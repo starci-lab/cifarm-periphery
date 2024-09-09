@@ -1,12 +1,12 @@
 import { Contract, JsonRpcProvider } from "ethers"
-import { evmRpc } from "../../"
+import { evmHttpRpcUrl } from "../../rpcs"
 import { GetNftsParams } from "../types.nft"
 import { erc721Abi } from "../../abi"
 import { Platform, chainKeyToPlatform } from "@/config"
 import { PlatformNotFoundException } from "@/exceptions"
 
 export const _getEvmNfts = async ({ nftAddress, chainKey, network }: GetNftsParams) => {
-    const rpc = evmRpc(chainKey, network)
+    const rpc = evmHttpRpcUrl(chainKey, network)
     const provider = new JsonRpcProvider(rpc)
     const contract = new Contract(nftAddress, erc721Abi, provider)
     const events = await contract.queryFilter("Transfer")

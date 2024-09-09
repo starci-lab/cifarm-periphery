@@ -9,6 +9,7 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo"
 import { ApplicationModule } from "./application"
 import { ScheduleModule } from "@nestjs/schedule"
 import { ObserversModule } from "./observers"
+import { MongooseModule } from "@nestjs/mongoose"
 
 @Module({
     imports: [
@@ -23,6 +24,14 @@ import { ObserversModule } from "./observers"
             plugins: [ApolloServerPluginLandingPageLocalDefault()],
             introspection: true,
         }),
+        MongooseModule.forRoot(
+            `mongodb://${envConfig().database.mongo.mongo1.host}:${envConfig().database.mongo.mongo1.port}`,
+            {
+                user: envConfig().database.mongo.mongo1.user,
+                pass: envConfig().database.mongo.mongo1.pass,
+                dbName: envConfig().database.mongo.mongo1.dbName,
+            },
+        ),
         ScheduleModule.forRoot(),
 
         ObserversModule,

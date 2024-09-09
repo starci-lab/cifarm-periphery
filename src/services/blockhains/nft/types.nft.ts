@@ -12,4 +12,5 @@ export interface GetContractObservableParams {
     chainKey: string,
     network: Network,
     eventName: string,
-}
+    callbackFn: (...args: Array<unknown>) => void | Promise<void>
+} 
