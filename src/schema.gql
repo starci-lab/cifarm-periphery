@@ -1,0 +1,24 @@
+type Metadata {
+  count: Int!
+}
+
+type Nft {
+  tokenId: Int!
+  tokenURI: String
+}
+
+type GetNftsResult {
+  records: [Nft!]!
+  metadata: Metadata!
+}
+
+type Query {
+  nfts(input: GetNftsInput!): GetNftsResult!
+}
+
+input GetNftsInput {
+  accountAddress: ID!
+  network: String
+  nftKey: String
+  chainKey: String
+}
