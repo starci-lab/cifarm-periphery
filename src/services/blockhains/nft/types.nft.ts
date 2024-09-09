@@ -14,3 +14,4 @@ export interface GetContractObservableParams {
     eventName: string,
     callbackFn: (...args: Array<unknown>) => void | Promise<void>
 } 
+

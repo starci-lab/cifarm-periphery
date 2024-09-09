@@ -20,7 +20,7 @@ export const blockchainConfig = (): BlockchainConfig => ({
             premiumTile: {
                 addresses: {
                     [Network.Mainnet]: "",
-                    [Network.Testnet]: "0xA871f915Dc331797d12625277Cd7Ae1cbad9f05d",
+                    [Network.Testnet]: "0x410d3e15058e8544B14FD1a317E330f693444673",
                 },
             },
         },

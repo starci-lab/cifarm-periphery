@@ -9,7 +9,6 @@ export class BlockchainNftBaseService {
     constructor() {}
 
     public getNfts(params: GetNftsParams) {
-        console.log("called")
         return _getNfts(params)
     }
 }

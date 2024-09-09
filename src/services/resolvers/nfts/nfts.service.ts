@@ -9,14 +9,13 @@ export class NftsResolverService {
     private readonly logger = new Logger(NftsResolverService.name)
 
     constructor(
-        private blockchainNftService: BlockchainNftBaseService
+        private blockchainNftBaseService: BlockchainNftBaseService
     ) {}
 
     public async getNfts({ accountAddress, nftKey, network, chainKey }: GetNftsInput): Promise<GetNftsResult> {
-        console.log(accountAddress, nftKey, network)
         const nftAddress = blockchainConfig()[chainKey].nfts[nftKey].addresses[network]
-        const data = await this.blockchainNftService.getNfts({ accountAddress, network, chainKey, nftAddress })
-        return { records : [], metadata: { count: 1}}
+        const records = await this.blockchainNftBaseService.getNfts({ accountAddress, network, chainKey, nftAddress })
+        return { records, metadata: { count: records.length }}
     }
 }
 

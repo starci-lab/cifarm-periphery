@@ -14,7 +14,7 @@ export class BlockchainObserver {
     constructor(
         @InjectModel(NftTransferSchema.name) 
         private nftTransferSchema: Model<NftTransferSchema>,
-        private readonly nftObserverService : BlockchainNftObserverService) {}
+        private readonly blockchainNftObserverService : BlockchainNftObserverService) {}
 
     @Timeout(0)
     async observeEvmNftTransfers() {
@@ -25,7 +25,7 @@ export class BlockchainObserver {
                 const nftAddresses = Object.values(blockchainConfig()[chainKey].nfts).map(({ addresses }) => addresses[network])
                 for (const nftAddress of nftAddresses) {
                     if (!nftAddress) continue
-                    this.nftObserverService.observeEvm({
+                    this.blockchainNftObserverService.observeEvm({
                         chainKey,
                         network,
                         nftAddress,
