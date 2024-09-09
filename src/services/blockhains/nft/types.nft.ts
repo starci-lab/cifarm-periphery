@@ -6,3 +6,10 @@ export interface GetNftsParams {
     chainKey: string,
     network: Network
 }
+
+export interface GetContractObservableParams {
+    nftAddress: string,
+    chainKey: string,
+    network: Network,
+    eventName: string,
+}

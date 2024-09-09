@@ -1,6 +1,6 @@
 
 import { Injectable, Logger } from "@nestjs/common"
-import { BlockchainNftService } from "../../blockhains"
+import { BlockchainNftBaseService } from "../../blockhains"
 import { GetNftsInput, GetNftsResult } from "./dtos"
 import { blockchainConfig } from "@/config"
 
@@ -9,7 +9,7 @@ export class NftsResolverService {
     private readonly logger = new Logger(NftsResolverService.name)
 
     constructor(
-        private blockchainNftService: BlockchainNftService
+        private blockchainNftService: BlockchainNftBaseService
     ) {}
 
     public async getNfts({ accountAddress, nftKey, network, chainKey }: GetNftsInput): Promise<GetNftsResult> {

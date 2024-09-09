@@ -7,6 +7,8 @@ import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin
 import { GraphQLModule } from "@nestjs/graphql"
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo"
 import { ApplicationModule } from "./application"
+import { ScheduleModule } from "@nestjs/schedule"
+import { ObserversModule } from "./observers"
 
 @Module({
     imports: [
@@ -21,7 +23,9 @@ import { ApplicationModule } from "./application"
             plugins: [ApolloServerPluginLandingPageLocalDefault()],
             introspection: true,
         }),
+        ScheduleModule.forRoot(),
 
+        ObserversModule,
         ServicesModule, 
         ApplicationModule
     ],

@@ -1,14 +1,16 @@
 import { Global, Module } from "@nestjs/common"
-import { BlockchainNftService } from "./nft"
+import { BlockchainNftBaseService, BlockchainNftObserverService } from "./nft"
 
 @Global()
 @Module({
     imports: [],
     providers: [
-        BlockchainNftService
+        BlockchainNftBaseService, 
+        BlockchainNftObserverService
     ],
     exports: [
-        BlockchainNftService
+        BlockchainNftBaseService, 
+        BlockchainNftObserverService
     ]
 })
 export class BlockchainModule {}

@@ -1,2 +1,3 @@
 export * from "./services.module"
-export * from "./resolvers/nfts"
+export * from "./resolvers"
+export * from "./blockhains"
