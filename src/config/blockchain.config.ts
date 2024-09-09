@@ -27,6 +27,10 @@ export const blockchainConfig = (): BlockchainConfig => ({
     },
 })
 
+export const defaultChainKey = Object.keys(blockchainConfig())[0]
+export const defaultNftKey = Object.keys(blockchainConfig()[defaultChainKey].nfts)[0]
+
+
 export enum Platform {
   Evm = "evm",
 }

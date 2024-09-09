@@ -1,9 +1,9 @@
 import { Network } from "@/config"
-import { ManyResult, Metadata } from "@/services/types.service"
+import { ManyResult } from "@/services/types.service"
 import { InputType, Field, ID, ObjectType, Int } from "@nestjs/graphql"
 
 @InputType()
-export class GetNftsInput {
+export class GetNftsArgs {
   @Field(() => ID, {
       name: "accountAddress",
   })
@@ -26,10 +26,21 @@ export class GetNftsInput {
       nullable: true,
   })
       chainKey: string
+  @Field(() => Int, {
+      name: "skip",
+      nullable: true
+  })
+      skip?: number
+
+  @Field(() => String, {
+      name: "take",
+      nullable: true,
+  })
+      take?: number
 }
 
 @ObjectType()
-export class Nft {
+export class NftResponse {
   @Field(() => Int, {
       name: "tokenId",
   })
@@ -43,14 +54,14 @@ export class Nft {
 }
 
 @ObjectType()
-export class GetNftsResult implements ManyResult<Nft> {
-
-  @Field(() => [Nft], {
+export class GetNftsResponse implements ManyResult<NftResponse> {
+  @Field(() => [NftResponse], {
       name: "records",
   })
-      records: Array<Nft>
-  @Field(() => Metadata, {
-      name: "metadata",
-  })
-      metadata: Metadata
+      records: Array<NftResponse>
+      @Field(() => Int, {
+          name: "count",
+      })
+          count: number
+      
 }

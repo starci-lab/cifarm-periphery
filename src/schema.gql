@@ -1,24 +1,22 @@
-type Metadata {
-  count: Int!
-}
-
-type Nft {
+type NftResponse {
   tokenId: Int!
   tokenURI: String
 }
 
-type GetNftsResult {
-  records: [Nft!]!
-  metadata: Metadata!
+type GetNftsResponse {
+  records: [NftResponse!]!
+  count: Int!
 }
 
 type Query {
-  nfts(input: GetNftsInput!): GetNftsResult!
+  nfts(args: GetNftsArgs!): GetNftsResponse!
 }
 
-input GetNftsInput {
+input GetNftsArgs {
   accountAddress: ID!
   network: String
   nftKey: String
   chainKey: String
+  skip: Int
+  take: String
 }

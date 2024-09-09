@@ -5,6 +5,18 @@ export interface GetNftsParams {
     nftAddress: string,
     chainKey: string,
     network: Network
+    skip: number
+    take: number
+}
+
+export interface NftResult {
+    tokenId: number,
+    tokenURI: string
+}
+
+export interface GetNftsResult {
+    records: Array<NftResult>,
+    count: number
 }
 
 export interface GetContractObservableParams {

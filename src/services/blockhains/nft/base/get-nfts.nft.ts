@@ -1,35 +1,32 @@
 import { Contract, JsonRpcProvider } from "ethers"
 import { evmHttpRpcUrl } from "../../rpcs"
-import { GetNftsParams } from "../types.nft"
+import { GetNftsParams, GetNftsResult, NftResult } from "../types.nft"
 import { erc721Abi } from "../../abi"
 import { Platform, chainKeyToPlatform } from "@/config"
 import { PlatformNotFoundException } from "@/exceptions"
 import { MulticallProvider } from "@ethers-ext/provider-multicall"
-
-export interface Nft {
-    tokenId: number,
-    tokenURI: string
-}
 
 export const _getEvmNfts = async ({
     nftAddress,
     chainKey,
     network,
     accountAddress,
-}: GetNftsParams) => {
+    skip,
+    take
+}: GetNftsParams): Promise<GetNftsResult> => {
     const rpc = evmHttpRpcUrl(chainKey, network)
     const provider = new JsonRpcProvider(rpc)
     const contract = new Contract(nftAddress, erc721Abi, provider)
-    const balance = await contract
+    const balance = Number(await contract
         .getFunction("balanceOf")
-        .staticCall(accountAddress)
+        .staticCall(accountAddress))
 
     const multicaller = new MulticallProvider(provider)
     const multicallerContract = new Contract(nftAddress, erc721Abi, multicaller)
 
     const promises: Array<Promise<void>> = []
     const tokenIds: Array<number> = []
-    for (let index = 0; index < Number(balance); index++) {
+    for (let index = skip; index < Math.min(balance, skip + take); index++) {
         promises.push(
             (async () => {
                 const tokenId = await multicallerContract
@@ -41,14 +38,14 @@ export const _getEvmNfts = async ({
     }
     await Promise.all(promises)
 
-    const results: Array<Nft> = []
+    const records: Array<NftResult> = []
     for (const tokenId of tokenIds) {
         promises.push(
             (async () => {
                 const tokenURI = await multicallerContract
                     .getFunction("tokenURI")
                     .staticCall(tokenId)
-                results.push({
+                records.push({
                     tokenId,
                     tokenURI
                 })
@@ -57,7 +54,10 @@ export const _getEvmNfts = async ({
     }
     await Promise.all(promises)
 
-    return results
+    return {
+        count: balance,
+        records
+    }
 }
 
 export const _getNfts = (params: GetNftsParams) => {
