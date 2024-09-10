@@ -28,4 +28,4 @@ jobs:
         IPFS_URL: ${{secrets.IPFS_URL}}
         DEFAULT_AUTH_KEY: ${{secrets.DEFAULT_AUTH_KEY}}
       run: docker compose -f .docker/production.yaml -p cifarm-api up --build -d 
- 
+  
