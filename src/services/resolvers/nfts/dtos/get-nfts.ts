@@ -1,5 +1,5 @@
 import { Network } from "@/config"
-import { ManyResult } from "@/services/types.service"
+import { ManyResult } from "../../../common"
 import { InputType, Field, ID, ObjectType, Int } from "@nestjs/graphql"
 
 @InputType()

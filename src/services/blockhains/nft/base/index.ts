@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common"
-import { GetNftsParams } from "../types.nft"
+import { GetNftsParams } from "../common"
 import { _getNfts } from "./get-nfts.nft"
 
 @Injectable()

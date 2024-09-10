@@ -1,6 +1,6 @@
 import { Contract, JsonRpcProvider } from "ethers"
 import { evmHttpRpcUrl } from "../../rpcs"
-import { GetNftsParams, GetNftsResult, NftResult } from "../types.nft"
+import { GetNftsParams, GetNftsResult, NftResult } from "../common"
 import { erc721Abi } from "../../abi"
 import { Platform, chainKeyToPlatform } from "@/config"
 import { PlatformNotFoundException } from "@/exceptions"

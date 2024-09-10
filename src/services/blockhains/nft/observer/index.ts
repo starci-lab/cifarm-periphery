@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common"
-import { GetContractObservableParams } from "../types.nft"
+import { GetContractObservableParams } from "../common"
 import { WebSocketProvider, Contract } from "ethers"
 import { evmWsRpcUrl } from "../../rpcs"
 import { erc721Abi } from "../../abi"
