@@ -10,12 +10,16 @@ export class NftsResolverService {
     constructor(private blockchainNftBaseService: BlockchainNftBaseService) {}
 
     public async getNfts({
-        accountAddress,
-        nftKey,
-        network,
-        chainKey,
-        skip,
-        take
+        input: {
+            accountAddress,
+            nftKey,
+            network,
+            chainKey,
+        },
+        filter: {
+            skip,
+            take
+        }
     }: GetNftsArgs): Promise<GetNftsResponse> {
         chainKey = chainKey || defaultChainKey
         nftKey = nftKey || defaultNftKey

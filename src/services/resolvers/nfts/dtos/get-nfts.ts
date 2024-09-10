@@ -1,9 +1,9 @@
 import { Network } from "@/config"
-import { ManyResult } from "../../../common"
+import { BaseArgs, ManyResult } from "../../../common"
 import { InputType, Field, ID, ObjectType, Int } from "@nestjs/graphql"
 
 @InputType()
-export class GetNftsArgs {
+export class GetNftsInput {
   @Field(() => ID, {
       name: "accountAddress",
   })
@@ -26,9 +26,13 @@ export class GetNftsArgs {
       nullable: true,
   })
       chainKey: string
+}
+
+@InputType()
+export class GetNftsFilter {
   @Field(() => Int, {
       name: "skip",
-      nullable: true
+      nullable: true,
   })
       skip?: number
 
@@ -37,6 +41,20 @@ export class GetNftsArgs {
       nullable: true,
   })
       take?: number
+}
+
+@InputType()
+export class GetNftsArgs implements BaseArgs<GetNftsInput, GetNftsFilter> {
+  @Field(() => GetNftsInput, {
+      name: "input",
+      nullable: true,
+  })
+      input?: GetNftsInput
+  @Field(() => GetNftsFilter, {
+      name: "filter",
+      nullable: true,
+  })
+      filter?: GetNftsFilter
 }
 
 @ObjectType()
@@ -59,9 +77,8 @@ export class GetNftsResponse implements ManyResult<NftResponse> {
       name: "records",
   })
       records: Array<NftResponse>
-      @Field(() => Int, {
-          name: "count",
-      })
-          count: number
-      
+  @Field(() => Int, {
+      name: "count",
+  })
+      count: number
 }
