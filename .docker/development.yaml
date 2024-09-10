@@ -7,4 +7,4 @@ services:
     ports:
       - 9999:9999
   
-#docker compose -f .docker/development.yaml -p api.cifarm up --build -d 
+#docker compose -f .docker/development.yaml -p cifarm-api up --build -d 
