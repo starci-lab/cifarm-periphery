@@ -31,9 +31,7 @@ export class AuthenticatorControllerService {
     ) {}
 
     public async requestMessage(): Promise<RequestMessageResponse> {
-
         const message = randomUUID()
-
         //tempt inf for testing
         await this.cacheManager.set(message, true, 0)
         return {
