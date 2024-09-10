@@ -33,6 +33,7 @@ export const defaultNftKey = Object.keys(blockchainConfig()[defaultChainKey].nft
 
 export enum Platform {
   Evm = "evm",
+  Aptos = "aptos"
 }
 
 export const chainKeyToPlatform = (chainKey: string): Platform => {

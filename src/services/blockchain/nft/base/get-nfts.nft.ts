@@ -1,7 +1,7 @@
 import { Contract, JsonRpcProvider } from "ethers"
 import { evmHttpRpcUrl } from "../../rpcs"
 import { GetNftsParams, GetNftsResult, NftResult } from "../common"
-import { erc721Abi } from "../../abi"
+import { erc721Abi } from "../../abis"
 import { Platform, chainKeyToPlatform } from "@/config"
 import { PlatformNotFoundException } from "@/exceptions"
 import { MulticallProvider } from "@ethers-ext/provider-multicall"

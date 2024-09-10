@@ -11,3 +11,9 @@ export class PlatformNotFoundException extends HttpException {
         super(`Platform not found: ${platform}`, HttpStatus.NOT_FOUND)
     }
 }
+
+export class InvalidSignatureException extends HttpException {
+    constructor(signature: string) {
+        super(`Invalid signature: ${signature}`, HttpStatus.BAD_REQUEST)
+    }
+}

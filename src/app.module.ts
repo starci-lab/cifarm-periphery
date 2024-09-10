@@ -10,6 +10,8 @@ import { ApplicationModule } from "./application"
 import { ScheduleModule } from "@nestjs/schedule"
 import { ObserversModule } from "./observers"
 import { MongooseModule } from "@nestjs/mongoose"
+import { CacheModule } from "@nestjs/cache-manager"
+import * as redisStore from "cache-manager-redis-store"
 
 @Module({
     imports: [
@@ -24,6 +26,14 @@ import { MongooseModule } from "@nestjs/mongoose"
             plugins: [ApolloServerPluginLandingPageLocalDefault()],
             introspection: true,
         }),
+        CacheModule.register({
+            store: redisStore,
+            ttl: 1000 * 60,
+            isGlobal: true,
+            host: envConfig().redis.host,
+            port: envConfig().redis.port,
+        }),
+
         MongooseModule.forRoot(
             `mongodb://${envConfig().database.mongo.mongo1.host}:${envConfig().database.mongo.mongo1.port}`,
             {

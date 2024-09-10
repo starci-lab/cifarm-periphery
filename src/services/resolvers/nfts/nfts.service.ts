@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common"
-import { BlockchainNftBaseService } from "../../blockhains"
+import { BlockchainNftBaseService } from "../../blockchain"
 import { GetNftsArgs, GetNftsResponse } from "./dtos"
 import { Network, blockchainConfig, defaultChainKey, defaultNftKey } from "@/config"
 

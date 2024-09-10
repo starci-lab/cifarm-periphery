@@ -2,7 +2,7 @@ import { Injectable, Logger } from "@nestjs/common"
 import { GetContractObservableParams } from "../common"
 import { WebSocketProvider, Contract } from "ethers"
 import { evmWsRpcUrl } from "../../rpcs"
-import { erc721Abi } from "../../abi"
+import { erc721Abi } from "../../abis"
 
 @Injectable()
 export class BlockchainNftObserverService {
