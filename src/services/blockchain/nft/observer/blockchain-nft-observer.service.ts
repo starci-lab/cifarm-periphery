@@ -20,7 +20,7 @@ export class BlockchainNftObserverService {
             start()
         })
         websocket.on("error", (error) => {
-            this.logger.error(`WebSocket error encountered : ${error.message} ${chainKey}, ${network} ${eventName}`)
+            this.logger.error(`WebSocket error encountered : ${error.message}`)
         })
 
         let contract: Contract | undefined
