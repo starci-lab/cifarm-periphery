@@ -31,7 +31,12 @@ export class AuthenticatorControllerService {
     ) {}
 
     public async requestMessage(): Promise<RequestMessageResponse> {
-        const message = randomUUID()
+        
+        const message = `Welcome to CiFarm!
+Please sign the following message to proceed.
+This action does not initiate a blockchain transaction and will not incur any gas fees.
+Nonce: ${randomUUID()}`
+
         //tempt inf for testing
         await this.cacheManager.set(message, true, 0)
         return {

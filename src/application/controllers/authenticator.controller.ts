@@ -39,7 +39,8 @@ export class AuthenticatorController {
   public async requestMessage() {
       return await this.authenticatorService.requestMessage()
   }
-
+  
+  //temp keep for development
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ type: GetFakeSignatureResponse, status: 200 })
   @Post("fake-signature")
