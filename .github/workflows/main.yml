@@ -1,0 +1,31 @@
+name: Deploy on self-hosted runner
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  docker-compose:
+    runs-on: self-hosted
+    environment: docker
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2 
+ 
+    - name: Run `docker compose`
+      env:
+        PORT: ${{vars.PORT}}
+        NODE_ENV: ${{vars.NODE_ENV}}
+        REDIS_PORT: ${{secrets.REDIS_PORT}}
+        REDIS_HOST: ${{secrets.REDIS_HOST}}
+        SALT: ${{secrets.SALT}}
+        MONGO_1_DB_NAME: ${{secrets.MONGO_1_DB_NAME}}
+        MONGO_1_HOST: ${{secrets.MONGO_1_HOST}}
+        MONGO_1_PORT: ${{secrets.MONGO_1_PORT}}
+        MONGO_1_USER: ${{secrets.MONGO_1_USER}}
+        MONGO_1_PASS: ${{secrets.MONGO_1_PASS}}
+        IPFS_URL: ${{secrets.IPFS_URL}}
+        DEFAULT_AUTH_KEY: ${{secrets.DEFAULT_AUTH_KEY}}
+      run: docker compose -f .docker/production.yaml -p blockchain-auth-service up --build -d 
+ 

@@ -1,0 +1,10 @@
+services:
+  server:
+    build:
+      context: ..
+    env_file:
+      - ../.env.docker
+    ports:
+      - 9999:9999
+  
+#docker compose -f .docker/development.yaml -p api.cifarm up --build -d 

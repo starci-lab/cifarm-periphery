@@ -3,6 +3,7 @@ import { GetContractObservableParams } from "../common"
 import { WebSocketProvider, Contract } from "ethers"
 import { evmWsRpcUrl } from "../../rpcs"
 import { erc721Abi } from "../../abis"
+import * as WebSocket from "ws"
 
 @Injectable()
 export class BlockchainNftObserverService {
@@ -13,23 +14,22 @@ export class BlockchainNftObserverService {
     public observeEvm({ chainKey, network, nftAddress, eventName, callbackFn }: GetContractObservableParams) {
         const ws = evmWsRpcUrl(chainKey, network)
         const websocket = new WebSocket(ws)
-        let provider = new WebSocketProvider(websocket)
-
-        websocket.onclose = () => {
-            this.logger.verbose(`Disconnected. Reconnecting...: ${chainKey} ${network}`)
-            provider = new WebSocketProvider(websocket  )
-            startObserve()
-        }
- 
-        let contract: Contract
-        const startObserve =() => {
+        websocket.on("close", () => {
+            this.logger.error(`WebSocket disconnected. Attempting to reconnect... : ${chainKey} ${network} ${eventName} `)
+            start()
+        })
+        let contract: Contract | undefined
+        const start = () => {
+            const provider = new WebSocketProvider(websocket)
+            if (contract) {
+                contract.removeAllListeners(eventName)
+            }
             contract = new Contract(nftAddress, erc721Abi, provider) 
-            contract.removeAllListeners(eventName)
           
             contract
                 .on(eventName, callbackFn)
         }
-        startObserve()
+        start()
     }
 }
 

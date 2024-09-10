@@ -1,0 +1,17 @@
+services:
+  server:
+    build:
+      context: ..
+    environment:
+      PORT: ${PORT}
+      NODE_ENV: ${NODE_ENV}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_HOST: ${REDIS_HOST}
+      SALT: ${SALT}
+      MONGO_1_DB_NAME: ${MONGO_1_DB_NAME}
+      MONGO_1_HOST: ${MONGO_1_HOST}
+      MONGO_1_PORT: ${MONGO_1_PORT}
+      MONGO_1_USER: ${MONGO_1_USER}
+      MONGO_1_PASS: ${MONGO_1_PASS}
+    ports:
+      - 9999:9999
