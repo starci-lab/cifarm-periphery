@@ -13,10 +13,18 @@ type Query {
 }
 
 input GetNftsArgs {
+  input: GetNftsInput
+  filter: GetNftsFilter
+}
+
+input GetNftsInput {
   accountAddress: ID!
   network: String
   nftKey: String
   chainKey: String
+}
+
+input GetNftsFilter {
   skip: Int
   take: String
 }

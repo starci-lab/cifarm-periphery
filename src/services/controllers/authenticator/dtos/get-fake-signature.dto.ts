@@ -17,7 +17,7 @@ export class GetFakeSignatureResponseData extends VerifyMessageRequestBody {
   @ApiProperty({ example: "avalanche" })
       chainKey?: string
 }
-
+ 
 export const GET_FAKE_SIGNATURE_RESPONSE_SUCCESS_MESSAGE = "Successfully retrieved fake signature"
 export class GetFakeSignatureResponse
 implements HttpResponse<GetFakeSignatureResponseData>
