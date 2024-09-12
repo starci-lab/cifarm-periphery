@@ -8,7 +8,6 @@ import { GraphQLModule } from "@nestjs/graphql"
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo"
 import { ApplicationModule } from "./application"
 import { ScheduleModule } from "@nestjs/schedule"
-import { ObserversModule } from "./observers"
 import { MongooseModule } from "@nestjs/mongoose"
 import { CacheModule } from "@nestjs/cache-manager"
 import * as redisStore from "cache-manager-redis-store"
@@ -44,7 +43,6 @@ import * as redisStore from "cache-manager-redis-store"
         ),
         ScheduleModule.forRoot(),
 
-        ObserversModule,
         ServicesModule, 
         ApplicationModule
     ],
