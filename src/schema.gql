@@ -1,6 +1,7 @@
 type NftData {
   tokenId: Int!
   tokenURI: String
+  ownerAddress: String
 }
 
 type GetNftsByOwnerAddressResponse {
@@ -18,8 +19,15 @@ type Query {
 }
 
 input GetNftsByOwnerAddressArgs {
-  input: GetNftsByOwnerAddressFilter
+  input: GetNftsByOwnerAddressInput
   filter: GetNftsByOwnerAddressFilter
+}
+
+input GetNftsByOwnerAddressInput {
+  accountAddress: ID!
+  network: String
+  nftKey: String
+  chainKey: String
 }
 
 input GetNftsByOwnerAddressFilter {
@@ -32,7 +40,7 @@ input GetNftsByTokenIdsArgs {
 }
 
 input GetNftByTokenIdsInput {
-  tokenIds: [ID!]!
+  tokenIds: [Int!]!
   network: String
   nftKey: String
   chainKey: String

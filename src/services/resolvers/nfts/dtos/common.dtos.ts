@@ -12,4 +12,9 @@ export class NftData {
       nullable: true,
   })
       tokenURI: string
+  @Field(() => String, {
+      name: "ownerAddress",
+      nullable: true,
+  })
+      ownerAddress: string
 }

@@ -46,7 +46,7 @@ export class GetNftsByOwnerAddressFilter {
 
 @InputType()
 export class GetNftsByOwnerAddressArgs implements BaseArgs<GetNftsByOwnerAddressInput, GetNftsByOwnerAddressFilter> {
-  @Field(() => GetNftsByOwnerAddressFilter, {
+  @Field(() => GetNftsByOwnerAddressInput, {
       name: "input",
       nullable: true,
   })

@@ -1,11 +1,11 @@
 import { Network } from "@/config"
 import { BaseArgs, ManyResult } from "@/services/common"
-import { InputType, Field, ID, ObjectType } from "@nestjs/graphql"
+import { InputType, Field, ObjectType, Int } from "@nestjs/graphql"
 import { NftData } from "./common.dtos"
 
 @InputType()
 export class GetNftByTokenIdsInput {
-  @Field(() => [ID], {
+  @Field(() => [Int], {
       name: "tokenIds",
   })
       tokenIds: Array<number>

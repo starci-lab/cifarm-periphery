@@ -27,7 +27,7 @@ export class NftsResolver {
   @Query(() => GetNftsByTokenIdsResponse, {
       name: "nftsByTokenIds",
   })
-  public async getOwners(
+  public async getNftsByTokenIds(
     @Args("args") input: GetNftsByTokenIdsArgs,
   ): Promise<GetNftsByTokenIdsResponse> {
       return await this.nftsService.getNftsByTokenIds(input)
