@@ -1,7 +1,12 @@
 import { Injectable, Logger } from "@nestjs/common"
 import { BlockchainNftBaseService } from "../../blockchain"
 import { GetNftsArgs, GetNftsResponse } from "./dtos"
-import { Network, blockchainConfig, defaultChainKey, defaultNftKey } from "@/config"
+import {
+    Network,
+    blockchainConfig,
+    defaultChainKey,
+    defaultNftKey,
+} from "@/config"
 
 @Injectable()
 export class NftsResolverService {
@@ -10,31 +15,28 @@ export class NftsResolverService {
     constructor(private blockchainNftBaseService: BlockchainNftBaseService) {}
 
     public async getNfts({
-        input: {
-            accountAddress,
-            nftKey,
-            network,
-            chainKey,
-        },
-        filter: {
-            skip,
-            take
-        }
+        input,
+        filter,
     }: GetNftsArgs): Promise<GetNftsResponse> {
+        let { nftKey, network, chainKey } = { ...input }
+        const { accountAddress } = { ...input }
+        let { skip, take } = { ...filter }
+
         chainKey = chainKey || defaultChainKey
         nftKey = nftKey || defaultNftKey
         skip = skip || 0
         take = take || 5
         network = network || Network.Testnet
 
-        const nftAddress = blockchainConfig()[chainKey].nfts[nftKey].addresses[network]
+        const nftAddress =
+      blockchainConfig()[chainKey].nfts[nftKey].addresses[network]
         return await this.blockchainNftBaseService.getNfts({
             accountAddress,
             network,
             chainKey,
             nftAddress,
             skip,
-            take
+            take,
         })
     }
 }

@@ -36,7 +36,7 @@ export class GetNftsFilter {
   })
       skip?: number
 
-  @Field(() => String, {
+  @Field(() => Int, {
       name: "take",
       nullable: true,
   })

@@ -26,5 +26,5 @@ input GetNftsInput {
 
 input GetNftsFilter {
   skip: Int
-  take: String
+  take: Int
 }
