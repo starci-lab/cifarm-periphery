@@ -17,3 +17,9 @@ export class InvalidSignatureException extends HttpException {
         super(`Invalid signature: ${signature}`, HttpStatus.BAD_REQUEST)
     }
 }
+
+export class AccountAddressNotFoundException extends HttpException {
+    constructor(accountAddress: string) {
+        super(`Account address not found: ${accountAddress}`, HttpStatus.BAD_REQUEST)
+    }
+}

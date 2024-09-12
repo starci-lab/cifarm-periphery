@@ -7,6 +7,7 @@ import {
     defaultChainKey,
     defaultNftKey,
 } from "@/config"
+import { AccountAddressNotFoundException } from "@/exceptions"
 
 @Injectable()
 export class NftsResolverService {
@@ -18,10 +19,12 @@ export class NftsResolverService {
         input,
         filter,
     }: GetNftsArgs): Promise<GetNftsResponse> {
-        let { nftKey, network, chainKey } = { ...input }
         const { accountAddress } = { ...input }
-        let { skip, take } = { ...filter }
+        if (!accountAddress) throw new AccountAddressNotFoundException(accountAddress)
 
+        let { nftKey, network, chainKey } = { ...input }
+        let { skip, take } = { ...filter }
+        
         chainKey = chainKey || defaultChainKey
         nftKey = nftKey || defaultNftKey
         skip = skip || 0
