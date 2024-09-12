@@ -17,8 +17,17 @@ export class NftTransferSchema {
       from: string
   @Prop({ type: String, required: true })
       to: string
+  @Prop({ type: String, required: true })
+      chainKey: string
+  @Prop({ type: String, required: true })
+      network: string
+  @Prop({ type: String, required: true })
+      nftKey: string
+  @Prop({ type: String, required: true })
+      nftAddress: string
   @Prop({ type: Number, required: true })
       tokenId: number
 }
 
-export const NftTransferSchemaClass = SchemaFactory.createForClass(NftTransferSchema)
+export const NftTransferSchemaClass =
+  SchemaFactory.createForClass(NftTransferSchema)

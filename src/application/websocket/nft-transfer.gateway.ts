@@ -1,11 +1,11 @@
-import { blockchainConfig } from "@/config"
+import { Network, blockchainConfig } from "@/config"
 import { NftTransferSchema } from "@/database"
 import { BlockchainNftObserverService } from "@/services"
 import { Logger } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose"
 import { Timeout } from "@nestjs/schedule"
 import { WebSocketGateway, WebSocketServer } from "@nestjs/websockets"
-import { Network, ContractEventPayload } from "ethers"
+import { ContractEventPayload } from "ethers"
 import { Model } from "mongoose"
 import { Server } from "socket.io"
 
@@ -27,7 +27,7 @@ export class NftTranferGateway {
   ) {}
 
   @Timeout(0)
-  async observeEvmNftTransfers() {
+  public async observeEvmNftTransfers() {
       const chainKeys = Object.keys(blockchainConfig())
       const networks = Object.values(Network)
       for (const chainKey of chainKeys) {
@@ -37,10 +37,18 @@ export class NftTranferGateway {
               ).map(({ addresses }) => addresses[network])
               for (const nftAddress of nftAddresses) {
                   if (!nftAddress) continue
+                  const keys = Object.keys(blockchainConfig()[chainKey].nfts)
 
-                  const nftKey = Object.entries(blockchainConfig()[chainKey].nfts).find(
-                      ([, value]) => value[network] === nftAddress,
-                  )[0]
+                  let nftKey = ""
+                  for (const key of keys) {
+                      if (
+                          blockchainConfig()[chainKey].nfts[key].addresses[network] ===
+              nftAddress
+                      )
+                          nftKey = key
+                      break
+                  }
+
                   this.blockchainNftObserverService.observeEvm({
                       chainKey,
                       network,
@@ -56,20 +64,18 @@ export class NftTranferGateway {
                           this.logger.verbose(
                               `NFT Transfer found: ${transactionHash} ${chainKey}`,
                           )
-                          await this.nftTransferSchema.create({
+                          const object = await this.nftTransferSchema.create({
                               raw: payload,
                               from,
                               to,
                               tokenId: Number(tokenId),
                               transactionHash,
-                          })
-                          this.server.emit("nft-transfer-observed", {
-                              from,
-                              to,
-                              tokenId,
                               chainKey,
-                              nftKey,
+                              network,
+                              nftAddress,
+                              nftKey
                           })
+                          this.server.emit("nft-transfer-observed", object)
                       },
                   })
               }
