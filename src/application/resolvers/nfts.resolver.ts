@@ -1,6 +1,8 @@
 import {
-    GetNftsArgs,
-    GetNftsResponse,
+    GetNftsByOwnerAddressArgs,
+    GetNftsByOwnerAddressResponse,
+    GetNftsByTokenIdsArgs,
+    GetNftsByTokenIdsResponse,
     NftsResolverService,
 } from "@/services"
 import { Logger } from "@nestjs/common"
@@ -13,10 +15,21 @@ export class NftsResolver {
 
     constructor(private readonly nftsService: NftsResolverService) {}
 
-  @Query(() => GetNftsResponse, {
-      name: "nfts"
+  @Query(() => GetNftsByOwnerAddressResponse, {
+      name: "nftsByOwnerAddress",
   })
-    public async getNfts(@Args("args") input: GetNftsArgs): Promise<GetNftsResponse> {
-        return await this.nftsService.getNfts(input)
+    public async getNftsByOwnerAddress(
+    @Args("args") args: GetNftsByOwnerAddressArgs,
+    ): Promise<GetNftsByOwnerAddressResponse> {
+        return await this.nftsService.getNftsByOwnerAddress(args)
     }
+
+  @Query(() => GetNftsByTokenIdsResponse, {
+      name: "nftsByTokenIds",
+  })
+  public async getOwners(
+    @Args("args") input: GetNftsByTokenIdsArgs,
+  ): Promise<GetNftsByTokenIdsResponse> {
+      return await this.nftsService.getNftsByTokenIds(input)
+  }
 }

@@ -1,9 +1,10 @@
 import { Network } from "@/config"
 import { BaseArgs, ManyResult } from "../../../common"
 import { InputType, Field, ID, ObjectType, Int } from "@nestjs/graphql"
+import { NftData } from "./common.dtos"
 
 @InputType()
-export class GetNftsInput {
+export class GetNftsByOwnerAddressInput {
   @Field(() => ID, {
       name: "accountAddress",
   })
@@ -29,7 +30,7 @@ export class GetNftsInput {
 }
 
 @InputType()
-export class GetNftsFilter {
+export class GetNftsByOwnerAddressFilter {
   @Field(() => Int, {
       name: "skip",
       nullable: true,
@@ -44,39 +45,25 @@ export class GetNftsFilter {
 }
 
 @InputType()
-export class GetNftsArgs implements BaseArgs<GetNftsInput, GetNftsFilter> {
-  @Field(() => GetNftsInput, {
+export class GetNftsByOwnerAddressArgs implements BaseArgs<GetNftsByOwnerAddressInput, GetNftsByOwnerAddressFilter> {
+  @Field(() => GetNftsByOwnerAddressFilter, {
       name: "input",
       nullable: true,
   })
-      input?: GetNftsInput
-  @Field(() => GetNftsFilter, {
+      input?: GetNftsByOwnerAddressInput
+  @Field(() => GetNftsByOwnerAddressFilter, {
       name: "filter",
       nullable: true,
   })
-      filter?: GetNftsFilter
+      filter?: GetNftsByOwnerAddressFilter
 }
 
 @ObjectType()
-export class NftResponse {
-  @Field(() => Int, {
-      name: "tokenId",
-  })
-      tokenId: number
-
-  @Field(() => String, {
-      name: "tokenURI",
-      nullable: true,
-  })
-      tokenURI: string
-}
-
-@ObjectType()
-export class GetNftsResponse implements ManyResult<NftResponse> {
-  @Field(() => [NftResponse], {
+export class GetNftsByOwnerAddressResponse implements ManyResult<NftData> {
+  @Field(() => [NftData], {
       name: "records",
   })
-      records: Array<NftResponse>
+      records: Array<NftData>
   @Field(() => Int, {
       name: "count",
   })

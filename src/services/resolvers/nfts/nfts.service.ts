@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common"
 import { BlockchainNftBaseService } from "../../blockchain"
-import { GetNftsArgs, GetNftsResponse } from "./dtos"
+import { GetNftsByOwnerAddressArgs, GetNftsByOwnerAddressResponse, GetNftsByTokenIdsArgs, GetNftsByTokenIdsResponse } from "./dtos"
 import {
     Network,
     blockchainConfig,
@@ -15,25 +15,23 @@ export class NftsResolverService {
 
     constructor(private blockchainNftBaseService: BlockchainNftBaseService) {}
 
-    public async getNfts({
+    public async getNftsByOwnerAddress({
         input,
         filter,
-    }: GetNftsArgs): Promise<GetNftsResponse> {
+    }: GetNftsByOwnerAddressArgs): Promise<GetNftsByOwnerAddressResponse> {
         const { accountAddress } = { ...input }
         if (!accountAddress) throw new AccountAddressNotFoundException(accountAddress)
 
         let { nftKey, network, chainKey } = { ...input }
-        let { skip, take } = { ...filter }
+        const { skip, take } = { ...filter }
         
         chainKey = chainKey || defaultChainKey
         nftKey = nftKey || defaultNftKey
-        skip = skip || 0
-        take = take || 5
         network = network || Network.Testnet
 
         const nftAddress =
       blockchainConfig()[chainKey].nfts[nftKey].addresses[network]
-        return await this.blockchainNftBaseService.getNfts({
+        return await this.blockchainNftBaseService.getNftsByOwnerAddress({
             accountAddress,
             network,
             chainKey,
@@ -41,5 +39,26 @@ export class NftsResolverService {
             skip,
             take,
         })
+    }
+
+    public async getNftsByTokenIds({
+        input,
+    }: GetNftsByTokenIdsArgs): Promise<GetNftsByTokenIdsResponse> {
+        const { tokenIds } = { ...input }
+        let { nftKey, network, chainKey } = { ...input }
+        
+        chainKey = chainKey || defaultChainKey
+        nftKey = nftKey || defaultNftKey
+        network = network || Network.Testnet
+
+        const nftAddress =
+      blockchainConfig()[chainKey].nfts[nftKey].addresses[network]
+      
+        return await this.blockchainNftBaseService.getNftsByTokenIds({
+            tokenIds,
+            network,
+            chainKey,
+            nftAddress,
+        }) 
     }
 }

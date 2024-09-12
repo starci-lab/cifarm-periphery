@@ -1,32 +1,50 @@
 import { Contract, JsonRpcProvider } from "ethers"
 import { evmHttpRpcUrl } from "../../rpcs"
-import { GetNftsParams, GetNftsResult, NftResult } from "../common"
 import { erc721Abi } from "../../abis"
-import { Platform, chainKeyToPlatform } from "@/config"
+import { Network, Platform, chainKeyToPlatform } from "@/config"
 import { PlatformNotFoundException } from "@/exceptions"
 import { MulticallProvider } from "@ethers-ext/provider-multicall"
+import { NftData } from "../common"
 
-export const _getEvmNfts = async ({
+export interface GetNftsByOwnerAddressParams {
+    accountAddress: string,
+    nftAddress: string,
+    chainKey: string,
+    network: Network
+    skip: number
+    take: number
+}
+
+export interface GetNftsByOwnerAddressResult {
+    records: Array<NftData>,
+    count: number
+}
+
+export const _getEvmNftsByOwnerAddress = async ({
     nftAddress,
     chainKey,
     network,
     accountAddress,
     skip,
-    take
-}: GetNftsParams): Promise<GetNftsResult> => {
+    take,
+}: GetNftsByOwnerAddressParams): Promise<GetNftsByOwnerAddressResult> => {
     const rpc = evmHttpRpcUrl(chainKey, network)
     const provider = new JsonRpcProvider(rpc)
     const contract = new Contract(nftAddress, erc721Abi, provider)
-    const balance = Number(await contract
-        .getFunction("balanceOf")
-        .staticCall(accountAddress))
+    const balance = Number(
+        await contract.getFunction("balanceOf").staticCall(accountAddress),
+    )
 
     const multicaller = new MulticallProvider(provider)
     const multicallerContract = new Contract(nftAddress, erc721Abi, multicaller)
 
     const promises: Array<Promise<void>> = []
     const tokenIds: Array<number> = []
-    for (let index = skip; index < Math.min(balance, skip + take); index++) {
+    for (
+        let index = skip || 0;
+        index < (take ? Math.min(balance, (skip || 0) + take) : balance);
+        index++
+    ) {
         promises.push(
             (async () => {
                 const tokenId = await multicallerContract
@@ -38,7 +56,7 @@ export const _getEvmNfts = async ({
     }
     await Promise.all(promises)
 
-    const records: Array<NftResult> = []
+    const records: Array<NftData> = []
     for (const tokenId of tokenIds) {
         promises.push(
             (async () => {
@@ -47,7 +65,8 @@ export const _getEvmNfts = async ({
                     .staticCall(tokenId)
                 records.push({
                     tokenId,
-                    tokenURI
+                    tokenURI,
+                    ownerAddress: accountAddress
                 })
             })(),
         )
@@ -56,15 +75,15 @@ export const _getEvmNfts = async ({
 
     return {
         count: balance,
-        records
+        records,
     }
 }
 
-export const _getNfts = (params: GetNftsParams) => {
+export const _getNftsByOwnerAddress = (params: GetNftsByOwnerAddressParams) => {
     const platform = chainKeyToPlatform(params.chainKey)
     switch (platform) {
     case Platform.Evm: {
-        return _getEvmNfts(params)
+        return _getEvmNftsByOwnerAddress(params)
     }
     default:
         throw new PlatformNotFoundException(platform)
