@@ -1,10 +1,10 @@
 import { Network } from "@/config"
 import { BaseArgs, ManyResult } from "@/services/common"
 import { InputType, Field, ObjectType, Int } from "@nestjs/graphql"
-import { NftData } from "./common.dtos"
+import { NftDataResponse } from "./common.dtos"
 
 @InputType()
-export class GetNftByTokenIdsInput {
+export class GetNftsByTokenIdsInput {
   @Field(() => [Int], {
       name: "tokenIds",
   })
@@ -30,18 +30,18 @@ export class GetNftByTokenIdsInput {
 }
 
 @InputType()
-export class GetNftsByTokenIdsArgs implements BaseArgs<GetNftByTokenIdsInput> {
-  @Field(() => GetNftByTokenIdsInput, {
+export class GetNftsByTokenIdsArgs implements BaseArgs<GetNftsByTokenIdsInput> {
+  @Field(() => GetNftsByTokenIdsInput, {
       name: "input",
       nullable: true,
   })
-      input?: GetNftByTokenIdsInput
+      input?: GetNftsByTokenIdsInput
 }
 
 @ObjectType()
-export class GetNftsByTokenIdsResponse implements ManyResult<NftData> {
-  @Field(() => [NftData], {
+export class GetNftsByTokenIdsResponse implements ManyResult<NftDataResponse> {
+  @Field(() => [NftDataResponse], {
       name: "records",
   })
-      records: Array<NftData>
+      records: Array<NftDataResponse>
 }

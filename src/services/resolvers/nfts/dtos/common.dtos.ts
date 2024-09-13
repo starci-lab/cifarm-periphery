@@ -1,7 +1,7 @@
 import { ObjectType, Field, Int } from "@nestjs/graphql"
 
 @ObjectType()
-export class NftData {
+export class NftDataResponse {
   @Field(() => Int, {
       name: "tokenId",
   })

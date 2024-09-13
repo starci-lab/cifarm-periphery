@@ -1,21 +1,22 @@
-type NftData {
+type NftDataResponse {
   tokenId: Int!
   tokenURI: String
   ownerAddress: String
 }
 
 type GetNftsByOwnerAddressResponse {
-  records: [NftData!]!
+  records: [NftDataResponse!]!
   count: Int!
 }
 
 type GetNftsByTokenIdsResponse {
-  records: [NftData!]!
+  records: [NftDataResponse!]!
 }
 
 type Query {
   nftsByOwnerAddress(args: GetNftsByOwnerAddressArgs!): GetNftsByOwnerAddressResponse!
   nftsByTokenIds(args: GetNftsByTokenIdsArgs!): GetNftsByTokenIdsResponse!
+  nftByTokenId(args: GetNftByTokenIdArgs!): NftDataResponse!
 }
 
 input GetNftsByOwnerAddressArgs {
@@ -36,11 +37,22 @@ input GetNftsByOwnerAddressFilter {
 }
 
 input GetNftsByTokenIdsArgs {
-  input: GetNftByTokenIdsInput
+  input: GetNftsByTokenIdsInput
 }
 
-input GetNftByTokenIdsInput {
+input GetNftsByTokenIdsInput {
   tokenIds: [Int!]!
+  network: String
+  nftKey: String
+  chainKey: String
+}
+
+input GetNftByTokenIdArgs {
+  input: GetNftByTokenIdInput
+}
+
+input GetNftByTokenIdInput {
+  tokenId: Int!
   network: String
   nftKey: String
   chainKey: String

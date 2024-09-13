@@ -8,6 +8,7 @@ import {
     GetNftsByTokenIdsParams,
     _getNftsByTokenIds,
 } from "./get-nfts-by-token-ids.nft"
+import { GetNftByTokenIdParams, _getNftByTokenId } from "./get-nfts-by-token-id.nft"
 
 export interface BlockchainNftBaseServiceConstructorParams {
   nftAddress: string;
@@ -27,5 +28,9 @@ export class BlockchainNftBaseService {
 
     public getNftsByTokenIds(params: GetNftsByTokenIdsParams) {
         return _getNftsByTokenIds(params)
+    }
+
+    public getNftByTokenId(params: GetNftByTokenIdParams) {
+        return _getNftByTokenId(params)
     }
 }
