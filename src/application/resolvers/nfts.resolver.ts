@@ -45,3 +45,4 @@ export class NftsResolver {
       return await this.nftsService.getNftByTokenId(input)
   }
 }
+  
