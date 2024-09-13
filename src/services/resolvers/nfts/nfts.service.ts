@@ -80,12 +80,17 @@ export class NftsResolverService {
 
         const nftAddress =
       blockchainConfig()[chainKey].nfts[nftKey].addresses[network]
-
-        return await this.blockchainNftBaseService.getNftByTokenId({
-            tokenId,
-            network,
-            chainKey,
-            nftAddress,
-        })
+        try {
+            return await this.blockchainNftBaseService.getNftByTokenId({
+                tokenId,
+                network,
+                chainKey,
+                nftAddress,
+            })
+        } catch (ex) {
+            this.logger.error(ex)
+            return null
+        }
+        
     }
 }

@@ -16,7 +16,7 @@ type GetNftsByTokenIdsResponse {
 type Query {
   nftsByOwnerAddress(args: GetNftsByOwnerAddressArgs!): GetNftsByOwnerAddressResponse!
   nftsByTokenIds(args: GetNftsByTokenIdsArgs!): GetNftsByTokenIdsResponse!
-  nftByTokenId(args: GetNftByTokenIdArgs!): NftDataResponse!
+  nftByTokenId(args: GetNftByTokenIdArgs!): NftDataResponse
 }
 
 input GetNftsByOwnerAddressArgs {

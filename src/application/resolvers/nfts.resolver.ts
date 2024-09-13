@@ -1,5 +1,5 @@
 import {
-  GetNftByTokenIdArgs,
+    GetNftByTokenIdArgs,
     GetNftsByOwnerAddressArgs,
     GetNftsByOwnerAddressResponse,
     GetNftsByTokenIdsArgs,
@@ -37,6 +37,7 @@ export class NftsResolver {
 
   @Query(() => NftDataResponse, {
       name: "nftByTokenId",
+      nullable: true
   })
   public async getNftByTokenId(
   @Args("args") input: GetNftByTokenIdArgs,
