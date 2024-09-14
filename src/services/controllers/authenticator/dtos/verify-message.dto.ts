@@ -6,8 +6,9 @@ import {
     IsHexadecimal,
     IsNotEmpty,
     IsOptional,
-    IsString
+    IsString,
 } from "class-validator"
+import { Network } from "@/config"
 
 export class VerifyMessageRequestBody implements SignedMessage {
   @IsNotEmpty()
@@ -25,28 +26,40 @@ export class VerifyMessageRequestBody implements SignedMessage {
   @IsOptional()
   @ApiProperty({ example: "avalanche" })
       chainKey?: string
+  @IsOptional()
+  @ApiProperty({ example: "testnet" })
+      network?: Network
 }
 
 export class VerifyMessageResponseData {
   @IsBoolean()
   @ApiProperty({ example: true })
       result: boolean
-      
+
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ example: "0x6fc0C3f7B9Ec501A547185074F7299d34cd73209" })
       address: string
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+      example: "65a9c6f6e5a9e79b7f2b9b7e5b2e5e5b78767f764e6d5dfe1189e4b015b7e057",
+  })
+      authenticationId: string
 }
 
-export const VERIFY_MESSAGE_RESPONSE_SUCCESS_MESSAGE  = "Message verification successful"
-export const VERIFY_MESSAGE_RESPONSE_FAILED_MESSAGE = "Message verification failed"
+export const VERIFY_MESSAGE_RESPONSE_SUCCESS_MESSAGE =
+  "Message verification successful"
+export const VERIFY_MESSAGE_RESPONSE_FAILED_MESSAGE =
+  "Message verification failed"
 
 export class VerifyMessageResponse
 implements HttpResponse<VerifyMessageResponseData>
 {
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ example: VERIFY_MESSAGE_RESPONSE_SUCCESS_MESSAGE  })
+  @ApiProperty({ example: VERIFY_MESSAGE_RESPONSE_SUCCESS_MESSAGE })
       message: string
   @ApiProperty({
       example: {

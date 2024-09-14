@@ -17,8 +17,14 @@ import {
     ChainKeyNotFoundException,
     InvalidSignatureException,
 } from "@/exceptions"
-import { Platform, chainKeyToPlatform, defaultChainKey } from "@/config"
+import {
+    Network,
+    Platform,
+    chainKeyToPlatform,
+    defaultChainKey,
+} from "@/config"
 import { EvmAuthService, AptosAuthService } from "../../blockchain"
+import { Sha256Service } from "@/services/base"
 
 @Injectable()
 export class AuthenticatorControllerService {
@@ -27,6 +33,7 @@ export class AuthenticatorControllerService {
     constructor(
     private readonly evmAuthService: EvmAuthService,
     private readonly aptosAuthService: AptosAuthService,
+    private readonly sha256Service: Sha256Service,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     ) {}
 
@@ -47,6 +54,7 @@ export class AuthenticatorControllerService {
         signature,
         publicKey,
         chainKey,
+        network,
     }: VerifyMessageRequestBody): Promise<VerifyMessageResponse> {
         const valid = await this.cacheManager.get(message)
         if (!valid) {
@@ -57,6 +65,7 @@ export class AuthenticatorControllerService {
         let address = publicKey
 
         chainKey = chainKey ?? defaultChainKey
+        network = network ?? Network.Testnet
         const platform = chainKeyToPlatform(chainKey)
         switch (platform) {
         case Platform.Evm:
@@ -81,11 +90,16 @@ export class AuthenticatorControllerService {
         }
         if (!result) throw new InvalidSignatureException(signature)
 
+        const authenticationId = this.sha256Service.hash(
+            address,
+            chainKey,
+            network,
+        )
         return {
             message: result
                 ? VERIFY_MESSAGE_RESPONSE_SUCCESS_MESSAGE
                 : VERIFY_MESSAGE_RESPONSE_FAILED_MESSAGE,
-            data: { result, address },
+            data: { result, address, authenticationId },
         }
     }
 
