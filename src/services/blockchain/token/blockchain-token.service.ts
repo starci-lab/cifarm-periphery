@@ -14,6 +14,5 @@ export class BlockchainTokenService {
             this.logger.error(ex)
             throw new TransactionExecutionException(ex)
         }
-    
     }
 }
