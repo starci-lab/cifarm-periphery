@@ -23,3 +23,9 @@ export class AccountAddressNotFoundException extends HttpException {
         super(`Account address not found: ${accountAddress}`, HttpStatus.BAD_REQUEST)
     }
 }
+
+export class TransactionExecutionException extends HttpException {
+    constructor(message: string) {
+        super(`Transaction execution failed: ${message}`, HttpStatus.BAD_REQUEST)
+    }
+}

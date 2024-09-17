@@ -1,17 +1,20 @@
 import { Global, Module } from "@nestjs/common"
 import { AuthenticatorControllerService } from "./authenticator"
 import { PackagesControllerService } from "./packages"
+import { TokenControllerService } from "./token"
 
 @Global()
 @Module({
     imports: [],
     providers: [
         AuthenticatorControllerService,
-        PackagesControllerService
+        PackagesControllerService,
+        TokenControllerService
     ],
     exports: [
         AuthenticatorControllerService,
-        PackagesControllerService
+        PackagesControllerService,
+        TokenControllerService
     ],
 })
 export class ControllersModule {}
