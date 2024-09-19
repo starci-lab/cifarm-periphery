@@ -13,6 +13,6 @@ export class BlockchainTokenService {
         } catch (ex) {
             this.logger.error(ex)
             throw new TransactionExecutionException(ex)
-        }
+        } 
     }
 }
