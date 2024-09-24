@@ -12,7 +12,7 @@ export interface GetContractObservableParams {
 
 export interface NftData {
     ownerAddress: string,
-    tokenId: number,
+    tokenId: string,
     tokenURI: string
 }
 

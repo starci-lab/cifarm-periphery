@@ -1,13 +1,13 @@
 import { Network } from "@/config"
 import { BaseArgs } from "@/services/common"
-import { InputType, Field, Int } from "@nestjs/graphql"
+import { InputType, Field } from "@nestjs/graphql"
 
 @InputType()
 export class GetNftByTokenIdInput {
-  @Field(() => Int, {
+  @Field(() => String, {
       name: "tokenId",
   })
-      tokenId: number
+      tokenId: string
 
   @Field(() => String, {
       name: "network",

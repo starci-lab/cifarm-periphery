@@ -8,7 +8,7 @@ export class GetNftsByTokenIdsInput {
   @Field(() => [Int], {
       name: "tokenIds",
   })
-      tokenIds: Array<number>
+      tokenIds: Array<string>
 
   @Field(() => String, {
       name: "network",

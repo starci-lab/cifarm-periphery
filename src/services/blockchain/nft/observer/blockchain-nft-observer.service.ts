@@ -14,7 +14,7 @@ export class BlockchainNftObserverService {
     public observeEvm({ chainKey, network, nftAddress, eventName, callbackFn }: GetContractObservableParams) {
         const ws = evmWsRpcUrl(chainKey, network)
         const websocket = new WebSocket(ws)
-
+    
         websocket.on("close", () => {
             this.logger.debug(`WebSocket disconnected. Attempting to reconnect... : ${chainKey} ${network} ${eventName} `)
             start()
@@ -22,7 +22,7 @@ export class BlockchainNftObserverService {
         websocket.on("error", (error) => {
             this.logger.error(`WebSocket error encountered : ${error.message}`)
         })
-
+    
         let contract: Contract | undefined
         const start = () => {
             const provider = new WebSocketProvider(websocket)
@@ -30,7 +30,7 @@ export class BlockchainNftObserverService {
                 contract.removeAllListeners(eventName)
             }
             contract = new Contract(nftAddress, erc721Abi, provider) 
-          
+              
             contract
                 .on(eventName, callbackFn)
         }

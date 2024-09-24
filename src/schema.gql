@@ -1,5 +1,5 @@
 type NftDataResponse {
-  tokenId: Int!
+  tokenId: String!
   tokenURI: String
   ownerAddress: String
 }
@@ -52,7 +52,7 @@ input GetNftByTokenIdArgs {
 }
 
 input GetNftByTokenIdInput {
-  tokenId: Int!
+  tokenId: String!
   network: String
   nftKey: String
   chainKey: String

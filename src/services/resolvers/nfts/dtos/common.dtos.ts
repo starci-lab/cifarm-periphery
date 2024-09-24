@@ -1,11 +1,11 @@
-import { ObjectType, Field, Int } from "@nestjs/graphql"
+import { ObjectType, Field } from "@nestjs/graphql"
 
 @ObjectType()
 export class NftDataResponse {
-  @Field(() => Int, {
+  @Field(() => String, {
       name: "tokenId",
   })
-      tokenId: number
+      tokenId: string
 
   @Field(() => String, {
       name: "tokenURI",

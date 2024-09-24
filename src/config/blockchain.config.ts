@@ -25,6 +25,26 @@ export const blockchainConfig = (): BlockchainConfig => ({
             },
         },
     },
+    solana: {
+        nfts: {
+            premiumTile: {
+                addresses: {
+                    [Network.Mainnet]: "",
+                    [Network.Testnet]: "E31eadBc4uLfcHRSCLVVDPVngPavmZDVjzdGdjyCkbWZ",
+                },
+            },
+        }
+    },
+    aptos: {
+        nfts: {
+            premiumTile: {
+                addresses: {
+                    [Network.Mainnet]: "",
+                    [Network.Testnet]: "0x26e36d9baaa360ef03ffac616758b0b067ca5a89d6972168ca58a33b1f4fb329",
+                },
+            },
+        }
+    }
 })
 
 export const defaultChainKey = Object.keys(blockchainConfig())[0]
@@ -33,6 +53,7 @@ export const defaultNftKey = Object.keys(blockchainConfig()[defaultChainKey].nft
 
 export enum Platform {
   Evm = "evm",
+  Solana = "solana",
   Aptos = "aptos"
 }
 
@@ -40,6 +61,10 @@ export const chainKeyToPlatform = (chainKey: string): Platform => {
     switch (chainKey) {
     case "avalanche":
         return Platform.Evm
+    case "solana":
+        return Platform.Solana
+    case "aptos":
+        return Platform.Aptos
     default:
         throw new ChainKeyNotFoundException(chainKey)
     }
