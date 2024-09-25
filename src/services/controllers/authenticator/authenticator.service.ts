@@ -23,7 +23,7 @@ import {
     chainKeyToPlatform,
     defaultChainKey,
 } from "@/config"
-import { EvmAuthService, AptosAuthService } from "../../blockchain"
+import { EvmAuthService, AptosAuthService, SolanaAuthService } from "../../blockchain"
 import { Sha256Service } from "@/services/base"
 
 @Injectable()
@@ -33,6 +33,7 @@ export class AuthenticatorControllerService {
     constructor(
     private readonly evmAuthService: EvmAuthService,
     private readonly aptosAuthService: AptosAuthService,
+    private readonly solanaAuthService: SolanaAuthService,
     private readonly sha256Service: Sha256Service,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     ) {}
@@ -70,6 +71,13 @@ export class AuthenticatorControllerService {
         switch (platform) {
         case Platform.Evm:
             result = this.evmAuthService.verifyMessage({
+                message,
+                signature,
+                publicKey,
+            })
+            break
+        case Platform.Solana:
+            result = this.solanaAuthService.verifyMessage({
                 message,
                 signature,
                 publicKey,
