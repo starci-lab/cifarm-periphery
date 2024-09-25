@@ -13,11 +13,12 @@ export class SolanaAuthService {
         signature,
         publicKey,
     }: Omit<SignedMessage, "chainName">) {
+        console.log(message, signature, publicKey)
         try {
             return nacl.sign.detached.verify(
                 decodeUTF8(message),
-                decodeUTF8(signature),
-                decodeUTF8(publicKey),
+                Buffer.from(signature, "hex"),
+                Buffer.from(publicKey, "hex"),
             )
         } catch (ex) {
             this.logger.error(ex)
