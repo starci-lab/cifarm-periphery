@@ -137,6 +137,34 @@ export class AuthenticatorControllerService {
                 },
             }
         }
+        case Platform.Solana: {
+            const { publicKey, secretKey } =
+          this.solanaAuthService.getFakeKeyPair(accountNumber)
+            const signature = this.solanaAuthService.signMessage(message, Buffer.from(secretKey).toString("hex"))
+            return {
+                message: GET_FAKE_SIGNATURE_RESPONSE_SUCCESS_MESSAGE,
+                data: {
+                    message,
+                    publicKey: publicKey.toBase58(),
+                    signature,
+                    chainKey,
+                },
+            }
+        }
+        case Platform.Aptos: {
+            const { publicKey, privateKey } =
+          this.aptosAuthService.getFakeKeyPair(accountNumber)
+            const signature = this.aptosAuthService.signMessage(message, privateKey.toString())
+            return {
+                message: GET_FAKE_SIGNATURE_RESPONSE_SUCCESS_MESSAGE,
+                data: {
+                    message,
+                    publicKey: publicKey.toString(),
+                    signature,
+                    chainKey,
+                },
+            }
+        }
         default:
             throw new ChainKeyNotFoundException(chainKey)
         }

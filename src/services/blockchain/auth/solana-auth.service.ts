@@ -1,7 +1,11 @@
 import { SignedMessage } from "../common"
 import { Injectable, Logger } from "@nestjs/common"
-import nacl from "tweetnacl"
-import { decodeUTF8 } from "tweetnacl-util"
+import { sign } from "tweetnacl"
+import { mnemonicToSeedSync } from "bip39"
+import { fakeConfig } from "@/config"
+import { Keypair } from "@solana/web3.js"
+import { decode } from "bs58"
+import { decodeBase64 } from "ethers"
 
 @Injectable()
 export class SolanaAuthService {
@@ -13,12 +17,11 @@ export class SolanaAuthService {
         signature,
         publicKey,
     }: Omit<SignedMessage, "chainName">) {
-        console.log(message, signature, publicKey)
         try {
-            return nacl.sign.detached.verify(
-                decodeUTF8(message),
-                Buffer.from(signature, "hex"),
-                Buffer.from(publicKey, "hex"),
+            return sign.detached.verify(
+                decodeBase64(message),
+                decodeBase64(signature),
+                decode(publicKey)
             )
         } catch (ex) {
             this.logger.error(ex)
@@ -28,10 +31,18 @@ export class SolanaAuthService {
 
     public signMessage(message: string, privateKey: string) {
         return Buffer.from(
-            nacl.sign.detached(
-                decodeUTF8(message),
-                decodeUTF8(privateKey),
+            sign.detached(
+                decodeBase64(message),
+                Buffer.from(privateKey, "hex"),
             ),
         ).toString("base64")
+    }
+
+    public getFakeKeyPair(accountNumber: number) {
+        const seed = mnemonicToSeedSync(
+            fakeConfig().mnemonic,
+            accountNumber.toString(),
+        )
+        return Keypair.fromSeed(seed.subarray(0, 32))
     }
 }

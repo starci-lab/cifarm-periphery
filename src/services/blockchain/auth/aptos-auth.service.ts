@@ -1,3 +1,4 @@
+import { fakeConfig } from "@/config"
 import { SignedMessage } from "../common"
 import {
     Account,
@@ -35,5 +36,12 @@ export class AptosAuthService {
 
     public toAddress(publicKey: string) {
         return new Ed25519PublicKey(publicKey).authKey().toString()
+    }
+
+    public getFakeKeyPair(accountNumber: number) {
+        return Account.fromDerivationPath({
+            mnemonic: fakeConfig().mnemonic,
+            path: `m/44'/637'/${accountNumber}'/0'/0'`,
+        })
     }
 }
