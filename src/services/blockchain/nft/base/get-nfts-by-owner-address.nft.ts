@@ -5,22 +5,22 @@ import { Network, Platform, chainKeyToPlatform } from "@/config"
 import { PlatformNotFoundException } from "@/exceptions"
 import { MulticallProvider } from "@ethers-ext/provider-multicall"
 import { NftData } from "../common"
-import { createUmi, } from "@metaplex-foundation/umi-bundle-defaults"
+import { createUmi } from "@metaplex-foundation/umi-bundle-defaults"
 import { fetchAllDigitalAssetByOwner } from "@metaplex-foundation/mpl-token-metadata"
 import { publicKey, isSome } from "@metaplex-foundation/umi"
 
 export interface GetNftsByOwnerAddressParams {
-    accountAddress: string,
-    nftAddress: string,
-    chainKey: string,
-    network: Network
-    skip: number
-    take: number
+  accountAddress: string;
+  nftAddress: string;
+  chainKey: string;
+  network: Network;
+  skip: number;
+  take: number;
 }
 
 export interface GetNftsByOwnerAddressResult {
-    records: Array<NftData>,
-    count: number
+  records: Array<NftData>;
+  count: number;
 }
 
 export const _getEvmNftsByOwnerAddress = async ({
@@ -69,7 +69,7 @@ export const _getEvmNftsByOwnerAddress = async ({
                 records.push({
                     tokenId,
                     tokenURI,
-                    ownerAddress: accountAddress
+                    ownerAddress: accountAddress,
                 })
             })(),
         )
@@ -94,22 +94,23 @@ export const _getSolanaNftsByOwnerAddress = async ({
     const umi = createUmi(rpc)
 
     let nfts = await fetchAllDigitalAssetByOwner(umi, publicKey(accountAddress))
-    nfts = nfts.filter(nft => {
+    nfts = nfts.filter((nft) => {
         if (isSome(nft.metadata.collection)) {
-            console.log(nft.metadata.collection)
             return nft.metadata.collection.value.key.toString() === nftAddress
         }
         return false
     })
-    
-    const records: Array<NftData> = nfts.map(nft => ({
-        tokenId: nft.metadata.mint.toString(),
-        tokenURI: nft.metadata.uri,
-        ownerAddress: accountAddress,
-    })).slice(skip, take)
+
+    const records: Array<NftData> = nfts
+        .map((nft) => ({
+            tokenId: nft.metadata.mint.toString(),
+            tokenURI: nft.metadata.uri,
+            ownerAddress: accountAddress,
+        }))
+        .slice(skip ? skip : undefined, take ? take : undefined)
     return {
         records,
-        count: nfts.length
+        count: nfts.length,
     }
 }
 
@@ -126,7 +127,7 @@ export const _getAptosNftsByOwnerAddress = async ({
         accountAddress,
         collectionAddress: nftAddress,
     })
-    nfts = nfts.slice(skip, take)
+    nfts = nfts.slice(skip ? skip : undefined, take ? take : undefined)
 
     const promises: Array<Promise<void>> = []
     const records: Array<NftData> = []
@@ -147,7 +148,7 @@ export const _getAptosNftsByOwnerAddress = async ({
     await Promise.all(promises)
     return {
         records,
-        count: nfts.length
+        count: nfts.length,
     }
 }
 
