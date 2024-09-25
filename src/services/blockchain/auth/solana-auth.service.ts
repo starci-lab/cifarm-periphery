@@ -5,7 +5,6 @@ import { mnemonicToSeedSync } from "bip39"
 import { fakeConfig } from "@/config"
 import { Keypair } from "@solana/web3.js"
 import { decode } from "bs58"
-import { decodeBase64 } from "ethers"
 
 @Injectable()
 export class SolanaAuthService {
@@ -19,9 +18,9 @@ export class SolanaAuthService {
     }: Omit<SignedMessage, "chainName">) {
         try {
             return sign.detached.verify(
-                decodeBase64(message),
-                decodeBase64(signature),
-                decode(publicKey)
+                Buffer.from(message, "base64"),
+                Buffer.from(signature, "base64"),
+                decode(publicKey),
             )
         } catch (ex) {
             this.logger.error(ex)
@@ -32,7 +31,7 @@ export class SolanaAuthService {
     public signMessage(message: string, privateKey: string) {
         return Buffer.from(
             sign.detached(
-                decodeBase64(message),
+                Buffer.from(message, "base64"),
                 Buffer.from(privateKey, "hex"),
             ),
         ).toString("base64")
