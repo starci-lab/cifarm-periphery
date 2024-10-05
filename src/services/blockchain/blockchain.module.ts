@@ -24,5 +24,5 @@ import { BlockchainTokenService } from "./token"
         AptosAuthService,
         SolanaAuthService
     ]
-})
+}) 
 export class BlockchainModule {}
