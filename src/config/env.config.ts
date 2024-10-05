@@ -17,9 +17,21 @@ export const envConfig = () => ({
             }
         },
     },
+    messageBrokers: {
+        rabbitMq: {
+            rabbitMq1: {
+                user: process.env.RABBITMQ_1_USER,
+                password: process.env.RABBITMQ_1_PASS,
+                port: process.env.RABBITMQ_1_PORT,
+                host: process.env.RABBITMQ_1_HOST,
+            }
+        }
+    },
     redis: {
         host: process.env.REDIS_HOST,
         port: Number(process.env.REDIS_PORT ?? 6379),
     },
-    salt: process.env.SALT
+    secrets: {
+        salt: process.env.SALT, 
+    }
 }) 

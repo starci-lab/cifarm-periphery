@@ -8,6 +8,6 @@ export class Sha256Service {
     constructor () {}
 
     public hash(...values: string[]) : string {
-        return createHash("sha256").update([...values, envConfig().salt].join()).digest("hex") 
+        return createHash("sha256").update([...values, envConfig().secrets.salt].join()).digest("hex") 
     }
 }

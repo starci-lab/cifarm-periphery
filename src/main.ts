@@ -30,7 +30,6 @@ const generateSchema = async () => {
 }
 
 const bootstrap = async () => {
-
     const app = await NestFactory.create(AppModule)
     app.enableCors()
     const redisIoAdapter = new RedisIoAdapter(app)
