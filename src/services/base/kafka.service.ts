@@ -72,5 +72,5 @@ export class KafkaService {
         } catch (ex) {
             this.logger.error(ex)
         }
-    }
+    } 
 }
