@@ -1,26 +1,36 @@
-import { RabbitMQService } from "@/services"
+import { KafkaService } from "@/services"
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common"
 
-export const INVITE_QUEUE = "invite-queue"
+export const INVITE_GROUP_TOPIC = "invite"
 
 @Injectable()
 export class InviteConsumer implements OnModuleInit {
     private readonly logger = new Logger(InviteConsumer.name)
-    constructor(
-        private readonly rabbitMQService: RabbitMQService
-    ) {}
+    constructor(private readonly kafkaService: KafkaService) {}
 
     async onModuleInit() {
         try {
-            await this.rabbitMQService.registerConsumer<string>(INVITE_QUEUE, (content) => {
-                this.logger.log(content)
+            const consumer = await this.kafkaService.createConsumer({
+                groupId: INVITE_GROUP_TOPIC,
             })
+            await consumer.subscribe({
+                topic: INVITE_GROUP_TOPIC,
+                fromBeginning: true,
+            })
+            consumer.run({
+                eachMessage: async ({ message }) => {
+                    console.log({
+                        value: message.value.toString(),
+                    })
+                }
+            }
+            )
         } catch (ex) {
-            this.logger.error(ex)
+            this.logger.error(ex) 
         }
     }
 }
 
 export interface InviteData {
-    userId: string
+  userId: string;
 }

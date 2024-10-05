@@ -25,6 +25,12 @@ export const envConfig = () => ({
                 port: process.env.RABBITMQ_1_PORT,
                 host: process.env.RABBITMQ_1_HOST,
             }
+        },
+        kafka: {
+            kafka1: {
+                host: process.env.KAFKA_1_HOST,
+                port: process.env.KAFKA_1_PORT,
+            }
         }
     },
     redis: {
