@@ -29,5 +29,7 @@ jobs:
         RABBITMQ_1_PASSWORD: ${{secrets.RABBITMQ_1_PASSWORD}}
         RABBITMQ_1_PORT: ${{secrets.RABBITMQ_1_PORT}}
         RABBITMQ_1_HOST: ${{secrets.RABBITMQ_1_HOST}}
+        KAFKA_1_HOST: ${{secrets.KAFKA_1_HOST}}
+        KAFKA_1_PORT: ${{secrets.KAFKA_1_PORT}}
       run: docker compose -f .docker/production.yaml -p cifarm-api up --build -d 
   
