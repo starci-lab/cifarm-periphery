@@ -1,7 +1,7 @@
 import { RabbitMQService } from "@/services"
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common"
 
-export const INVITE_QUEUE = "invite-queue"
+export const INVITE_QUEUE = "invite"
 
 @Injectable()
 export class InviteConsumer implements OnModuleInit {
