@@ -6,7 +6,7 @@ import {
     Transport,
 } from "@nestjs/microservices"
 import { ChannelWrapper, connect } from "amqp-connection-manager"
-import { ConfirmChannel, ConsumeMessage } from "amqplib"
+import { ConfirmChannel, ConsumeMessage, credentials } from "amqplib"
 
 @Injectable()
 export class RabbitMQService {
@@ -43,13 +43,18 @@ export class RabbitMQService {
     ): Promise<void> {
         try {
             const connection = connect([
-                `amqp://${envConfig().messageBrokers.rabbitMq.rabbitMq1.user}:${envConfig().messageBrokers.rabbitMq.rabbitMq1.password}@${envConfig().messageBrokers.rabbitMq.rabbitMq1.host}:${envConfig().messageBrokers.rabbitMq.rabbitMq1.port}`,
-            ])
+                `amqp://${envConfig().messageBrokers.rabbitMq.rabbitMq1.host}:${envConfig().messageBrokers.rabbitMq.rabbitMq1.port}`,
+            ], {
+                connectionOptions: {
+                    credentials: credentials.plain(envConfig().messageBrokers.rabbitMq.rabbitMq1.user, envConfig().messageBrokers.rabbitMq.rabbitMq1.password),
+                }
+            })
             this.channelWrappers[queue] = connection.createChannel()
             await this.channelWrappers[queue].addSetup(
                 async (channel: ConfirmChannel) => {
                     await channel.assertQueue(queue, { durable: false })
                     await channel.consume(queue, async (message: ConsumeMessage) => {
+                        this.logger.log(message)
                         if (message) {
                             const content = JSON.parse(message.content.toString())
                                 .data as TContent
@@ -57,8 +62,9 @@ export class RabbitMQService {
                             channel.ack(message)
                         }
                     })
-                },
+                }, 
             )
+            this.logger.debug(`Consumer registered for queue: ${queue}`)
         } catch (ex) {
             this.logger.error(ex)
         }

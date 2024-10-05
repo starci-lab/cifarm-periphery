@@ -21,7 +21,7 @@ export const envConfig = () => ({
         rabbitMq: {
             rabbitMq1: {
                 user: process.env.RABBITMQ_1_USER,
-                password: process.env.RABBITMQ_1_PASS,
+                password: process.env.RABBITMQ_1_PASSWORD,
                 port: process.env.RABBITMQ_1_PORT,
                 host: process.env.RABBITMQ_1_HOST,
             }
