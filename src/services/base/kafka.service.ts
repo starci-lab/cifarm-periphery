@@ -54,13 +54,14 @@ export class KafkaService {
         const key = params.key ?? DEFAULT_KEY
         const groupId = params.groupId ?? DEFAULT_GROUP_ID
         if (this.consumers[key]) return this.consumers[groupId]
-        this.logger.debug(`${envConfig().messageBrokers.kafka.kafka1.host}:${envConfig().messageBrokers.kafka.kafka1.port}`,)
+        this.logger.debug(`${envConfig().messageBrokers.kafka.kafka1.host}:${envConfig().messageBrokers.kafka.kafka1.port}`)
         try {
             const kafka = new Kafka({
                 clientId: CLIENT_ID,
                 brokers: [
                     `${envConfig().messageBrokers.kafka.kafka1.host}:${envConfig().messageBrokers.kafka.kafka1.port}`,
                 ],
+
             })
 
             const consumer = kafka.consumer({ groupId, heartbeatInterval: 30 })
