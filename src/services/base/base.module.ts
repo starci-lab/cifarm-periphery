@@ -9,12 +9,12 @@ import { KafkaService } from "./kafka.service"
     providers: [
         Sha256Service,
         RabbitMQService,
-        KafkaService
+        KafkaService,
     ],
     exports: [
         Sha256Service,
         RabbitMQService,
-        KafkaService
+        KafkaService,
     ]
 })
 export class BaseModule {}

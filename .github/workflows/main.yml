@@ -31,5 +31,10 @@ jobs:
         RABBITMQ_1_HOST: ${{secrets.RABBITMQ_1_HOST}}
         KAFKA_1_HOST: ${{secrets.KAFKA_1_HOST}}
         KAFKA_1_PORT: ${{secrets.KAFKA_1_PORT}}
+        NAKAMA_HOST: ${{secrets.NAKAMA_HOST}}
+        NAKAMA_PORT: ${{secrets.NAKAMA_PORT}}
+        NAKAMA_SERVER_KEY: ${{secrets.NAKAMA_SERVER_KEY}}
+        NAKAMA_USE_SSL: ${{secrets.NAKAMA_USE_SSL}}
+        NAKAMA_AUTHENTICATION_ID: ${{secrets.NAKAMA_AUTHENTICATION_ID}}qq
       run: docker compose -f .docker/production.yaml -p cifarm-api up --build -d 
   

@@ -11,7 +11,6 @@ import { ScheduleModule } from "@nestjs/schedule"
 import { MongooseModule } from "@nestjs/mongoose"
 import { CacheModule } from "@nestjs/cache-manager"
 import * as redisStore from "cache-manager-redis-store"
-import { ConsumersModule } from "./consumers"
 
 @Module({
     imports: [
@@ -44,7 +43,6 @@ import { ConsumersModule } from "./consumers"
         ),
         ScheduleModule.forRoot(),
 
-        ConsumersModule,
         ServicesModule, 
         ApplicationModule
     ],

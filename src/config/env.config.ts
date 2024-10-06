@@ -33,6 +33,13 @@ export const envConfig = () => ({
             }
         }
     },
+    nakama: {
+        host: process.env.NAKAMA_HOST,
+        port: process.env.NAKAMA_PORT,
+        ssl: process.env.NAKAMA_SSL === "true",
+        key: process.env.NAKAMA_KEY,
+        authenticationId: process.env.NAKAMA_AUTHENTICATION_ID,
+    },
     redis: {
         host: process.env.REDIS_HOST,
         port: Number(process.env.REDIS_PORT ?? 6379),
