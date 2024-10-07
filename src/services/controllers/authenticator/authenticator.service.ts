@@ -9,6 +9,9 @@ import {
     VERIFY_MESSAGE_RESPONSE_FAILED_MESSAGE,
     REQUEST_MESSAGE_RESPONSE_SUCCESS_MESSAGE,
     GET_FAKE_SIGNATURE_RESPONSE_SUCCESS_MESSAGE,
+    AuthorizeTelegramContext,
+    AuthorizeTelegramResponse,
+    AUTHORIZE_TELEGRAM_RESPONSE_SUCCESS_MESSAGE,
 } from "./dtos"
 import { randomUUID } from "crypto"
 import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager"
@@ -23,7 +26,11 @@ import {
     chainKeyToPlatform,
     defaultChainKey,
 } from "@/config"
-import { EvmAuthService, AptosAuthService, SolanaAuthService } from "../../blockchain"
+import {
+    EvmAuthService,
+    AptosAuthService,
+    SolanaAuthService,
+} from "../../blockchain"
 import { Sha256Service } from "@/services/base"
 
 @Injectable()
@@ -140,7 +147,10 @@ export class AuthenticatorControllerService {
         case Platform.Solana: {
             const { publicKey, secretKey } =
           this.solanaAuthService.getFakeKeyPair(accountNumber)
-            const signature = this.solanaAuthService.signMessage(message, Buffer.from(secretKey).toString("hex"))
+            const signature = this.solanaAuthService.signMessage(
+                message,
+                Buffer.from(secretKey).toString("hex"),
+            )
             return {
                 message: GET_FAKE_SIGNATURE_RESPONSE_SUCCESS_MESSAGE,
                 data: {
@@ -154,7 +164,10 @@ export class AuthenticatorControllerService {
         case Platform.Aptos: {
             const { publicKey, privateKey } =
           this.aptosAuthService.getFakeKeyPair(accountNumber)
-            const signature = this.aptosAuthService.signMessage(message, privateKey.toString())
+            const signature = this.aptosAuthService.signMessage(
+                message,
+                privateKey.toString(),
+            )
             return {
                 message: GET_FAKE_SIGNATURE_RESPONSE_SUCCESS_MESSAGE,
                 data: {
@@ -167,6 +180,17 @@ export class AuthenticatorControllerService {
         }
         default:
             throw new ChainKeyNotFoundException(chainKey)
+        }
+    }
+
+    public async authorizeTelegram({
+        telegramData,
+    }: AuthorizeTelegramContext): Promise<AuthorizeTelegramResponse> {
+        return {
+            data: {
+                telegramData
+            },
+            message: AUTHORIZE_TELEGRAM_RESPONSE_SUCCESS_MESSAGE,
         }
     }
 }

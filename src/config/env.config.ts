@@ -46,5 +46,9 @@ export const envConfig = () => ({
     },
     secrets: {
         salt: process.env.SALT, 
+        telegram: {
+            botToken: process.env.TELEGRAM_BOT_TOKEN,
+            mockAuthorization: process.env.TELEGRAM_MOCK_AUTHORIZATION
+        }
     }
 }) 

@@ -35,6 +35,9 @@ jobs:
         NAKAMA_PORT: ${{secrets.NAKAMA_PORT}}
         NAKAMA_SERVER_KEY: ${{secrets.NAKAMA_SERVER_KEY}}
         NAKAMA_USE_SSL: ${{secrets.NAKAMA_USE_SSL}}
-        NAKAMA_AUTHENTICATION_ID: ${{secrets.NAKAMA_AUTHENTICATION_ID}}qq
+        NAKAMA_AUTHENTICATION_ID: ${{secrets.NAKAMA_AUTHENTICATION_ID}}
+        TELEGRAM_BOT_TOKEN: ${{secrets.TELEGRAM_BOT_TOKEN}}
+        TELEGRAM_MOCK_AUTHORIZATION: ${{secrets.TELEGRAM_MOCK_AUTHORIZATION}}
+
       run: docker compose -f .docker/production.yaml -p cifarm-api up --build -d 
   

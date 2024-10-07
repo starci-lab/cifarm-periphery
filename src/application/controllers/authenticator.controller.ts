@@ -1,5 +1,8 @@
+import { TelegramData } from "@/decorators"
+import { TelegramAuthorizationGuard, TelegramData as TelegramDataType } from "@/guards"
 import {
     AuthenticatorControllerService,
+    AuthorizeTelegramResponse,
     GetFakeSignatureRequestBody,
     GetFakeSignatureResponse,
 } from "@/services"
@@ -15,6 +18,7 @@ import {
     HttpStatus,
     Logger,
     Post,
+    UseGuards,
 } from "@nestjs/common"
 import { ApiResponse, ApiTags } from "@nestjs/swagger"
 
@@ -39,12 +43,22 @@ export class AuthenticatorController {
   public async requestMessage() {
       return await this.authenticatorService.requestMessage()
   }
-  
+
   //temp keep for development
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ type: GetFakeSignatureResponse, status: 200 })
   @Post("fake-signature")
   public async getFakeSignature(@Body() body: GetFakeSignatureRequestBody) {
       return await this.authenticatorService.getFakeSignature(body)
+  }
+
+  @UseGuards(TelegramAuthorizationGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ type: AuthorizeTelegramResponse, status: 200 })
+  @Post("authorize-telegram")
+  public async authorizeTelegram(@TelegramData() telegramData: TelegramDataType) {
+      return await this.authenticatorService.authorizeTelegram({
+          telegramData,
+      })
   }
 }
