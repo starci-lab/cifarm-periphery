@@ -68,6 +68,7 @@ export class AuthenticatorControllerService {
         if (!valid) {
             throw new CacheNotFound(message)
         }
+        console.log(message, signature, publicKey)
         //await this.cacheManager.del(message)
         let result = false
         let address = publicKey
