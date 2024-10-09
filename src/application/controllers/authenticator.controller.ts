@@ -1,5 +1,5 @@
 import { TelegramData } from "@/decorators"
-import { DebugGuard, TelegramAuthorizationGuard, TelegramData as TelegramDataType } from "@/guards"
+import { TelegramAuthorizationGuard, TelegramData as TelegramDataType } from "@/guards"
 import {
     AuthenticatorControllerService,
     AuthorizeTelegramResponse,
@@ -30,7 +30,7 @@ export class AuthenticatorController {
     private readonly authenticatorService: AuthenticatorControllerService,
     ) {}
   
-  @UseGuards(DebugGuard)
+  //@UseGuards(DebugGuard)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ type: VerifyMessageResponse, status: 200 })
   @Post("verify-message")

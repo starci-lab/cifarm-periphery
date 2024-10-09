@@ -25,6 +25,7 @@ import {
     Platform,
     chainKeyToPlatform,
     defaultChainKey,
+    envConfig,
 } from "@/config"
 import {
     EvmAuthService,
@@ -122,7 +123,9 @@ export class AuthenticatorControllerService {
     public async getFakeSignature({
         accountNumber,
         chainKey,
+        network
     }: GetFakeSignatureRequestBody): Promise<GetFakeSignatureResponse> {
+        network = network || Network.Testnet
         const {
             data: { message },
         } = await this.requestMessage()
@@ -142,6 +145,8 @@ export class AuthenticatorControllerService {
                     publicKey: address,
                     signature,
                     chainKey,
+                    network,
+                    telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
                 },
             }
         }
@@ -159,6 +164,8 @@ export class AuthenticatorControllerService {
                     publicKey: publicKey.toBase58(),
                     signature,
                     chainKey,
+                    network,
+                    telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
                 },
             }
         }
@@ -176,6 +183,8 @@ export class AuthenticatorControllerService {
                     publicKey: publicKey.toString(),
                     signature,
                     chainKey,
+                    network,
+                    telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
                 },
             }
         }
