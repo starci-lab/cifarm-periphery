@@ -7,7 +7,7 @@ export class DebugGuard implements CanActivate {
         context: ExecutionContext,
     ): boolean | Promise<boolean> | Observable<boolean> {
         const request = context.switchToHttp().getRequest()
-        console.log(request)
+        this.logger.debug(request.body)
         return true
     }
 }
