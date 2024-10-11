@@ -1,10 +1,11 @@
 import { TelegramData } from "@/decorators"
-import { DebugGuard, TelegramAuthorizationGuard, TelegramData as TelegramDataType } from "@/guards"
+import { TelegramAuthorizationGuard, TelegramData as TelegramDataType } from "@/guards"
 import {
     AuthenticatorControllerService,
     AuthorizeTelegramResponse,
     GetFakeSignatureRequestBody,
     GetFakeSignatureResponse,
+    RegisterTelegramResponse,
 } from "@/services"
 import {
     RequestMessageResponse,
@@ -30,7 +31,7 @@ export class AuthenticatorController {
     private readonly authenticatorService: AuthenticatorControllerService,
     ) {}
   
-  @UseGuards(DebugGuard)
+  //@UseGuards(DebugGuard)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ type: VerifyMessageResponse, status: 200 })
   @Post("verify-message")
@@ -59,6 +60,16 @@ export class AuthenticatorController {
   @Post("authorize-telegram")
   public async authorizeTelegram(@TelegramData() telegramData: TelegramDataType) {
       return await this.authenticatorService.authorizeTelegram({
+          telegramData,
+      })
+  }
+
+  @UseGuards(TelegramAuthorizationGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ type: RegisterTelegramResponse, status: 200 })
+  @Post("register-telegram")
+  public async registerTelegram(@TelegramData() telegramData: TelegramDataType) {
+      return await this.authenticatorService.registerTelegram({
           telegramData,
       })
   }

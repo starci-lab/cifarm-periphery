@@ -6,6 +6,7 @@ import { Observable } from "rxjs"
 
 export interface TelegramData {
     userId: number
+    username: string
 }
 
 export class TelegramAuthorizationGuard implements CanActivate {
@@ -22,7 +23,8 @@ export class TelegramAuthorizationGuard implements CanActivate {
             try {
                 if (authData === envConfig().secrets.telegram.mockAuthorization) {
                     const telegramData: TelegramData = {
-                        userId: 123456789
+                        userId: 123456789,
+                        username: "test",
                     }
                     request.telegramData = telegramData
                     return true
@@ -34,7 +36,8 @@ export class TelegramAuthorizationGuard implements CanActivate {
                 // Parse init data. We will surely need it in the future.
                 const parsed = parse(authData)
                 const telegramData: TelegramData = {
-                    userId: parsed.user.id
+                    userId: parsed.user.id,
+                    username: parsed.user.username,
                 }
                 request.telegramData = telegramData
                 return true

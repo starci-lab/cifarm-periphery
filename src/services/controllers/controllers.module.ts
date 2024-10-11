@@ -2,10 +2,16 @@ import { Global, Module } from "@nestjs/common"
 import { AuthenticatorControllerService } from "./authenticator"
 import { PackagesControllerService } from "./packages"
 import { TokenControllerService } from "./token"
+import { TypeOrmModule } from "@nestjs/typeorm"
+import { UsersEntity } from "@/database"
 
 @Global()
 @Module({
-    imports: [],
+    imports: [
+        TypeOrmModule.forFeature([
+            UsersEntity
+        ])
+    ],
     providers: [
         AuthenticatorControllerService,
         PackagesControllerService,

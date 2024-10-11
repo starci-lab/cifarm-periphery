@@ -11,6 +11,7 @@ import { ScheduleModule } from "@nestjs/schedule"
 import { MongooseModule } from "@nestjs/mongoose"
 import { CacheModule } from "@nestjs/cache-manager"
 import * as redisStore from "cache-manager-redis-store"
+import { TypeOrmModule } from "@nestjs/typeorm"
 
 @Module({
     imports: [
@@ -31,6 +32,17 @@ import * as redisStore from "cache-manager-redis-store"
             isGlobal: true,
             host: envConfig().redis.host,
             port: envConfig().redis.port,
+        }),
+
+        TypeOrmModule.forRoot({
+            type: "postgres",
+            host: envConfig().database.postgres.postgres1.host,
+            port: envConfig().database.postgres.postgres1.port,
+            username: envConfig().database.postgres.postgres1.user,
+            password: envConfig().database.postgres.postgres1.pass,
+            database: envConfig().database.postgres.postgres1.dbName,
+            autoLoadEntities: true,
+            synchronize: true
         }),
 
         MongooseModule.forRoot(

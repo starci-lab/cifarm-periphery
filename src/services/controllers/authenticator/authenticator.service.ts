@@ -12,6 +12,9 @@ import {
     AuthorizeTelegramContext,
     AuthorizeTelegramResponse,
     AUTHORIZE_TELEGRAM_RESPONSE_SUCCESS_MESSAGE,
+    RegisterTelegramContext,
+    RegisterTelegramResponse,
+    REGISTER_TELEGRAM_RESPONSE_SUCCESS_MESSAGE,
 } from "./dtos"
 import { randomUUID } from "crypto"
 import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager"
@@ -32,6 +35,9 @@ import {
     SolanaAuthService,
 } from "../../blockchain"
 import { Sha256Service } from "@/services/base"
+import { InjectRepository } from "@nestjs/typeorm"
+import { UsersEntity } from "@/database"
+import { Repository } from "typeorm"
 
 @Injectable()
 export class AuthenticatorControllerService {
@@ -42,7 +48,12 @@ export class AuthenticatorControllerService {
     private readonly aptosAuthService: AptosAuthService,
     private readonly solanaAuthService: SolanaAuthService,
     private readonly sha256Service: Sha256Service,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    
+    @Inject(CACHE_MANAGER) 
+    private cacheManager: Cache,
+   
+    @InjectRepository(UsersEntity)
+    private readonly usersRepository: Repository<UsersEntity>
     ) {}
 
     public async requestMessage(): Promise<RequestMessageResponse> {
@@ -192,6 +203,31 @@ export class AuthenticatorControllerService {
                 telegramData
             },
             message: AUTHORIZE_TELEGRAM_RESPONSE_SUCCESS_MESSAGE,
+        }
+    }
+
+    public async registerTelegram({
+        telegramData,
+    }: RegisterTelegramContext): Promise<RegisterTelegramResponse> {
+        const user = await this.usersRepository.findOne({
+            where: {
+                telegramId: telegramData.userId.toString()
+            }
+        })
+
+        if (!user) {
+            const x = await this.usersRepository.save({
+                telegramId: telegramData.userId.toString(),
+                username: telegramData.username
+            })
+            console.log(x)
+        }
+
+        return {
+            data: {
+                telegramData
+            },
+            message: REGISTER_TELEGRAM_RESPONSE_SUCCESS_MESSAGE,
         }
     }
 }

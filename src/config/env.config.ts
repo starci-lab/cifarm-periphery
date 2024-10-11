@@ -16,6 +16,15 @@ export const envConfig = () => ({
                 pass: process.env.MONGO_1_PASS
             }
         },
+        postgres: {
+            postgres1: {
+                dbName: process.env.POSTGRES_1_DB_NAME,
+                host: process.env.POSTGRES_1_HOST,
+                port: process.env.POSTGRES_1_PORT ? Number(process.env.POSTGRES_1_PORT) : 5433,
+                user: process.env.POSTGRES_1_USER,
+                pass: process.env.POSTGRES_1_PASS
+            }
+        }
     },
     messageBrokers: {
         rabbitMq: {
