@@ -36,6 +36,9 @@ const bootstrap = async () => {
     await redisIoAdapter.connectToRedis()
     app.useWebSocketAdapter(redisIoAdapter)
 
+    const x = envConfig()
+    console.log(x)
+
     const config = new DocumentBuilder()
         .setVersion("1.0")
         .addBearerAuth()
