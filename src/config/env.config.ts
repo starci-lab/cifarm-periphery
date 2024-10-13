@@ -56,7 +56,10 @@ export const envConfig = () => ({
     secrets: {
         salt: process.env.SALT, 
         telegram: {
-            botToken: process.env.TELEGRAM_BOT_TOKEN,
+            botTokens: {
+                ciwallet: process.env.TELEGRAM_CIWALLET_BOT_TOKEN,
+                cifarm: process.env.TELEGRAM_CIFARM_BOT_TOKEN
+            },
             mockAuthorization: process.env.TELEGRAM_MOCK_AUTHORIZATION
         }
     }

@@ -9,6 +9,17 @@ export interface TelegramData {
     username: string
 }
 
+export const validateSuccess = (authData: string, botToken: string) : [boolean, unknown | undefined] => {
+    try {
+        validate(authData, botToken, {
+            expiresIn: 3600,
+        })
+        return [true, undefined]
+    } catch (ex) {
+        return [false, ex]
+    }
+}
+
 export class TelegramAuthorizationGuard implements CanActivate {
     private readonly logger = new Logger(TelegramAuthorizationGuard.name)
     canActivate(
@@ -20,33 +31,31 @@ export class TelegramAuthorizationGuard implements CanActivate {
 
         switch (authType) {
         case "tma": {
-            try {
-                const [mockAuthorization, mockUserId = ""] = authData.split(",")
-                if (mockAuthorization === envConfig().secrets.telegram.mockAuthorization) {
-                    const telegramData: TelegramData = {
-                        userId: mockUserId ? Number(mockUserId) : 123456789,
-                        username: "test"
-                    }
-                    request.telegramData = telegramData
-                    return true
-                }
-                validate(authData, envConfig().secrets.telegram.botToken, {
-                    // We consider init data sign valid for 1 hour from their creation moment.
-                    expiresIn: 3600,
-                })
-                // Parse init data. We will surely need it in the future.
-                const parsed = parse(authData)
+            const [mockAuthorization, mockUserId = ""] = authData.split(",")
+            if (mockAuthorization === envConfig().secrets.telegram.mockAuthorization) {
                 const telegramData: TelegramData = {
-                    userId: parsed.user.id,
-                    username: parsed.user.username,
+                    userId: mockUserId ? Number(mockUserId) : 123456789,
+                    username: "test"
                 }
                 request.telegramData = telegramData
                 return true
-            } catch (ex) {
-
-                this.logger.error(ex.message)
-                throw new TelegramAuthorizationFailedException(ex.message)
             }
+            const [ ciwalletResult, ciwalletEx ] = validateSuccess(authData, envConfig().secrets.telegram.botTokens.ciwallet)
+            //if both fail we only log ciwallet
+            const [ cifarmResult ] = validateSuccess(authData, envConfig().secrets.telegram.botTokens.cifarm)
+            if (!ciwalletResult || !cifarmResult) {
+                this.logger.error(`Telegram authorization failed: ${ciwalletEx.toString()}`)
+                throw new TelegramAuthorizationFailedException(`${ciwalletEx.toString()}`)
+            }
+
+            // Parse init data. We will surely need it in the future.
+            const parsed = parse(authData)
+            const telegramData: TelegramData = {
+                userId: parsed.user.id,
+                username: parsed.user.username,
+            }
+            request.telegramData = telegramData
+            return true
         }
         default: {
             throw new TelegramAuthorizationFailedException("Authorization data not found")
