@@ -17,11 +17,13 @@ export class SolanaAuthService {
         publicKey,
     }: Omit<SignedMessage, "chainName">) {
         try {
-            return sign.detached.verify(
+            const result = sign.detached.verify(
                 Buffer.from(message, "base64"),
                 Buffer.from(signature, "base64"),
                 decode(publicKey),
             )
+            this.logger.log(`Message verification result: ${result}`)
+            return result
         } catch (ex) {
             this.logger.error(ex)
             return false
@@ -32,7 +34,7 @@ export class SolanaAuthService {
         return Buffer.from(
             sign.detached(
                 Buffer.from(message, "base64"),
-                Buffer.from(privateKey, "hex"),
+                decode(privateKey),
             ),
         ).toString("base64")
     }
