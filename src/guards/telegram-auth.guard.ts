@@ -28,7 +28,6 @@ export class TelegramAuthorizationGuard implements CanActivate {
         const request = context.switchToHttp().getRequest()
         const [authType, authData = ""] =
       (request.headers["authorization"]  || "").split(" ")
-
         switch (authType) {
         case "tma": {
             const [mockAuthorization, mockUserId = ""] = authData.split(",")

@@ -12,6 +12,7 @@ import { writeFileSync } from "fs"
 import { join } from "path"
 import { getEnvValue } from "./utils"
 import { RedisIoAdapter } from "@/adapters"
+import { Logger } from "@nestjs/common"
 
 const generateSchema = async () => {
     const app = await NestFactory.create(GraphQLSchemaBuilderModule)
@@ -30,6 +31,7 @@ const generateSchema = async () => {
 }
 
 const bootstrap = async () => {
+    const logger = new Logger("Bootstrap")
     const app = await NestFactory.create(AppModule)
     app.enableCors()
     const redisIoAdapter = new RedisIoAdapter(app)
@@ -42,6 +44,9 @@ const bootstrap = async () => {
         .build()
     const document = SwaggerModule.createDocument(app, config)
     SwaggerModule.setup("/api", app, document)
+
+    logger.debug(`Ciwallet token: ${envConfig().secrets.telegram.botTokens.ciwallet}`)
+    logger.debug(`Cifarm token: ${envConfig().secrets.telegram.botTokens.cifarm}`)
 
     await app.listen(envConfig().port)
 }
