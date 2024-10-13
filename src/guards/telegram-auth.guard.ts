@@ -43,7 +43,7 @@ export class TelegramAuthorizationGuard implements CanActivate {
             const [ ciwalletResult, ciwalletEx ] = validateSuccess(authData, envConfig().secrets.telegram.botTokens.ciwallet)
             //if both fail we only log ciwallet
             const [ cifarmResult ] = validateSuccess(authData, envConfig().secrets.telegram.botTokens.cifarm)
-            if (!ciwalletResult || !cifarmResult) {
+            if (!ciwalletResult && !cifarmResult) {
                 this.logger.error(`Telegram authorization failed: ${ciwalletEx.toString()}`)
                 throw new TelegramAuthorizationFailedException(`${ciwalletEx.toString()}`)
             }
