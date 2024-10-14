@@ -19,7 +19,7 @@ export const defaultBotType = BotType.Ciwallet
 export class TelegramAuthorizationGuard implements CanActivate {
     private readonly logger = new Logger(TelegramAuthorizationGuard.name)
 
-    validateToken (authData: string, botType: BotType = BotType.Ciwallet) {
+    validateToken(authData: string, botType: BotType = BotType.Ciwallet) {
         botType = botType || BotType.Ciwallet
         const botTokenMap = {
             [BotType.Ciwallet]: envConfig().secrets.telegram.botTokens.ciwallet,
@@ -47,8 +47,7 @@ export class TelegramAuthorizationGuard implements CanActivate {
         const request = context.switchToHttp().getRequest()
         const [authType, authData = ""] =
       (request.headers["authorization"]  || "").split(" ")
-
-        const botType = request.headers["bot-type"] as BotType
+        const botType = request.headers["bot-type"] || defaultBotType
 
         switch (authType) {
         case "tma": {
@@ -61,15 +60,15 @@ export class TelegramAuthorizationGuard implements CanActivate {
                 request.telegramData = telegramData
                 return true
             }
-
             this.validateToken(authData, botType)
-            
             // Parse init data. We will surely need it in the future.
+
             const parsed = parse(authData)
             const telegramData: TelegramData = {
                 userId: parsed.user.id,
                 username: parsed.user.username,
             }
+
             request.telegramData = telegramData
             return true
         }

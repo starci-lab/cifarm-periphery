@@ -39,7 +39,6 @@ import { Sha256Service } from "@/services/base"
 import { InjectRepository } from "@nestjs/typeorm"
 import { UsersEntity } from "@/database"
 import { Repository } from "typeorm"
-import { defaultBotType } from "@/guards"
 import { encode } from "bs58"
 
 @Injectable()
@@ -160,7 +159,6 @@ export class AuthenticatorControllerService {
                     chainKey,
                     network,
                     telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
-                    botType: defaultBotType,
                 },
             }
         }
@@ -180,7 +178,6 @@ export class AuthenticatorControllerService {
                     chainKey,
                     network,
                     telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
-                    botType: defaultBotType,
                 },
             }
         }
@@ -200,7 +197,6 @@ export class AuthenticatorControllerService {
                     chainKey,
                     network,
                     telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
-                    botType: defaultBotType,
                 },
             }
         }
