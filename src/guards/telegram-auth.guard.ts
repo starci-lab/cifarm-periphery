@@ -21,16 +21,16 @@ export class TelegramAuthorizationGuard implements CanActivate {
 
     validateToken(authData: string, botType: BotType = BotType.Ciwallet) {
         botType = botType || BotType.Ciwallet
+
         const botTokenMap = {
             [BotType.Ciwallet]: envConfig().secrets.telegram.botTokens.ciwallet,
             [BotType.Cifarm]: envConfig().secrets.telegram.botTokens.cifarm,
         }
-
+ 
         if (botTokenMap[botType] === undefined) {
             this.logger.error("Bot type not found")
             throw new TelegramAuthorizationFailedException("Bot type not found")
         }
-
         try {
             validate(authData, botTokenMap[botType], {
                 expiresIn: 3600,
@@ -48,8 +48,10 @@ export class TelegramAuthorizationGuard implements CanActivate {
         const [authType, authData = ""] =
       (request.headers["authorization"]  || "").split(" ")
         const botType = request.headers["bot-type"] || defaultBotType
-
-        switch (authType) {
+        console.log(botType)
+        console.log(request.headers)
+        
+        switch (authType) { 
         case "tma": {
             const [mockAuthorization, mockUserId = ""] = authData.split(",")
             if (mockAuthorization === envConfig().secrets.telegram.mockAuthorization) {
