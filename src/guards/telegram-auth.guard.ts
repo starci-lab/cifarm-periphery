@@ -9,25 +9,47 @@ export interface TelegramData {
     username: string
 }
 
-export const validateSuccess = (authData: string, botToken: string) : [boolean, unknown | undefined] => {
-    try {
-        validate(authData, botToken, {
-            expiresIn: 3600,
-        })
-        return [true, undefined]
-    } catch (ex) {
-        return [false, ex]
-    }
+export enum BotType {
+    Ciwallet = "ciwallet",
+    Cifarm = "cifarm",
 }
+
+export const defaultBotType = BotType.Ciwallet
 
 export class TelegramAuthorizationGuard implements CanActivate {
     private readonly logger = new Logger(TelegramAuthorizationGuard.name)
+
+    validateToken (authData: string, botType: BotType = BotType.Ciwallet) {
+        botType = botType || BotType.Ciwallet
+        const botTokenMap = {
+            [BotType.Ciwallet]: envConfig().secrets.telegram.botTokens.ciwallet,
+            [BotType.Cifarm]: envConfig().secrets.telegram.botTokens.cifarm,
+        }
+
+        if (botTokenMap[botType] === undefined) {
+            this.logger.error("Bot type not found")
+            throw new TelegramAuthorizationFailedException("Bot type not found")
+        }
+
+        try {
+            validate(authData, botTokenMap[botType], {
+                expiresIn: 3600,
+            })
+        } catch (ex) {
+            this.logger.error(ex.toString())
+            throw new TelegramAuthorizationFailedException(`${ex.toString()}`)
+        }
+    }
+
     canActivate(
         context: ExecutionContext,
     ): boolean | Promise<boolean> | Observable<boolean> {
         const request = context.switchToHttp().getRequest()
         const [authType, authData = ""] =
       (request.headers["authorization"]  || "").split(" ")
+
+        const botType = request.headers["bot-type"] as BotType
+
         switch (authType) {
         case "tma": {
             const [mockAuthorization, mockUserId = ""] = authData.split(",")
@@ -39,14 +61,9 @@ export class TelegramAuthorizationGuard implements CanActivate {
                 request.telegramData = telegramData
                 return true
             }
-            const [ ciwalletResult, ciwalletEx ] = validateSuccess(authData, envConfig().secrets.telegram.botTokens.ciwallet)
-            //if both fail we only log ciwallet
-            const [ cifarmResult ] = validateSuccess(authData, envConfig().secrets.telegram.botTokens.cifarm)
-            if (!ciwalletResult && !cifarmResult) {
-                this.logger.error(`Telegram authorization failed: ${ciwalletEx.toString()}`)
-                throw new TelegramAuthorizationFailedException(`${ciwalletEx.toString()}`)
-            }
 
+            this.validateToken(authData, botType)
+            
             // Parse init data. We will surely need it in the future.
             const parsed = parse(authData)
             const telegramData: TelegramData = {
@@ -57,6 +74,7 @@ export class TelegramAuthorizationGuard implements CanActivate {
             return true
         }
         default: {
+            this.logger.error("Authorization data not found")
             throw new TelegramAuthorizationFailedException("Authorization data not found")
         }
         }

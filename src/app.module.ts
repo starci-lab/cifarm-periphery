@@ -33,7 +33,7 @@ import { TypeOrmModule } from "@nestjs/typeorm"
             host: envConfig().redis.host,
             port: envConfig().redis.port,
         }),
-
+ 
         TypeOrmModule.forRoot({
             type: "postgres",
             host: envConfig().database.postgres.postgres1.host,

@@ -2,6 +2,7 @@ import { HttpResponse } from "@/utils"
 import { ApiProperty } from "@nestjs/swagger"
 import { IsNotEmpty, IsOptional } from "class-validator"
 import { Network } from "@/config"
+import { BotType, defaultBotType } from "@/guards"
 
 export class GetFakeSignatureRequestBody {
   @IsOptional()
@@ -38,6 +39,9 @@ export class GetFakeSignatureResponseData {
 
   @ApiProperty({ example: "tranminhthien" })
       telegramInitDataRaw: string
+
+  @ApiProperty({ example: defaultBotType })
+      botType: BotType
 }
 
 export const GET_FAKE_SIGNATURE_RESPONSE_SUCCESS_MESSAGE =
@@ -57,6 +61,7 @@ implements HttpResponse<GetFakeSignatureResponseData>
           chainKey: "avalanche",
           network: "testnet",
           telegramInitData: "tranminhthien",
+          botType: defaultBotType
       },
   })
       data: GetFakeSignatureResponseData

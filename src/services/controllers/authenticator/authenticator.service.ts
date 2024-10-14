@@ -39,6 +39,8 @@ import { Sha256Service } from "@/services/base"
 import { InjectRepository } from "@nestjs/typeorm"
 import { UsersEntity } from "@/database"
 import { Repository } from "typeorm"
+import { defaultBotType } from "@/guards"
+import { encode } from "bs58"
 
 @Injectable()
 export class AuthenticatorControllerService {
@@ -158,6 +160,7 @@ export class AuthenticatorControllerService {
                     chainKey,
                     network,
                     telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
+                    botType: defaultBotType,
                 },
             }
         }
@@ -166,7 +169,7 @@ export class AuthenticatorControllerService {
           this.solanaAuthService.getFakeKeyPair(accountNumber)
             const signature = this.solanaAuthService.signMessage(
                 message,
-                Buffer.from(secretKey).toString("hex"),
+                encode(secretKey),
             )
             return {
                 message: GET_FAKE_SIGNATURE_RESPONSE_SUCCESS_MESSAGE,
@@ -177,6 +180,7 @@ export class AuthenticatorControllerService {
                     chainKey,
                     network,
                     telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
+                    botType: defaultBotType,
                 },
             }
         }
@@ -196,6 +200,7 @@ export class AuthenticatorControllerService {
                     chainKey,
                     network,
                     telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
+                    botType: defaultBotType,
                 },
             }
         }
