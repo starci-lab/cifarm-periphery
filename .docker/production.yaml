@@ -1,4 +1,20 @@
 services:
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_1_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_1_PASS}
+    ports:
+      - "${MONGO_1_PORT}:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "${REDIS_PORT}:6379"
   server:
     build:
       context: ..
@@ -35,3 +51,5 @@ services:
       POSTGRES_1_PASS: ${POSTGRES_1_PASS}
     ports:
       - 9999:9999
+volumes:
+  mongo_data:
