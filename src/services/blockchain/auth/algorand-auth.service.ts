@@ -16,9 +16,6 @@ export class AlgorandAuthService {
 
     public verifyMessage({ message, signature, publicKey }: Omit<SignedMessage, "chainName">) {
         try {
-            console.log("message", message)
-            console.log("signature", signature)
-            console.log("publicKey", publicKey)
             return verifyBytes(Buffer.from(message, "base64"), Buffer.from(signature, "base64"), publicKey)
         } catch (ex) {
             this.logger.error(ex)
