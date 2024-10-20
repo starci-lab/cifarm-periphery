@@ -54,7 +54,8 @@ export const defaultNftKey = Object.keys(blockchainConfig()[defaultChainKey].nft
 export enum Platform {
   Evm = "evm",
   Solana = "solana",
-  Aptos = "aptos"
+  Aptos = "aptos",
+  Algorand = "algorand",
 }
 
 export const chainKeyToPlatform = (chainKey: string): Platform => {
@@ -65,6 +66,8 @@ export const chainKeyToPlatform = (chainKey: string): Platform => {
         return Platform.Solana
     case "aptos":
         return Platform.Aptos
+    case "algorand":
+        return Platform.Algorand
     default:
         throw new ChainKeyNotFoundException(chainKey)
     }

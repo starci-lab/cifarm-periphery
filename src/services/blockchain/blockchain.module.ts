@@ -1,6 +1,6 @@
 import { Global, Module } from "@nestjs/common"
 import { BlockchainNftBaseService, BlockchainNftObserverService } from "./nft"
-import { AptosAuthService, EvmAuthService, SolanaAuthService } from "./auth"
+import { AlgorandAuthService, AptosAuthService, EvmAuthService, SolanaAuthService } from "./auth"
 import { BlockchainTokenService } from "./token"
 
 @Global()
@@ -13,7 +13,8 @@ import { BlockchainTokenService } from "./token"
 
         EvmAuthService,
         AptosAuthService,
-        SolanaAuthService
+        SolanaAuthService,
+        AlgorandAuthService
     ],
     exports: [
         BlockchainNftBaseService, 
@@ -22,7 +23,8 @@ import { BlockchainTokenService } from "./token"
         
         EvmAuthService,
         AptosAuthService,
-        SolanaAuthService
+        SolanaAuthService,
+        AlgorandAuthService
     ]
 }) 
 export class BlockchainModule {}

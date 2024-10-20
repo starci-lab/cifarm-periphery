@@ -5,7 +5,6 @@ import {
     AuthorizeTelegramResponse,
     GetFakeSignatureRequestBody,
     GetFakeSignatureResponse,
-    RegisterTelegramResponse,
 } from "@/services"
 import {
     RequestMessageResponse,
@@ -60,16 +59,6 @@ export class AuthenticatorController {
   @Post("authorize-telegram")
   public async authorizeTelegram(@TelegramData() telegramData: TelegramDataType) {
       return await this.authenticatorService.authorizeTelegram({
-          telegramData,
-      })
-  }
-
-  @UseGuards(TelegramAuthorizationGuard)
-  @HttpCode(HttpStatus.OK)
-  @ApiResponse({ type: RegisterTelegramResponse, status: 200 })
-  @Post("register-telegram")
-  public async registerTelegram(@TelegramData() telegramData: TelegramDataType) {
-      return await this.authenticatorService.registerTelegram({
           telegramData,
       })
   }

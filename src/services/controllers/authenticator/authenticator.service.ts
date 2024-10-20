@@ -12,9 +12,6 @@ import {
     AuthorizeTelegramContext,
     AuthorizeTelegramResponse,
     AUTHORIZE_TELEGRAM_RESPONSE_SUCCESS_MESSAGE,
-    RegisterTelegramContext,
-    RegisterTelegramResponse,
-    REGISTER_TELEGRAM_RESPONSE_SUCCESS_MESSAGE,
 } from "./dtos"
 import { randomUUID } from "crypto"
 import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager"
@@ -34,6 +31,7 @@ import {
     EvmAuthService,
     AptosAuthService,
     SolanaAuthService,
+    AlgorandAuthService,
 } from "../../blockchain"
 import { Sha256Service } from "@/services/base"
 import { InjectRepository } from "@nestjs/typeorm"
@@ -51,6 +49,7 @@ export class AuthenticatorControllerService {
     private readonly aptosAuthService: AptosAuthService,
     private readonly solanaAuthService: SolanaAuthService,
     private readonly sha256Service: Sha256Service,
+    private readonly algorandAuthService: AlgorandAuthService,
     
     @Inject(CACHE_MANAGER) 
     private cacheManager: Cache,
@@ -112,6 +111,13 @@ export class AuthenticatorControllerService {
                 publicKey,
             })
             address = this.aptosAuthService.toAddress(publicKey)
+            break
+        case Platform.Algorand:
+            result = this.algorandAuthService.verifyMessage({
+                message,
+                signature,
+                publicKey,
+            })
             break
         default:
             this.logger.error(`Unknown platform: ${platform}`)
@@ -204,6 +210,26 @@ export class AuthenticatorControllerService {
                 },
             }
         }
+        case Platform.Algorand: {
+            const { addr, sk } =
+          this.algorandAuthService.getFakeKeyPair(accountNumber)
+            const signature = this.algorandAuthService.signMessage(
+                message,
+                Buffer.from(sk).toString("base64"),
+            )
+            return {
+                message: GET_FAKE_SIGNATURE_RESPONSE_SUCCESS_MESSAGE,
+                data: {
+                    message,
+                    publicKey: addr.toString(),
+                    signature,
+                    chainKey,
+                    network,
+                    telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
+                    botType: defaultBotType
+                },
+            }
+        }
         default:
             throw new ChainKeyNotFoundException(chainKey)
         }
@@ -212,23 +238,11 @@ export class AuthenticatorControllerService {
     public async authorizeTelegram({
         telegramData,
     }: AuthorizeTelegramContext): Promise<AuthorizeTelegramResponse> {
-        return {
-            data: {
-                telegramData
-            },
-            message: AUTHORIZE_TELEGRAM_RESPONSE_SUCCESS_MESSAGE,
-        }
-    }
-
-    public async registerTelegram({
-        telegramData,
-    }: RegisterTelegramContext): Promise<RegisterTelegramResponse> {
         const user = await this.usersRepository.findOne({
             where: {
                 telegramId: telegramData.userId.toString()
             }
         })
-
         if (!user) {
             const x = await this.usersRepository.save({
                 telegramId: telegramData.userId.toString(),
@@ -241,7 +255,7 @@ export class AuthenticatorControllerService {
             data: {
                 telegramData
             },
-            message: REGISTER_TELEGRAM_RESPONSE_SUCCESS_MESSAGE,
+            message: AUTHORIZE_TELEGRAM_RESPONSE_SUCCESS_MESSAGE,
         }
     }
 }
