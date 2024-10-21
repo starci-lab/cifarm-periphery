@@ -44,6 +44,16 @@ export const blockchainConfig = (): BlockchainConfig => ({
                 },
             },
         }
+    },
+    algorand: {
+        nfts: {
+            premiumTile: {
+                addresses: {
+                    [Network.Mainnet]: "",
+                    [Network.Testnet]: "premiumTile1",
+                },
+            },
+        }
     }
 })
 
@@ -71,4 +81,13 @@ export const chainKeyToPlatform = (chainKey: string): Platform => {
     default:
         throw new ChainKeyNotFoundException(chainKey)
     }
+}
+
+export enum SupportedChainKey {
+    Sui = "sui",
+    Aptos = "aptos",
+    Avalanche = "avalanche",
+    Solana = "solana",
+    Bsc = "bsc",
+    Algorand = "algorand",
 }

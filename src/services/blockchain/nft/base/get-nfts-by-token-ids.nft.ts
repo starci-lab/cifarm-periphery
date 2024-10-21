@@ -1,5 +1,5 @@
 import { Contract, JsonRpcProvider } from "ethers"
-import { aptosClient, evmHttpRpcUrl, solanaHttpRpcUrl } from "../../rpcs"
+import { algorandAlgodClient, algorandIndexerClient, aptosClient, evmHttpRpcUrl, solanaHttpRpcUrl } from "../../rpcs"
 import { erc721Abi } from "../../abis"
 import { Network, Platform, chainKeyToPlatform } from "@/config"
 import { PlatformNotFoundException } from "@/exceptions"
@@ -9,6 +9,7 @@ import { Connection, PublicKey, ParsedAccountData } from "@solana/web3.js"
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults"
 import { fetchDigitalAsset } from "@metaplex-foundation/mpl-token-metadata"
 import { publicKey } from "@metaplex-foundation/umi"
+import { CIDService } from "../../../base"
 
 export interface GetNftsByTokenIdsParams {
     tokenIds: Array<string>,
@@ -16,6 +17,12 @@ export interface GetNftsByTokenIdsParams {
     chainKey: string,
     network: Network
 }
+
+//services from dependency injection
+export interface GetNftsByTokenIdsServices {
+    cidService?: CIDService;
+}
+  
 
 export interface GetNftsByTokenIdsResult {
     records: Array<NftData>,
@@ -130,7 +137,39 @@ export const _getAptosNftsByTokenIds = async ({
     }
 }
 
-export const _getNftsByTokenIds = (params: GetNftsByTokenIdsParams) => {
+export const _getAlgorandNftsByTokenIds = async ({
+    tokenIds,
+    network,
+}: GetNftsByTokenIdsParams, { cidService }: GetNftsByTokenIdsServices): Promise<GetNftsByTokenIdsResult> => {
+    const algodClient = algorandAlgodClient(network)
+    const indexerClient = algorandIndexerClient(network)
+    const records: Array<NftData> = []
+    const promises: Array<Promise<void>> = [] 
+    for (const tokenId of tokenIds) {
+        promises.push(
+            (async () => {
+                const { balances } = await indexerClient.lookupAssetBalances(Number(tokenId)).do()
+                const ownerAddress = balances[0].address
+                const { params } = await algodClient.getAssetByID(Number(tokenId)).do()
+                const cid = cidService.algorandReserveAddressToCid(params.reserve)
+                const tokenURI = cidService.getCidUrl(cid)
+
+                records.push({
+                    ownerAddress,
+                    tokenId,
+                    tokenURI,
+                })
+            })(),
+        ) 
+    }
+    await Promise.all(promises)
+    
+    return {
+        records
+    }
+}
+
+export const _getNftsByTokenIds = (params: GetNftsByTokenIdsParams, services: GetNftsByTokenIdsServices) => {
     const platform = chainKeyToPlatform(params.chainKey)
     switch (platform) {
     case Platform.Evm: {
@@ -141,6 +180,9 @@ export const _getNftsByTokenIds = (params: GetNftsByTokenIdsParams) => {
     }
     case Platform.Aptos: {
         return _getAptosNftsByTokenIds(params)
+    }
+    case Platform.Algorand: {
+        return _getAlgorandNftsByTokenIds(params, services)
     }
     default:
         throw new PlatformNotFoundException(platform)

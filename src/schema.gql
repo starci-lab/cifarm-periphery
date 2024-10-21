@@ -41,7 +41,7 @@ input GetNftsByTokenIdsArgs {
 }
 
 input GetNftsByTokenIdsInput {
-  tokenIds: [Int!]!
+  tokenIds: [String!]!
   network: String
   nftKey: String
   chainKey: String

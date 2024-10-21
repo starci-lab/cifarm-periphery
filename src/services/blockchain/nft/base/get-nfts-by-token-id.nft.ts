@@ -1,5 +1,5 @@
 import { Contract, JsonRpcProvider } from "ethers"
-import { aptosClient, evmHttpRpcUrl, solanaHttpRpcUrl } from "../../rpcs"
+import { algorandAlgodClient, algorandIndexerClient, aptosClient, evmHttpRpcUrl, solanaHttpRpcUrl } from "../../rpcs"
 import { fetchDigitalAsset } from "@metaplex-foundation/mpl-token-metadata"
 import { publicKey } from "@metaplex-foundation/umi"
 import { Connection, PublicKey, ParsedAccountData } from "@solana/web3.js"
@@ -9,6 +9,7 @@ import { PlatformNotFoundException } from "@/exceptions"
 import { MulticallProvider } from "@ethers-ext/provider-multicall"
 import { NftData } from "../common"
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults"
+import { CIDService } from "../../../base"
 
 export interface GetNftByTokenIdParams {
     tokenId: string,
@@ -16,6 +17,12 @@ export interface GetNftByTokenIdParams {
     chainKey: string,
     network: Network
 }
+
+//services from dependency injection
+export interface GetNftByTokenIdServices {
+    cidService?: CIDService;
+}
+  
 
 export const _getEvmNftByTokenId = async ({
     nftAddress,
@@ -88,7 +95,31 @@ export const _getAptosNftByTokenId = async ({
     }
 }
 
-export const _getNftByTokenId = (params: GetNftByTokenIdParams) => {
+export const _getAlgorandNftByTokenId = async ({
+    network,
+    tokenId,
+}: GetNftByTokenIdParams, { cidService }: GetNftByTokenIdServices): Promise<NftData> => {
+    const indexerClient = algorandIndexerClient(network)
+    const algodClient = algorandAlgodClient(network)
+    try {
+        const { balances } = await indexerClient.lookupAssetBalances(Number(tokenId)).do()
+        
+        const ownerAddress = balances[0].address
+        const { params } = await algodClient.getAssetByID(Number(tokenId)).do()
+        const cid = cidService.algorandReserveAddressToCid(params.reserve)
+        const tokenURI = cidService.getCidUrl(cid)
+
+        return {
+            ownerAddress,
+            tokenId,
+            tokenURI,
+        }
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const _getNftByTokenId = (params: GetNftByTokenIdParams, services: GetNftByTokenIdServices) => {
     const platform = chainKeyToPlatform(params.chainKey)
     switch (platform) {
     case Platform.Evm: {
@@ -99,6 +130,9 @@ export const _getNftByTokenId = (params: GetNftByTokenIdParams) => {
     }
     case Platform.Aptos: {
         return _getAptosNftByTokenId(params)
+    }
+    case Platform.Algorand: {
+        return _getAlgorandNftByTokenId(params, services)
     }
     default:
         throw new PlatformNotFoundException(platform)

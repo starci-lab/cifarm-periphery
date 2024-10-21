@@ -3,3 +3,4 @@ export interface HttpResponse<TData = undefined> {
     data?: TData;
 }
   
+export type Atomic = string | number | boolean | object
