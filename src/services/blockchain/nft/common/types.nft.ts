@@ -3,7 +3,7 @@ import { Atomic } from "@/utils"
 
 
 export interface GetContractObservableParams {
-    nftAddress: string,
+    nftCollectionId: string,
     chainKey: string,
     network: Network,
     eventName: string,

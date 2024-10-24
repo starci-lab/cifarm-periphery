@@ -27,7 +27,7 @@ input GetNftsByOwnerAddressArgs {
 input GetNftsByOwnerAddressInput {
   accountAddress: ID!
   network: String
-  nftKey: String
+  nftCollectionKey: String
   chainKey: String
 }
 
@@ -43,7 +43,7 @@ input GetNftsByTokenIdsArgs {
 input GetNftsByTokenIdsInput {
   tokenIds: [String!]!
   network: String
-  nftKey: String
+  nftCollectionKey: String
   chainKey: String
 }
 
@@ -54,6 +54,6 @@ input GetNftByTokenIdArgs {
 input GetNftByTokenIdInput {
   tokenId: String!
   network: String
-  nftKey: String
+  nftCollectionKey: String
   chainKey: String
 }

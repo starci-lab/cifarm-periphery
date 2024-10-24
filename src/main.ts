@@ -6,7 +6,7 @@ import {
     GraphQLSchemaBuilderModule,
     GraphQLSchemaFactory,
 } from "@nestjs/graphql"
-import { NftsResolver } from "./application"
+import { NftResolver } from "./application"
 import { printSchema } from "graphql"
 import { writeFileSync } from "fs"
 import { join } from "path"
@@ -18,7 +18,7 @@ const generateSchema = async () => {
     await app.init()
 
     const gqlSchemaFactory = app.get(GraphQLSchemaFactory)
-    const schema = await gqlSchemaFactory.create([NftsResolver])
+    const schema = await gqlSchemaFactory.create([NftResolver])
 
     writeFileSync(
         join(

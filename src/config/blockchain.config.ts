@@ -5,82 +5,18 @@ export enum Network {
   Mainnet = "mainnet",
 }
 
-export interface NftInfo {
-    addresses: Record<Network, string>
+export interface NftCollectionInfo {
+    collectionId: string
 }
 
+export enum NftCollection {
+    //đất phù sa
+    Fertile = "fertile",
+    //bò
+    Cow = "cow",
+}
 export interface ChainIfo {
-    nfts: Record<string, NftInfo>
-}
-
-export type BlockchainConfig = Record<string, ChainIfo>
-export const blockchainConfig = (): BlockchainConfig => ({
-    avalanche: {
-        nfts: {
-            premiumTile: {
-                addresses: {
-                    [Network.Mainnet]: "",
-                    [Network.Testnet]: "0x410d3e15058e8544B14FD1a317E330f693444673",
-                },
-            },
-        },
-    },
-    solana: {
-        nfts: {
-            premiumTile: {
-                addresses: {
-                    [Network.Mainnet]: "",
-                    [Network.Testnet]: "E31eadBc4uLfcHRSCLVVDPVngPavmZDVjzdGdjyCkbWZ",
-                },
-            },
-        }
-    },
-    aptos: {
-        nfts: {
-            premiumTile: {
-                addresses: {
-                    [Network.Mainnet]: "",
-                    [Network.Testnet]: "0x2a86d07b6f49e8794051580e107d96f6feed0d27b52359e8d8c62af32c07cc34",
-                },
-            },
-        }
-    },
-    algorand: {
-        nfts: {
-            premiumTile: {
-                addresses: {
-                    [Network.Mainnet]: "",
-                    [Network.Testnet]: "premiumTile1",
-                },
-            },
-        }
-    }
-})
-
-export const defaultChainKey = Object.keys(blockchainConfig())[0]
-export const defaultNftKey = Object.keys(blockchainConfig()[defaultChainKey].nfts)[0]
-
-
-export enum Platform {
-  Evm = "evm",
-  Solana = "solana",
-  Aptos = "aptos",
-  Algorand = "algorand",
-}
-
-export const chainKeyToPlatform = (chainKey: string): Platform => {
-    switch (chainKey) {
-    case "avalanche":
-        return Platform.Evm
-    case "solana":
-        return Platform.Solana
-    case "aptos":
-        return Platform.Aptos
-    case "algorand":
-        return Platform.Algorand
-    default:
-        throw new ChainKeyNotFoundException(chainKey)
-    }
+    nftCollections: Record<string, Record<Network, NftCollectionInfo>>
 }
 
 export enum SupportedChainKey {
@@ -90,4 +26,98 @@ export enum SupportedChainKey {
     Solana = "solana",
     Bsc = "bsc",
     Algorand = "algorand",
+    Polkadot = "polkadot",
+  }
+
+export type BlockchainConfig = Record<string, ChainIfo>
+export const blockchainConfig = (): BlockchainConfig => ({
+    [SupportedChainKey.Avalanche]: {
+        nftCollections: {
+            [NftCollection.Fertile]: {
+                [Network.Mainnet]: {
+                    collectionId: ""
+                },
+                [Network.Testnet]: {
+                    collectionId: "0x2a86d07b6f49e8794051580e107d96f6feed0d27b52359e8d8c62af32c07cc34"
+                }
+            },
+        },
+    },
+    [SupportedChainKey.Solana]: {
+        nftCollections: {
+            [NftCollection.Fertile]: {
+                [Network.Mainnet]: {
+                    collectionId: ""
+                },
+                [Network.Testnet]: {
+                    collectionId: "E31eadBc4uLfcHRSCLVVDPVngPavmZDVjzdGdjyCkbWZ"
+                }
+            },
+        },
+    },
+    [SupportedChainKey.Aptos]: {
+        nftCollections: {
+            [NftCollection.Fertile]: {
+                [Network.Mainnet]: {
+                    collectionId: ""
+                },
+                [Network.Testnet]: {
+                    collectionId: "0x2a86d07b6f49e8794051580e107d96f6feed0d27b52359e8d8c62af32c07cc34"
+                }
+            },
+        },
+    },
+    [SupportedChainKey.Algorand]: {
+        nftCollections: {
+            [NftCollection.Fertile]: {
+                [Network.Mainnet]: {
+                    collectionId: ""
+                },
+                [Network.Testnet]: {
+                    collectionId: "premiumTile1"
+                }
+            },
+        },
+    },
+    [SupportedChainKey.Polkadot]: {
+        nftCollections: {
+            [NftCollection.Fertile]: {
+                [Network.Mainnet]: {
+                    collectionId: ""
+                },
+                [Network.Testnet]: {
+                    collectionId: "4191"
+                }
+            },
+        },
+    }
+})
+
+export const defaultChainKey = Object.keys(blockchainConfig())[0]
+export const defaultNftCollectionKey = Object.keys(blockchainConfig()[defaultChainKey].nftCollections)[0]
+
+
+export enum Platform {
+  Evm = "evm",
+  Solana = "solana",
+  Aptos = "aptos",
+  Algorand = "algorand",
+  Polkadot = "polkadot",
+}
+
+export const chainKeyToPlatform = (chainKey: string): Platform => {
+    switch (chainKey) {
+    case SupportedChainKey.Avalanche:
+        return Platform.Evm
+    case SupportedChainKey.Solana:
+        return Platform.Solana
+    case SupportedChainKey.Aptos:
+        return Platform.Aptos
+    case SupportedChainKey.Algorand:
+        return Platform.Algorand
+    case SupportedChainKey.Polkadot:
+        return Platform.Polkadot
+    default:
+        throw new ChainKeyNotFoundException(chainKey)
+    }
 }

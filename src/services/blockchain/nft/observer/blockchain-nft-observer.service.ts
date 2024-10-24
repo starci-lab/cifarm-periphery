@@ -11,7 +11,7 @@ export class BlockchainNftObserverService {
 
     constructor() {}
 
-    public observeEvm({ chainKey, network, nftAddress, eventName, callbackFn }: GetContractObservableParams) {
+    public observeEvm({ chainKey, network, nftCollectionId, eventName, callbackFn }: GetContractObservableParams) {
         const ws = evmWsRpcUrl(chainKey, network)
         const websocket = new WebSocket(ws)
     
@@ -29,7 +29,7 @@ export class BlockchainNftObserverService {
             if (contract) {
                 contract.removeAllListeners(eventName)
             }
-            contract = new Contract(nftAddress, erc721Abi, provider) 
+            contract = new Contract(nftCollectionId, erc721Abi, provider) 
               
             contract
                 .on(eventName, callbackFn)

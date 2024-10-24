@@ -35,27 +35,27 @@ export class NftTranferGateway {
           switch (platform) {
           case Platform.Evm: {
               for (const network of networks) {
-                  const nftAddresses = Object.values(
-                      blockchainConfig()[chainKey].nfts,
-                  ).map(({ addresses }) => addresses[network])
-                  for (const nftAddress of nftAddresses) {
-                      if (!nftAddress) continue
-                      const keys = Object.keys(blockchainConfig()[chainKey].nfts)
+                  const nftCollectionIds = Object.values(
+                      blockchainConfig()[chainKey].nftCollections[network],
+                  ).map(({ collectionId }) => collectionId)
+                  for (const nftCollectionId of nftCollectionIds) {
+                      if (!nftCollectionId) continue
+                      const keys = Object.keys(blockchainConfig()[chainKey].nftCollections[nftCollectionId][network])
       
-                      let nftKey = ""
+                      let nftCollectionKey = ""
                       for (const key of keys) {
                           if (
-                              blockchainConfig()[chainKey].nfts[key].addresses[network] ===
-                    nftAddress
+                              blockchainConfig()[chainKey].nftCollections[key][network].collectionId ===
+                    nftCollectionId
                           )
-                              nftKey = key
+                              nftCollectionKey = key
                           break
                       }
       
                       this.blockchainNftObserverService.observeEvm({
                           chainKey,
                           network,
-                          nftAddress,
+                          nftCollectionId,
                           eventName: "Transfer",
                           callbackFn: async (
                               from: string,
@@ -75,8 +75,8 @@ export class NftTranferGateway {
                                   transactionHash,
                                   chainKey,
                                   network,
-                                  nftAddress,
-                                  nftKey
+                                  nftCollectionKey,
+                                  nftCollectionId
                               })
                               this.server.emit("nft-transfer-observed", object)
                           },

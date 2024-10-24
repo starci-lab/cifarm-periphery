@@ -1,4 +1,4 @@
-import { NftsResolverService } from "./nfts/nfts.service"
+import { NftResolverService } from "./nft"
 import { Global, Module } from "@nestjs/common"
 
 @Global()
@@ -6,10 +6,10 @@ import { Global, Module } from "@nestjs/common"
     imports: [
     ],
     providers: [
-        NftsResolverService
+        NftResolverService
     ],
     exports: [
-        NftsResolverService
+        NftResolverService
     ]
 })
 export class ResolversModule {}

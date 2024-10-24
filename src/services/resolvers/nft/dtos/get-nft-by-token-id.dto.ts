@@ -16,10 +16,10 @@ export class GetNftByTokenIdInput {
       network?: Network
 
   @Field(() => String, {
-      name: "nftKey",
+      name: "nftCollectionKey",
       nullable: true,
   })
-      nftKey: string
+      nftCollectionKey: string
 
   @Field(() => String, {
       name: "chainKey",

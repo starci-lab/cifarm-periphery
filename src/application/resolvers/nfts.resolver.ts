@@ -5,17 +5,17 @@ import {
     GetNftsByTokenIdsArgs,
     GetNftsByTokenIdsResponse,
     NftDataResponse,
-    NftsResolverService,
+    NftResolverService,
 } from "@/services"
 import { Logger } from "@nestjs/common"
 
 import { Args, Query, Resolver } from "@nestjs/graphql"
 
-@Resolver("Nfts")
-export class NftsResolver {
-    private readonly logger = new Logger(NftsResolver.name)
+@Resolver("Nft")
+export class NftResolver {
+    private readonly logger = new Logger(NftResolver.name)
 
-    constructor(private readonly nftsService: NftsResolverService) {}
+    constructor(private readonly nftService: NftResolverService) {}
 
   @Query(() => GetNftsByOwnerAddressResponse, {
       name: "nftsByOwnerAddress",
@@ -23,7 +23,7 @@ export class NftsResolver {
     public async getNftsByOwnerAddress(
     @Args("args") args: GetNftsByOwnerAddressArgs,
     ): Promise<GetNftsByOwnerAddressResponse> {
-        return await this.nftsService.getNftsByOwnerAddress(args)
+        return await this.nftService.getNftsByOwnerAddress(args)
     }
 
   @Query(() => GetNftsByTokenIdsResponse, {
@@ -32,7 +32,7 @@ export class NftsResolver {
   public async getNftsByTokenIds(
     @Args("args") input: GetNftsByTokenIdsArgs,
   ): Promise<GetNftsByTokenIdsResponse> {
-      return await this.nftsService.getNftsByTokenIds(input)
+      return await this.nftService.getNftsByTokenIds(input)
   }
 
   @Query(() => NftDataResponse, {
@@ -42,7 +42,7 @@ export class NftsResolver {
   public async getNftByTokenId(
   @Args("args") input: GetNftByTokenIdArgs,
   ): Promise<NftDataResponse> {
-      return await this.nftsService.getNftByTokenId(input)
+      return await this.nftService.getNftByTokenId(input)
   }
 }
   

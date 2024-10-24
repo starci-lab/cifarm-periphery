@@ -17,7 +17,7 @@ import { CIDService } from "../../../base"
 
 export interface GetNftsByOwnerAddressParams {
   accountAddress: string;
-  nftAddress: string;
+  nftCollectionId: string;
   chainKey: string;
   network: Network;
   skip: number;
@@ -35,7 +35,7 @@ export interface GetNftsByOwnerAddressResult {
 }
 
 export const _getEvmNftsByOwnerAddress = async ({
-    nftAddress,
+    nftCollectionId,
     chainKey,
     network,
     accountAddress,
@@ -44,13 +44,13 @@ export const _getEvmNftsByOwnerAddress = async ({
 }: GetNftsByOwnerAddressParams): Promise<GetNftsByOwnerAddressResult> => {
     const rpc = evmHttpRpcUrl(chainKey, network)
     const provider = new JsonRpcProvider(rpc)
-    const contract = new Contract(nftAddress, erc721Abi, provider)
+    const contract = new Contract(nftCollectionId, erc721Abi, provider)
     const balance = Number(
         await contract.getFunction("balanceOf").staticCall(accountAddress),
     )
 
     const multicaller = new MulticallProvider(provider)
-    const multicallerContract = new Contract(nftAddress, erc721Abi, multicaller)
+    const multicallerContract = new Contract(nftCollectionId, erc721Abi, multicaller)
 
     const promises: Array<Promise<void>> = []
     const tokenIds: Array<string> = []
@@ -94,7 +94,7 @@ export const _getEvmNftsByOwnerAddress = async ({
 }
 
 export const _getSolanaNftsByOwnerAddress = async ({
-    nftAddress,
+    nftCollectionId,
     chainKey,
     network,
     accountAddress,
@@ -107,7 +107,7 @@ export const _getSolanaNftsByOwnerAddress = async ({
     let nfts = await fetchAllDigitalAssetByOwner(umi, publicKey(accountAddress))
     nfts = nfts.filter((nft) => {
         if (isSome(nft.metadata.collection)) {
-            return nft.metadata.collection.value.key.toString() === nftAddress
+            return nft.metadata.collection.value.key.toString() === nftCollectionId
         }
         return false
     })
@@ -126,7 +126,7 @@ export const _getSolanaNftsByOwnerAddress = async ({
 }
 
 export const _getAptosNftsByOwnerAddress = async ({
-    nftAddress,
+    nftCollectionId,
     network,
     accountAddress,
     skip,
@@ -136,7 +136,7 @@ export const _getAptosNftsByOwnerAddress = async ({
 
     let nfts = await client.getAccountOwnedTokensFromCollectionAddress({
         accountAddress,
-        collectionAddress: nftAddress,
+        collectionAddress: nftCollectionId,
     })
     nfts = nfts.slice(skip ? skip : undefined, take ? take : undefined)
 
@@ -165,7 +165,7 @@ export const _getAptosNftsByOwnerAddress = async ({
 
 export const _getAlgorandNftsByOwnerAddress = async (
     {
-        nftAddress,
+        nftCollectionId,
         network,
         accountAddress,
         skip,
@@ -185,7 +185,7 @@ export const _getAlgorandNftsByOwnerAddress = async (
             const cid = cidService.algorandReserveAddressToCid(params.reserve)
             const data = await cidService.getCidContent(cid) as AlgorandMetadata
 
-            if (data !== null && data.collection.id === nftAddress) {
+            if (data !== null && data.collection.id === nftCollectionId) {
                 nfts.push({
                     ownerAddress: accountAddress,
                     tokenId: asset.assetId.toString(),

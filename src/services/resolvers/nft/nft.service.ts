@@ -12,13 +12,13 @@ import {
     Network,
     blockchainConfig,
     defaultChainKey,
-    defaultNftKey,
+    defaultNftCollectionKey,
 } from "@/config"
 import { AccountAddressNotFoundException } from "@/exceptions"
 
 @Injectable()
-export class NftsResolverService {
-    private readonly logger = new Logger(NftsResolverService.name)
+export class NftResolverService {
+    private readonly logger = new Logger(NftResolverService.name)
 
     constructor(private blockchainNftBaseService: BlockchainNftBaseService) {}
 
@@ -30,20 +30,21 @@ export class NftsResolverService {
         if (!accountAddress)
             throw new AccountAddressNotFoundException(accountAddress)
 
-        let { nftKey, network, chainKey } = { ...input }
+        let { nftCollectionKey, network, chainKey } = { ...input }
         const { skip, take } = { ...filter }
 
         chainKey = chainKey || defaultChainKey
-        nftKey = nftKey || defaultNftKey
+        nftCollectionKey = nftCollectionKey || defaultNftCollectionKey
         network = network || Network.Testnet
 
-        const nftAddress =
-      blockchainConfig()[chainKey].nfts[nftKey].addresses[network]
+        const nftCollectionId =
+      blockchainConfig()[chainKey].nftCollections[nftCollectionKey][network].collectionId
+
         return await this.blockchainNftBaseService.getNftsByOwnerAddress({
             accountAddress,
             network,
             chainKey,
-            nftAddress,
+            nftCollectionId,
             skip,
             take,
         })
@@ -53,39 +54,39 @@ export class NftsResolverService {
         input,
     }: GetNftsByTokenIdsArgs): Promise<GetNftsByTokenIdsResponse> {
         const { tokenIds } = { ...input }
-        let { nftKey, network, chainKey } = { ...input }
+        let { nftCollectionKey, network, chainKey } = { ...input }
 
         chainKey = chainKey || defaultChainKey
-        nftKey = nftKey || defaultNftKey
+        nftCollectionKey = nftCollectionKey || defaultNftCollectionKey
         network = network || Network.Testnet
-
-        const nftAddress =
-      blockchainConfig()[chainKey].nfts[nftKey].addresses[network]
+        
+        const nftCollectionId =
+      blockchainConfig()[chainKey].nftCollections[nftCollectionKey][network].collectionId
 
         return await this.blockchainNftBaseService.getNftsByTokenIds({
             tokenIds,
             network,
             chainKey,
-            nftAddress,
+            nftCollectionId,
         })
     }
 
     public async getNftByTokenId({ input }: GetNftByTokenIdArgs): Promise<NftDataResponse> {
         const { tokenId } = { ...input }
-        let { nftKey, network, chainKey } = { ...input }
+        let { nftCollectionKey, network, chainKey } = { ...input }
 
         chainKey = chainKey || defaultChainKey
-        nftKey = nftKey || defaultNftKey
+        nftCollectionKey = nftCollectionKey || defaultNftCollectionKey
         network = network || Network.Testnet
 
-        const nftAddress =
-      blockchainConfig()[chainKey].nfts[nftKey].addresses[network]
+        const nftCollectionId =
+        blockchainConfig()[chainKey].nftCollections[nftCollectionKey][network].collectionId
         try {
             return await this.blockchainNftBaseService.getNftByTokenId({
                 tokenId,
                 network,
                 chainKey,
-                nftAddress,
+                nftCollectionId,
             })
         } catch (ex) {
             this.logger.error(ex)

@@ -1,9 +1,9 @@
 
 import { Module } from "@nestjs/common"
-import { NftsResolver } from "./nfts.resolver"
+import { NftResolver } from "./nfts.resolver"
 
 @Module({
     imports: [],
-    providers: [ NftsResolver ],
+    providers: [ NftResolver ],
 })
 export class ResolversModule {}

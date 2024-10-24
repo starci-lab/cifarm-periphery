@@ -13,7 +13,7 @@ import { CIDService } from "../../../base"
 
 export interface GetNftsByTokenIdsParams {
     tokenIds: Array<string>,
-    nftAddress: string,
+    nftCollectionId: string,
     chainKey: string,
     network: Network
 }
@@ -29,7 +29,7 @@ export interface GetNftsByTokenIdsResult {
 }
 
 export const _getEvmNftsByTokenIds = async ({
-    nftAddress,
+    nftCollectionId,
     chainKey,
     network,
     tokenIds,
@@ -37,7 +37,7 @@ export const _getEvmNftsByTokenIds = async ({
     const rpc = evmHttpRpcUrl(chainKey, network)
     const provider = new JsonRpcProvider(rpc)
     const multicaller = new MulticallProvider(provider)
-    const multicallerContract = new Contract(nftAddress, erc721Abi, multicaller)
+    const multicallerContract = new Contract(nftCollectionId, erc721Abi, multicaller)
 
     const records: Array<NftData> = []
     const promises: Array<Promise<void>> = []

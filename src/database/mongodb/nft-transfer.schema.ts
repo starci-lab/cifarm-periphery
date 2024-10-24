@@ -22,9 +22,9 @@ export class NftTransferSchema {
   @Prop({ type: String, required: true })
       network: string
   @Prop({ type: String, required: true })
-      nftKey: string
+      nftCollectionKey: string
   @Prop({ type: String, required: true })
-      nftAddress: string
+      nftCollectionId: string
   @Prop({ type: Number, required: true })
       tokenId: number
 }

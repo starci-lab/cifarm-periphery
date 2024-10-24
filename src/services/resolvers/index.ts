@@ -1,2 +1,2 @@
-export * from "./nfts"
+export * from "./nft"
 export * from "./resolvers.module"

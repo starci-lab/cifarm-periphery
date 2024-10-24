@@ -12,7 +12,7 @@ import { GetNftByTokenIdParams, _getNftByTokenId } from "./get-nfts-by-token-id.
 import { CIDService } from "../../../base"
 
 export interface BlockchainNftBaseServiceConstructorParams {
-  nftAddress: string;
+  nftCollectionId: string;
   chainKey: string;
   network: Network;
 }
