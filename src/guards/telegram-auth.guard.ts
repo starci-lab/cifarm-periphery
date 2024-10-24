@@ -19,7 +19,7 @@ export const defaultBotType = BotType.Ciwallet
 export class TelegramAuthorizationGuard implements CanActivate {
     private readonly logger = new Logger(TelegramAuthorizationGuard.name)
 
-    validateToken(authData: string, botType: BotType) {
+    validateToken(authData: string, botType?: BotType) {
         botType = botType || BotType.Ciwallet
 
         const botTokenMap = {
