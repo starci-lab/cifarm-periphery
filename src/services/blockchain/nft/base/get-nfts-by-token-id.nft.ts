@@ -16,7 +16,7 @@ import { PlatformNotFoundException } from "@/exceptions"
 import { MulticallProvider } from "@ethers-ext/provider-multicall"
 import { NftData } from "../common"
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults"
-import { CIDService, FetchService } from "../../../base"
+import { IpfsService } from "../../../base"
 import { Atomic } from "@/utils"
 
 export interface GetNftByTokenIdParams {
@@ -28,13 +28,12 @@ export interface GetNftByTokenIdParams {
 
 //services from dependency injection
 export interface GetNftByTokenIdServices {
-  cidService?: CIDService;
-  fetchService?: FetchService;
+  ipfsService?: IpfsService;
 }
 
 export const _getEvmNftByTokenId = async (
     { nftCollectionId, chainKey, network, tokenId }: GetNftByTokenIdParams,
-    { fetchService }: GetNftByTokenIdServices,
+    { ipfsService }: GetNftByTokenIdServices,
 ): Promise<NftData> => {
     const rpc = evmHttpRpcUrl(chainKey, network)
     const provider = new JsonRpcProvider(rpc)
@@ -50,20 +49,20 @@ export const _getEvmNftByTokenId = async (
         multicallerContract.getFunction("tokenURI").staticCall(tokenId),
     ])
 
-    const metadata = await fetchService.fetch(tokenURI)
+    const metadata = await ipfsService.getRawContent(tokenURI)
     return {
         ownerAddress,
         tokenId,
         metadata: {
             image: metadata.image,
-            properties: JSON.stringify(metadata.properties),
+            properties: metadata.properties,
         },
     }
 }
 
 export const _getSolanaNftByTokenId = async (
     { chainKey, network, tokenId }: GetNftByTokenIdParams,
-    { fetchService }: GetNftByTokenIdServices,
+    { ipfsService }: GetNftByTokenIdServices,
 ): Promise<NftData> => {
     const rpc = solanaHttpRpcUrl(chainKey, network)
     const connection = new Connection(rpc, "confirmed")
@@ -75,14 +74,14 @@ export const _getSolanaNftByTokenId = async (
     const largestAccountInfo = await connection.getParsedAccountInfo(
         largestAccounts.value[0].address,
     )
-    const metadata = await fetchService.fetch(digitalAsset.metadata.uri)
+    const metadata = await ipfsService.getRawContent(digitalAsset.metadata.uri)
     return {
         ownerAddress: (largestAccountInfo.value.data as ParsedAccountData).parsed
             .info.owner,
         tokenId,
         metadata: {
             image: metadata.image,
-            properties: JSON.stringify(metadata.properties),
+            properties: metadata.properties,
         },
     }
 }
@@ -91,7 +90,7 @@ export const _getAptosNftByTokenId = async ({
     network,
     tokenId,
 }: GetNftByTokenIdParams,
-{ fetchService }: GetNftByTokenIdServices): Promise<NftData> => {
+{ ipfsService }: GetNftByTokenIdServices): Promise<NftData> => {
     const client = aptosClient(network)
 
     const [digitalAsset, ownership] = await Promise.all([
@@ -103,20 +102,20 @@ export const _getAptosNftByTokenId = async ({
         }),
     ])
 
-    const metadata = await fetchService.fetch(digitalAsset.token_uri)
+    const metadata = await ipfsService.getRawContent(digitalAsset.token_uri)
     return {
         ownerAddress: ownership.owner_address,
         tokenId,
         metadata: {
             image: metadata.image,
-            properties: JSON.stringify(metadata.properties)
+            properties: metadata.properties
         },
     }
 }
 
 export const _getAlgorandNftByTokenId = async (
     { network, tokenId }: GetNftByTokenIdParams,
-    { cidService }: GetNftByTokenIdServices,
+    { ipfsService }: GetNftByTokenIdServices,
 ): Promise<NftData> => {
     const indexerClient = algorandIndexerClient(network)
     const algodClient = algorandAlgodClient(network)
@@ -127,15 +126,15 @@ export const _getAlgorandNftByTokenId = async (
 
         const ownerAddress = balances[0].address
         const { params } = await algodClient.getAssetByID(Number(tokenId)).do()
-        const cid = cidService.algorandReserveAddressToCid(params.reserve)
-        const metadata = await cidService.getCidContent(cid)
+        const cid = ipfsService.algorandReserveAddressToCid(params.reserve)
+        const metadata = await ipfsService.getCidContent(cid)
 
         return {
             ownerAddress,
             tokenId,
             metadata: {
                 image: metadata.image,
-                properties: JSON.stringify(metadata.properties),
+                properties: metadata.properties,
             },
         }
     } catch (error) {

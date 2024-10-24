@@ -2,8 +2,7 @@ import { Global, Module } from "@nestjs/common"
 import { Sha256Service } from "./sha256.service"
 import { RabbitMQService } from "./rabbitmq.service"
 import { KafkaService } from "./kafka.service"
-import { CIDService } from "./cid.service"
-import { FetchService } from "./fetch.service"
+import { IpfsService } from "./ipfs.service"
 
 @Global()
 @Module({
@@ -12,15 +11,14 @@ import { FetchService } from "./fetch.service"
         Sha256Service,
         RabbitMQService,
         KafkaService,
-        CIDService,
-        FetchService
+        IpfsService,
+
     ],
     exports: [
         Sha256Service,
         RabbitMQService,
         KafkaService,
-        CIDService,
-        FetchService
+        IpfsService,
     ]
 })
 export class BaseModule {}

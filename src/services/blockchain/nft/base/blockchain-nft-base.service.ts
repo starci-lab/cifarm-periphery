@@ -9,7 +9,7 @@ import {
     _getNftsByTokenIds,
 } from "./get-nfts-by-token-ids.nft"
 import { GetNftByTokenIdParams, _getNftByTokenId } from "./get-nfts-by-token-id.nft"
-import { CIDService, FetchService } from "../../../base"
+import { IpfsService } from "../../../base"
 
 export interface BlockchainNftBaseServiceConstructorParams {
   nftCollectionId: string;
@@ -22,28 +22,24 @@ export class BlockchainNftBaseService {
     private readonly logger = new Logger(BlockchainNftBaseService.name)
 
     constructor(
-        private readonly cidService: CIDService,
-        private readonly fetchService: FetchService,
+        private readonly ipfsService: IpfsService,
     ) {}
 
     public getNftsByOwnerAddress(params: GetNftsByOwnerAddressParams) {
         return _getNftsByOwnerAddress(params, {
-            cidService: this.cidService,
-            fetchService: this.fetchService,
+            ipfsService: this.ipfsService,
         })
     }
 
     public getNftsByTokenIds(params: GetNftsByTokenIdsParams) {
         return _getNftsByTokenIds(params, {
-            cidService: this.cidService,
-            fetchService: this.fetchService,
+            ipfsService: this.ipfsService,
         })
     }
 
     public getNftByTokenId(params: GetNftByTokenIdParams) {
         return _getNftByTokenId(params, {
-            cidService: this.cidService,
-            fetchService: this.fetchService,
+            ipfsService: this.ipfsService,
         })
     }
 }
