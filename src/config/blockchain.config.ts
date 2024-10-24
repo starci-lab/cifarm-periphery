@@ -11,7 +11,7 @@ export interface NftCollectionInfo {
 
 export enum NftCollectionKey {
     //đất phù sa
-    Fertile = "fertile",
+    FertileTile = "fertileTile",
     //bò
     Cow = "cow",
 }
@@ -33,7 +33,7 @@ export type BlockchainConfig = Record<string, ChainIfo>
 export const blockchainConfig = (): BlockchainConfig => ({
     [SupportedChainKey.Avalanche]: {
         nftCollections: {
-            [NftCollectionKey.Fertile]: {
+            [NftCollectionKey.FertileTile]: {
                 [Network.Mainnet]: {
                     collectionId: ""
                 },
@@ -45,7 +45,7 @@ export const blockchainConfig = (): BlockchainConfig => ({
     },
     [SupportedChainKey.Solana]: {
         nftCollections: {
-            [NftCollectionKey.Fertile]: {
+            [NftCollectionKey.FertileTile]: {
                 [Network.Mainnet]: {
                     collectionId: ""
                 },
@@ -57,7 +57,7 @@ export const blockchainConfig = (): BlockchainConfig => ({
     },
     [SupportedChainKey.Aptos]: {
         nftCollections: {
-            [NftCollectionKey.Fertile]: {
+            [NftCollectionKey.FertileTile]: {
                 [Network.Mainnet]: {
                     collectionId: ""
                 },
@@ -69,7 +69,7 @@ export const blockchainConfig = (): BlockchainConfig => ({
     },
     [SupportedChainKey.Algorand]: {
         nftCollections: {
-            [NftCollectionKey.Fertile]: {
+            [NftCollectionKey.FertileTile]: {
                 [Network.Mainnet]: {
                     collectionId: ""
                 },
@@ -81,7 +81,7 @@ export const blockchainConfig = (): BlockchainConfig => ({
     },
     [SupportedChainKey.Polkadot]: {
         nftCollections: {
-            [NftCollectionKey.Fertile]: {
+            [NftCollectionKey.FertileTile]: {
                 [Network.Mainnet]: {
                     collectionId: ""
                 },
