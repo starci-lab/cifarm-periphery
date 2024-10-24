@@ -131,6 +131,7 @@ export class AuthenticatorControllerService {
                 signature,
                 publicKey,
             })
+            address = this.polkadotAuthService.toAddress(publicKey)
             break
         }
         default:

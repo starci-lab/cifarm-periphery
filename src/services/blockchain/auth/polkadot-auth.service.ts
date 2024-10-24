@@ -52,4 +52,8 @@ export class PolkadotAuthService {
             publicKey: u8aToHex(publicKey),
         }
     }
+
+    public toAddress(publicKey: string) {
+        return encodeAddress(hexToU8a(publicKey))
+    }
 }
