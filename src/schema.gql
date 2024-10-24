@@ -1,6 +1,11 @@
+type NftMetadataResponse {
+  image: String!
+  properties: String!
+}
+
 type NftDataResponse {
   tokenId: String!
-  tokenURI: String
+  metadata: NftMetadataResponse
   ownerAddress: String
 }
 

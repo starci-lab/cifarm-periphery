@@ -14,7 +14,7 @@ export interface GetContractObservableParams {
 export interface NftData {
     ownerAddress: string,
     tokenId: string,
-    tokenURI: string
+    metadata: NftMetadata
 }
 
 //algorand
@@ -33,5 +33,11 @@ export interface AlgorandMetadata {
     image_mimetype: string;
     //data, for the actual content of the NFT
     properties: Record<string, Atomic>
-  }
+}
 
+export interface NftMetadata {
+    image: string,
+    //properties: Record<string, Atomic>
+    //serialized
+    properties: string
+}

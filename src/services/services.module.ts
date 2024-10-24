@@ -11,7 +11,7 @@ import { InitModule } from "./init"
         BlockchainModule,
         ResolversModule,
         ControllersModule,
-        InitModule
+        InitModule,
     ],
 })
 export class ServicesModule {}

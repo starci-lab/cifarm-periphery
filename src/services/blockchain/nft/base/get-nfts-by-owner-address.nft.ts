@@ -3,6 +3,7 @@ import {
     algorandAlgodClient,
     aptosClient,
     evmHttpRpcUrl,
+    polkadotUniqueNetworkIndexerClient,
     solanaHttpRpcUrl,
 } from "../../rpcs"
 import { erc721Abi } from "../../abis"
@@ -13,7 +14,8 @@ import { AlgorandMetadata, NftData } from "../common"
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults"
 import { fetchAllDigitalAssetByOwner } from "@metaplex-foundation/mpl-token-metadata"
 import { publicKey, isSome } from "@metaplex-foundation/umi"
-import { CIDService } from "../../../base"
+import { CIDService, FetchService } from "../../../base"
+import { Atomic } from "@/utils"
 
 export interface GetNftsByOwnerAddressParams {
   accountAddress: string;
@@ -27,6 +29,7 @@ export interface GetNftsByOwnerAddressParams {
 //services from dependency injection
 export interface GetNftsByOwnerAddressServices {
   cidService?: CIDService;
+  fetchService?: FetchService;
 }
 
 export interface GetNftsByOwnerAddressResult {
@@ -34,14 +37,17 @@ export interface GetNftsByOwnerAddressResult {
   count: number;
 }
 
-export const _getEvmNftsByOwnerAddress = async ({
-    nftCollectionId,
-    chainKey,
-    network,
-    accountAddress,
-    skip,
-    take,
-}: GetNftsByOwnerAddressParams): Promise<GetNftsByOwnerAddressResult> => {
+export const _getEvmNftsByOwnerAddress = async (
+    {
+        nftCollectionId,
+        chainKey,
+        network,
+        accountAddress,
+        skip,
+        take,
+    }: GetNftsByOwnerAddressParams,
+    { fetchService }: GetNftsByOwnerAddressServices,
+): Promise<GetNftsByOwnerAddressResult> => {
     const rpc = evmHttpRpcUrl(chainKey, network)
     const provider = new JsonRpcProvider(rpc)
     const contract = new Contract(nftCollectionId, erc721Abi, provider)
@@ -50,7 +56,11 @@ export const _getEvmNftsByOwnerAddress = async ({
     )
 
     const multicaller = new MulticallProvider(provider)
-    const multicallerContract = new Contract(nftCollectionId, erc721Abi, multicaller)
+    const multicallerContract = new Contract(
+        nftCollectionId,
+        erc721Abi,
+        multicaller,
+    )
 
     const promises: Array<Promise<void>> = []
     const tokenIds: Array<string> = []
@@ -77,9 +87,13 @@ export const _getEvmNftsByOwnerAddress = async ({
                 const tokenURI = await multicallerContract
                     .getFunction("tokenURI")
                     .staticCall(tokenId)
+                const metadata = await fetchService.fetch(tokenURI)
                 records.push({
                     tokenId,
-                    tokenURI,
+                    metadata: {
+                        image: metadata.image,
+                        properties: JSON.stringify(metadata.properties),
+                    },
                     ownerAddress: accountAddress,
                 })
             })(),
@@ -93,14 +107,17 @@ export const _getEvmNftsByOwnerAddress = async ({
     }
 }
 
-export const _getSolanaNftsByOwnerAddress = async ({
-    nftCollectionId,
-    chainKey,
-    network,
-    accountAddress,
-    skip,
-    take,
-}: GetNftsByOwnerAddressParams): Promise<GetNftsByOwnerAddressResult> => {
+export const _getSolanaNftsByOwnerAddress = async (
+    {
+        nftCollectionId,
+        chainKey,
+        network,
+        accountAddress,
+        skip,
+        take,
+    }: GetNftsByOwnerAddressParams,
+    { fetchService }: GetNftsByOwnerAddressServices,
+): Promise<GetNftsByOwnerAddressResult> => {
     const rpc = solanaHttpRpcUrl(chainKey, network)
     const umi = createUmi(rpc)
 
@@ -112,26 +129,45 @@ export const _getSolanaNftsByOwnerAddress = async ({
         return false
     })
 
-    const records: Array<NftData> = nfts
-        .map((nft) => ({
-            tokenId: nft.metadata.mint.toString(),
-            tokenURI: nft.metadata.uri,
-            ownerAddress: accountAddress,
-        }))
-        .slice(skip ? skip : undefined, take ? take : undefined)
+    const records: Array<NftData> = []
+    const promises: Array<Promise<void>> = []
+    for (
+        let index = skip || 0;
+        index < (take ? Math.min(nfts.length, (skip || 0) + take) : nfts.length);
+        index++
+    ) {
+        promises.push(
+            (async () => {
+                const metadata = await fetchService.fetch(
+                    nfts[index].metadata.uri,
+                )
+                records.push({
+                    tokenId: nfts[index].metadata.mint.toString(),
+                    metadata: {
+                        image: metadata.image,
+                        properties: JSON.stringify(metadata.properties),
+                    },
+                    ownerAddress: accountAddress,
+                })
+            })(),
+        )
+    }
     return {
         records,
         count: nfts.length,
     }
 }
 
-export const _getAptosNftsByOwnerAddress = async ({
-    nftCollectionId,
-    network,
-    accountAddress,
-    skip,
-    take,
-}: GetNftsByOwnerAddressParams): Promise<GetNftsByOwnerAddressResult> => {
+export const _getAptosNftsByOwnerAddress = async (
+    {
+        nftCollectionId,
+        network,
+        accountAddress,
+        skip,
+        take,
+    }: GetNftsByOwnerAddressParams,
+    { fetchService }: GetNftsByOwnerAddressServices,
+): Promise<GetNftsByOwnerAddressResult> => {
     const client = aptosClient(network)
 
     let nfts = await client.getAccountOwnedTokensFromCollectionAddress({
@@ -148,10 +184,14 @@ export const _getAptosNftsByOwnerAddress = async ({
             const digitalAsset = await client.getDigitalAssetData({
                 digitalAssetAddress: nft.token_data_id,
             })
+            const metadata = await fetchService.fetch(digitalAsset.token_uri)
             records.push({
                 ownerAddress: accountAddress,
                 tokenId: nft.token_data_id,
-                tokenURI: digitalAsset.token_uri,
+                metadata: {
+                    image: metadata.image,
+                    properties: JSON.stringify(metadata.properties),
+                },
             })
         }
         promises.push(promise())
@@ -177,24 +217,68 @@ export const _getAlgorandNftsByOwnerAddress = async (
 
     const accountInfo = await client.accountInformation(accountAddress).do()
     const nfts: Array<NftData> = []
-    
+
     const promises: Array<Promise<void>> = []
     for (const asset of accountInfo.assets) {
         const promise = async () => {
             const { params } = await client.getAssetByID(asset.assetId).do()
             const cid = cidService.algorandReserveAddressToCid(params.reserve)
-            const data = await cidService.getCidContent(cid) as AlgorandMetadata
+            const data = (await cidService.getCidContent(cid)) as AlgorandMetadata
 
             if (data !== null && data.collection.id === nftCollectionId) {
                 nfts.push({
                     ownerAddress: accountAddress,
                     tokenId: asset.assetId.toString(),
-                    tokenURI: data.image,
+                    metadata: {
+                        image: data.image,
+                        properties: JSON.stringify(data.properties),
+                    },
                 })
             }
         }
         promises.push(promise())
-    } 
+    }
+    await Promise.all(promises)
+    const records = nfts.slice(skip ? skip : undefined, take ? take : undefined)
+
+    return {
+        records,
+        count: nfts.length,
+    }
+}
+
+export const _getPolkadotUniqueNetworkNftsByOwnerAddress = async ({
+    nftCollectionId,
+    network,
+    accountAddress,
+    skip,
+    take,
+}: GetNftsByOwnerAddressParams): Promise<GetNftsByOwnerAddressResult> => {
+    const indexerClient = polkadotUniqueNetworkIndexerClient(network)
+
+    const searchNfts = await indexerClient.nfts({
+        collectionIdIn: [nftCollectionId],
+    })
+    const nfts: Array<NftData> = []
+
+    const promises: Array<Promise<void>> = []
+    for (const searchNft of searchNfts.items) {
+        const promise = async () => {
+            const properties: Record<string, Atomic> = {}
+            for (const property of searchNft.properties) {
+                properties[property.key] = property.value
+            }
+            nfts.push({
+                ownerAddress: accountAddress,
+                tokenId: searchNft.tokenId.toString(),
+                metadata: {
+                    image: searchNft.image,
+                    properties: JSON.stringify(properties),
+                },
+            })
+        }
+        promises.push(promise())
+    }
     await Promise.all(promises)
     const records = nfts.slice(skip ? skip : undefined, take ? take : undefined)
 
@@ -211,16 +295,19 @@ export const _getNftsByOwnerAddress = (
     const platform = chainKeyToPlatform(params.chainKey)
     switch (platform) {
     case Platform.Evm: {
-        return _getEvmNftsByOwnerAddress(params)
+        return _getEvmNftsByOwnerAddress(params, services)
     }
     case Platform.Solana: {
-        return _getSolanaNftsByOwnerAddress(params)
+        return _getSolanaNftsByOwnerAddress(params, services)
     }
     case Platform.Aptos: {
-        return _getAptosNftsByOwnerAddress(params)
+        return _getAptosNftsByOwnerAddress(params, services)
     }
     case Platform.Algorand: {
         return _getAlgorandNftsByOwnerAddress(params, services)
+    }
+    case Platform.Polkadot: {
+        return _getPolkadotUniqueNetworkNftsByOwnerAddress(params)
     }
     default:
         throw new PlatformNotFoundException(platform)
