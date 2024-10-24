@@ -32,6 +32,7 @@ import {
     AptosAuthService,
     SolanaAuthService,
     AlgorandAuthService,
+    PolkadotAuthService,
 } from "../../blockchain"
 import { Sha256Service } from "@/services/base"
 import { InjectRepository } from "@nestjs/typeorm"
@@ -50,12 +51,13 @@ export class AuthenticatorControllerService {
     private readonly solanaAuthService: SolanaAuthService,
     private readonly sha256Service: Sha256Service,
     private readonly algorandAuthService: AlgorandAuthService,
-    
-    @Inject(CACHE_MANAGER) 
+    private readonly polkadotAuthService: PolkadotAuthService,
+
+    @Inject(CACHE_MANAGER)
     private cacheManager: Cache,
-   
+
     @InjectRepository(UsersEntity)
-    private readonly usersRepository: Repository<UsersEntity>
+    private readonly usersRepository: Repository<UsersEntity>,
     ) {}
 
     public async requestMessage(): Promise<RequestMessageResponse> {
@@ -90,21 +92,23 @@ export class AuthenticatorControllerService {
         network = network ?? Network.Testnet
         const platform = chainKeyToPlatform(chainKey)
         switch (platform) {
-        case Platform.Evm:
+        case Platform.Evm: {
             result = this.evmAuthService.verifyMessage({
                 message,
                 signature,
                 publicKey,
             })
             break
-        case Platform.Solana:
+        }
+        case Platform.Solana: {
             result = this.solanaAuthService.verifyMessage({
                 message,
                 signature,
                 publicKey,
             })
             break
-        case Platform.Aptos:
+        }
+        case Platform.Aptos: {
             result = this.aptosAuthService.verifyMessage({
                 message,
                 signature,
@@ -112,13 +116,23 @@ export class AuthenticatorControllerService {
             })
             address = this.aptosAuthService.toAddress(publicKey)
             break
-        case Platform.Algorand:
+        }
+        case Platform.Algorand: {
             result = this.algorandAuthService.verifyMessage({
                 message,
                 signature,
                 publicKey,
             })
             break
+        }
+        case Platform.Polkadot: {
+            result = this.polkadotAuthService.verifyMessage({
+                message,
+                signature,
+                publicKey,
+            })
+            break
+        }
         default:
             this.logger.error(`Unknown platform: ${platform}`)
             result = false
@@ -142,7 +156,7 @@ export class AuthenticatorControllerService {
     public async getFakeSignature({
         accountNumber,
         chainKey,
-        network
+        network,
     }: GetFakeSignatureRequestBody): Promise<GetFakeSignatureResponse> {
         network = network || Network.Testnet
         const {
@@ -166,7 +180,7 @@ export class AuthenticatorControllerService {
                     chainKey,
                     network,
                     telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
-                    botType: defaultBotType
+                    botType: defaultBotType,
                 },
             }
         }
@@ -186,7 +200,7 @@ export class AuthenticatorControllerService {
                     chainKey,
                     network,
                     telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
-                    botType: defaultBotType
+                    botType: defaultBotType,
                 },
             }
         }
@@ -206,7 +220,7 @@ export class AuthenticatorControllerService {
                     chainKey,
                     network,
                     telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
-                    botType: defaultBotType
+                    botType: defaultBotType,
                 },
             }
         }
@@ -226,7 +240,29 @@ export class AuthenticatorControllerService {
                     chainKey,
                     network,
                     telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
-                    botType: defaultBotType
+                    botType: defaultBotType,
+                },
+            }
+        }
+        case Platform.Polkadot: {
+            const { publicKey, privateKey } =
+          this.polkadotAuthService.getFakeKeyPair(accountNumber)
+
+            const signature = this.algorandAuthService.signMessage(
+                message,
+                privateKey.toString(),
+            )
+
+            return {
+                message: GET_FAKE_SIGNATURE_RESPONSE_SUCCESS_MESSAGE,
+                data: {
+                    message,
+                    publicKey: publicKey.toString(),
+                    signature,
+                    chainKey,
+                    network,
+                    telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
+                    botType: defaultBotType,
                 },
             }
         }
@@ -240,20 +276,20 @@ export class AuthenticatorControllerService {
     }: AuthorizeTelegramContext): Promise<AuthorizeTelegramResponse> {
         const user = await this.usersRepository.findOne({
             where: {
-                telegramId: telegramData.userId.toString()
-            }
+                telegramId: telegramData.userId.toString(),
+            },
         })
         if (!user) {
             const x = await this.usersRepository.save({
                 telegramId: telegramData.userId.toString(),
-                username: telegramData.username
+                username: telegramData.username,
             })
             console.log(x)
         }
 
         return {
             data: {
-                telegramData
+                telegramData,
             },
             message: AUTHORIZE_TELEGRAM_RESPONSE_SUCCESS_MESSAGE,
         }

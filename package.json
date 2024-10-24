@@ -47,6 +47,7 @@
     "@nestjs/swagger": "^7.4.0",
     "@nestjs/typeorm": "^10.0.2",
     "@nestjs/websockets": "^10.4.1",
+    "@polkadot/util-crypto": "^9.2.2-0",
     "@socket.io/redis-adapter": "^8.3.0",
     "@telegram-apps/init-data-node": "^1.1.1",
     "@unique-nft/sdk": "^2.1.2",
