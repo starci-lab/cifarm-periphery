@@ -248,9 +248,10 @@ export class AuthenticatorControllerService {
             const { publicKey, privateKey } =
           this.polkadotAuthService.getFakeKeyPair(accountNumber)
 
-            const signature = this.algorandAuthService.signMessage(
+            const signature = this.polkadotAuthService.signMessage(
                 message,
                 privateKey.toString(),
+                publicKey.toString(),
             )
 
             return {

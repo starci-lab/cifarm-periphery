@@ -31,10 +31,11 @@ export class PolkadotAuthService {
         }
     }
 
-    public signMessage(message: string, privateKey: string) {
+    public signMessage(message: string, privateKey: string, publicKey: string) {
         return Buffer.from(
             sr25519Sign(Buffer.from(message, "base64"), {
                 secretKey: hexToU8a(privateKey),
+                publicKey: hexToU8a(publicKey),
             }),
         ).toString("base64")
     }
