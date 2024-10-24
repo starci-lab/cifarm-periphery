@@ -1,8 +1,7 @@
 import { Global, Module } from "@nestjs/common"
-import { BlockchainNftBaseService, BlockchainNftObserverService } from "./nft"
+import { IpfsService, BlockchainNftBaseService, BlockchainNftObserverService } from "./nft"
 import { AlgorandAuthService, AptosAuthService, EvmAuthService, SolanaAuthService } from "./auth"
 import { BlockchainTokenService } from "./token"
-import { IpfsService } from "./common"
 
 @Global()
 @Module({

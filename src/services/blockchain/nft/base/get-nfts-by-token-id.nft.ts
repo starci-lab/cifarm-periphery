@@ -17,7 +17,7 @@ import { MulticallProvider } from "@ethers-ext/provider-multicall"
 import { NftData } from "../common"
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults"
 import { Atomic } from "@/utils"
-import { IpfsService } from "../../common"
+import { IpfsService } from "../common"
 
 export interface GetNftByTokenIdParams {
   tokenId: string;

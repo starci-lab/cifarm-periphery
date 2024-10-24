@@ -10,7 +10,7 @@ import { createUmi } from "@metaplex-foundation/umi-bundle-defaults"
 import { fetchDigitalAsset } from "@metaplex-foundation/mpl-token-metadata"
 import { publicKey } from "@metaplex-foundation/umi"
 import { Atomic } from "@/utils"
-import { IpfsService } from "../../common"
+import { IpfsService } from "../common"
 
 export interface GetNftsByTokenIdsParams {
     tokenIds: Array<string>,

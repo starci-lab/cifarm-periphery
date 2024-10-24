@@ -9,7 +9,7 @@ import {
     _getNftsByTokenIds,
 } from "./get-nfts-by-token-ids.nft"
 import { GetNftByTokenIdParams, _getNftByTokenId } from "./get-nfts-by-token-id.nft"
-import { IpfsService } from "../../common"
+import { IpfsService } from "../common"
 
 export interface BlockchainNftBaseServiceConstructorParams {
   nftCollectionId: string;
