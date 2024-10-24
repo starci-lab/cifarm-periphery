@@ -265,8 +265,8 @@ export const _getPolkadotUniqueNetworkNftsByOwnerAddress = async ({
     for (const searchNft of searchNfts.items) {
         const promise = async () => {
             const properties: Record<string, Atomic> = {}
-            for (const property of searchNft.properties) {
-                properties[property.key] = property.value
+            for (const property of searchNft.attributes) {
+                properties[property.trait_type] = property.value
             }
             nfts.push({
                 ownerAddress: accountAddress,

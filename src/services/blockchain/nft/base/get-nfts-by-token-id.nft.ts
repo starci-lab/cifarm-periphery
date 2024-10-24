@@ -153,8 +153,8 @@ export const _getPolkadotUniqueNetworkNftByTokenId = async (
             tokenId: Number(tokenId),
         })
         const properties: Record<string, Atomic> = {}
-        for (const property of nft.properties) {
-            properties[property.key] = property.value
+        for (const property of nft.attributes) {
+            properties[property.trait_type] = property.value
         }
 
         return {
