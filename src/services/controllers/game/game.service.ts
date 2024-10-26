@@ -26,6 +26,10 @@ export class GameControllerService {
         name,
         version,
     }: CreateGameVersionRequestBody): Promise<CreateGameVersionResponse> {
+        //update all game version to inactive
+        await this.dataSource.manager.update(GameVersionEntity, {}, {
+            isActive: false,
+        })
         const { id } = await this.dataSource.manager.save(GameVersionEntity, {
             name,
             version,
