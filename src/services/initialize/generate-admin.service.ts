@@ -1,8 +1,7 @@
 import { envConfig } from "@/config"
 import { AccountEntity, Role } from "@/database"
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common"
-import { InjectRepository } from "@nestjs/typeorm"
-import { DeepPartial, Repository } from "typeorm"
+import { DataSource, DeepPartial } from "typeorm"
 import { Sha256Service } from "../base"
 
 @Injectable()
@@ -10,13 +9,12 @@ export class GenerateAdminService implements OnModuleInit {
     private readonly logger = new Logger(GenerateAdminService.name)
 
     constructor(
-    @InjectRepository(AccountEntity)
-    private readonly accountsRepository: Repository<AccountEntity>,
+    private readonly dataSource: DataSource,
     private readonly sha256Service: Sha256Service,
     ) {}
 
     async onModuleInit() {
-        const found = await this.accountsRepository.findOne({
+        const found = await this.dataSource.manager.findOne(AccountEntity, {
             where: {
                 username: envConfig().secrets.admin.username,
             }
@@ -36,12 +34,13 @@ export class GenerateAdminService implements OnModuleInit {
 
         if (!found) {
             //create
-            await this.accountsRepository.save(account)
+            await this.dataSource.manager.save(AccountEntity, account)
             this.logger.debug(`Admin account created: ${account.id}`)
         } else {
             //update
-            await this.accountsRepository.update(found.id, account)
-            this.logger.debug(`Admin account updated: ${account.id}`)
+            await this.dataSource.manager.save(AccountEntity, { ...account, id: found.id })
+            this.logger.debug(`Admin account updated: ${found.id}`)
         }
     }
 }
+ 
