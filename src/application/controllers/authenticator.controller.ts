@@ -19,14 +19,19 @@ import {
     RequestMessageResponse,
     VerifyMessageRequestBody,
     VerifyMessageResponse,
+    UpdateAccountRequestBody,
+    UpdateAccountResponse,
+    DeleteAccountRequestBody,
 } from "@/services"
 import {
     Body,
     Controller,
+    Delete,
     HttpCode,
     HttpStatus,
     Logger,
     Post,
+    Put,
     UseGuards,
 } from "@nestjs/common"
 import { ApiBearerAuth, ApiResponse, ApiTags } from "@nestjs/swagger"
@@ -41,14 +46,14 @@ export class AuthenticatorController {
 
   //@UseGuards(DebugGuard)
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ type: VerifyMessageResponse, status: 200 })
+  @ApiResponse({ type: VerifyMessageResponse })
   @Post("verify-message")
     public async verifyMessage(@Body() body: VerifyMessageRequestBody) {
         return await this.authenticatorService.verifyMessage(body)
     }
 
-  @HttpCode(HttpStatus.OK)
-  @ApiResponse({ type: RequestMessageResponse, status: 201 })
+  @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({ type: RequestMessageResponse })
   @Post("request-message")
   public async requestMessage() {
       return await this.authenticatorService.requestMessage()
@@ -56,7 +61,7 @@ export class AuthenticatorController {
 
   //temp keep for development
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ type: GetFakeSignatureResponse, status: 200 })
+  @ApiResponse({ type: GetFakeSignatureResponse })
   @Post("fake-signature")
   public async getFakeSignature(@Body() body: GetFakeSignatureRequestBody) {
       return await this.authenticatorService.getFakeSignature(body)
@@ -64,7 +69,7 @@ export class AuthenticatorController {
 
   @UseGuards(TelegramAuthorizationGuard)
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ type: AuthorizeTelegramResponse, status: 200 })
+  @ApiResponse({ type: AuthorizeTelegramResponse })
   @Post("authorize-telegram")
   public async authorizeTelegram(
     @TelegramData() telegramData: TelegramDataType,
@@ -75,7 +80,7 @@ export class AuthenticatorController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ type: SignInResponse, status: 200 })
+  @ApiResponse({ type: SignInResponse })
   @Post("sign-in")
   public async signIn(@Body() body: SignInRequestBody) {
       return await this.authenticatorService.signIn(body)
@@ -84,10 +89,30 @@ export class AuthenticatorController {
   @Roles([Role.Admin])
   @ApiBearerAuth()
   @UseGuards(RestJwtAuthGuard, RolesGuard)
-  @HttpCode(HttpStatus.OK)
-  @ApiResponse({ type: CreateAccountResponse, status: 200 })
+  @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({ type: CreateAccountResponse })
   @Post("account")
   public async create(@Body() body: CreateAccountRequestBody) {
       return await this.authenticatorService.createAccount(body)
+  }
+
+  @Roles([Role.Admin])
+  @ApiBearerAuth()
+  @UseGuards(RestJwtAuthGuard, RolesGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ type: UpdateAccountResponse })
+  @Put("account")
+  public async update(@Body() body: UpdateAccountRequestBody) {
+      return await this.authenticatorService.updateAccount(body)
+  }
+
+  @Roles([Role.Admin])
+  @ApiBearerAuth()
+  @UseGuards(RestJwtAuthGuard, RolesGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ type: DeleteAccountRequestBody })
+  @Delete("account")
+  public async delete(@Body() body: DeleteAccountRequestBody) {
+      return await this.authenticatorService.deleteAccount(body)
   }
 }

@@ -1,4 +1,9 @@
-import { Inject, Injectable, Logger } from "@nestjs/common"
+import {
+    Inject,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
+} from "@nestjs/common"
 import {
     GetFakeSignatureResponse,
     GetFakeSignatureRequestBody,
@@ -18,6 +23,12 @@ import {
     CreateAccountRequestBody,
     CREATE_ACCOUNT_RESPONSE_SUCCESS_MESSAGE,
     CreateAccountResponse,
+    UpdateAccountRequestBody,
+    UpdateAccountResponse,
+    UPDATE_ACCOUNT_RESPONSE_SUCCESS_MESSAGE,
+    DeleteAccountRequestBody,
+    DeleteAccountResponse,
+    DELETE_ACCOUNT_RESPONSE_SUCCESS_MESSAGE,
 } from "./dtos"
 import { randomUUID } from "crypto"
 import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager"
@@ -42,9 +53,8 @@ import {
     PolkadotAuthService,
 } from "../../blockchain"
 import { Sha256Service } from "@/services/base"
-import { InjectRepository } from "@nestjs/typeorm"
-import { Account, AccountEntity, UserEntity } from "@/database"
-import { Repository } from "typeorm"
+import { Account, AccountEntity, RoleEntity, UserEntity } from "@/database"
+import { DataSource, In } from "typeorm"
 import { encode } from "bs58"
 import { defaultBotType } from "@/guards"
 import { JwtService } from "@nestjs/jwt"
@@ -64,11 +74,7 @@ export class AuthenticatorControllerService {
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache,
 
-    @InjectRepository(UserEntity)
-    private readonly usersRepository: Repository<UserEntity>,
-
-    @InjectRepository(AccountEntity)
-    private readonly accountsRepository: Repository<AccountEntity>,
+    private readonly dataSource: DataSource,
 
     private readonly jwtService: JwtService,
     ) {}
@@ -289,13 +295,13 @@ export class AuthenticatorControllerService {
     public async authorizeTelegram({
         telegramData,
     }: AuthorizeTelegramContext): Promise<AuthorizeTelegramResponse> {
-        const user = await this.usersRepository.findOne({
+        const user = await this.dataSource.manager.findOne(UserEntity, {
             where: {
                 telegramId: telegramData.userId.toString(),
             },
         })
         if (!user) {
-            await this.usersRepository.save({
+            await this.dataSource.manager.save(UserEntity, {
                 telegramId: telegramData.userId.toString(),
                 username: telegramData.username,
             })
@@ -314,7 +320,7 @@ export class AuthenticatorControllerService {
         username,
     }: SignInRequestBody): Promise<SignInResponse> {
         const hashedPassword = this.sha256Service.hash(password)
-        const account = await this.accountsRepository.findOne({
+        const account = await this.dataSource.manager.findOne(AccountEntity, {
             where: {
                 username,
                 hashedPassword,
@@ -346,9 +352,9 @@ export class AuthenticatorControllerService {
         password,
         roles,
         username,
-    }: CreateAccountRequestBody) : Promise<CreateAccountResponse> {
+    }: CreateAccountRequestBody): Promise<CreateAccountResponse> {
         const hashedPassword = this.sha256Service.hash(password)
-        const { id } = await this.accountsRepository.save({
+        const { id } = await this.dataSource.manager.save(AccountEntity, {
             username,
             hashedPassword,
             roles: roles.map((role) => ({
@@ -360,6 +366,70 @@ export class AuthenticatorControllerService {
                 id,
             },
             message: CREATE_ACCOUNT_RESPONSE_SUCCESS_MESSAGE,
+        }
+    }
+
+    public async updateAccount({
+        password,
+        roles,
+        username,
+        id,
+    }: UpdateAccountRequestBody): Promise<UpdateAccountResponse> {
+        const foundRoles = await this.dataSource.manager.find(RoleEntity, {
+            where: {
+                accountId: id,
+            },
+        })
+
+        const rolesToDelete = foundRoles.filter(
+            (role) => !roles.includes(role.role),
+        )
+
+        const rolesToAdd = roles.filter(
+            (role) => !foundRoles.map((role) => role.role).includes(role),
+        )
+
+        const queryRunner = this.dataSource.createQueryRunner()
+        await queryRunner.connect()
+        await queryRunner.startTransaction()
+        try {
+            //delete roles
+            await queryRunner.manager.delete(RoleEntity, {
+                accountId: id,
+                role: In(rolesToDelete.map((role) => role.role)),
+            })
+
+            //add roles
+            await queryRunner.manager.save(
+                RoleEntity,
+                rolesToAdd.map((role) => ({
+                    accountId: id,
+                    role,
+                })),
+            )
+
+            //update account
+            const hashedPassword = this.sha256Service.hash(password)
+            await this.dataSource.manager.update(AccountEntity, id, {
+                username,
+                hashedPassword,
+            })
+            return {
+                message: UPDATE_ACCOUNT_RESPONSE_SUCCESS_MESSAGE,
+            }
+        } catch (ex) {
+            this.logger.error(ex)
+            await queryRunner.rollbackTransaction()
+            throw new InternalServerErrorException(ex)
+        }
+    }
+
+    public async deleteAccount({
+        id,
+    }: DeleteAccountRequestBody): Promise<DeleteAccountResponse> {
+        await this.dataSource.manager.delete(AccountEntity, id)
+        return {
+            message: DELETE_ACCOUNT_RESPONSE_SUCCESS_MESSAGE,
         }
     }
 }

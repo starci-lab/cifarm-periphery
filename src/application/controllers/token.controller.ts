@@ -22,7 +22,7 @@ export class TokenController {
     ) {}
 
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ type: MintResponse, status: 201 })
+  @ApiResponse({ type: MintResponse })
   @Post("mint")
     public async verifyMessage(@Body() body: MintRequestBody) {
         return await this.tokenService.mint(body)

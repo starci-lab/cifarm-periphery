@@ -14,10 +14,9 @@ export class GenerateAdminService implements OnModuleInit {
     ) {}
 
     async onModuleInit() {
-        const found = await this.dataSource.manager.findOne(AccountEntity, {
-            where: {
-                username: envConfig().secrets.admin.username,
-            }
+        //try remove admin account if exists
+        await this.dataSource.manager.delete(AccountEntity, {
+            username: envConfig().secrets.admin.username,
         })
 
         const account: DeepPartial<AccountEntity> = {
@@ -31,16 +30,8 @@ export class GenerateAdminService implements OnModuleInit {
                 }
             ]
         }
-
-        if (!found) {
-            //create
-            await this.dataSource.manager.save(AccountEntity, account)
-            this.logger.debug(`Admin account created: ${account.id}`)
-        } else {
-            //update
-            await this.dataSource.manager.save(AccountEntity, { ...account, id: found.id })
-            this.logger.debug(`Admin account updated: ${found.id}`)
-        }
+        await this.dataSource.manager.save(AccountEntity, account)
+        this.logger.debug(`Admin account created: ${account.id}`)
     }
 }
  
