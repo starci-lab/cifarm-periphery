@@ -4,8 +4,8 @@ import { DataSource } from "typeorm"
 import {
     CreateGameVersionRequestBody,
     CreateGameVersionResponse,
-} from "./dtos/create-game-version.dto"
-import { CREATE_ACCOUNT_RESPONSE_SUCCESS_MESSAGE } from "../authenticator"
+    CREATE_GAME_VERSION_SUCCESS_MESSAGE
+} from "./dtos"
 
 @Injectable()
 export class GameControllerService {
@@ -32,7 +32,7 @@ export class GameControllerService {
             description,
         })
         return {
-            message: CREATE_ACCOUNT_RESPONSE_SUCCESS_MESSAGE,
+            message: CREATE_GAME_VERSION_SUCCESS_MESSAGE,
             data: {
                 id,
             },
