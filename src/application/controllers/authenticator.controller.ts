@@ -1,10 +1,12 @@
 import { TelegramData } from "@/decorators"
-import { TelegramAuthorizationGuard, TelegramData as TelegramDataType } from "@/guards"
+import { RestJwtAuthGuard, TelegramAuthorizationGuard, TelegramData as TelegramDataType } from "@/guards"
 import {
     AuthenticatorControllerService,
     AuthorizeTelegramResponse,
     GetFakeSignatureRequestBody,
     GetFakeSignatureResponse,
+    SignInRequestBody,
+    SignInResponse,
 } from "@/services"
 import {
     RequestMessageResponse,
@@ -61,5 +63,13 @@ export class AuthenticatorController {
       return await this.authenticatorService.authorizeTelegram({
           telegramData,
       })
+  }
+
+  @UseGuards(RestJwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ type: SignInResponse, status: 200 })
+  @Post("sign-in")
+  public async signIn(@Body() body: SignInRequestBody) {
+      return await this.authenticatorService.signIn(body)
   }
 }

@@ -61,6 +61,14 @@ export const envConfig = () => ({
                 cifarm: process.env.TELEGRAM_CIFARM_BOT_TOKEN
             },
             mockAuthorization: process.env.TELEGRAM_MOCK_AUTHORIZATION
+        },
+        jwt: {
+            secret: process.env.JWT_SECRET,
+            expiresIn: process.env.JWT_EXPIRES_IN
+        },
+        admin: {
+            username: process.env.ADMIN_USERNAME,
+            password: process.env.ADMIN_PASSWORD
         }
     }
 }) 

@@ -3,7 +3,7 @@ import { BlockchainModule } from "./blockchain"
 import { ResolversModule } from "./resolvers"
 import { ControllersModule } from "./controllers"
 import { BaseModule } from "./base"
-import { InitModule } from "./init"
+import { InitializeModule } from "./initialize"
 
 @Module({
     imports: [
@@ -11,7 +11,7 @@ import { InitModule } from "./init"
         BlockchainModule,
         ResolversModule,
         ControllersModule,
-        InitModule,
+        InitializeModule,
     ],
 })
 export class ServicesModule {}

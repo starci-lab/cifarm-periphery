@@ -18,6 +18,29 @@ type GetNftsByTokenIdsResponse {
   records: [NftDataResponse!]!
 }
 
+type RoleEntity {
+  id: ID!
+  role: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  accountId: ID!
+  account: AccountEntity!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type AccountEntity {
+  id: ID!
+  username: String!
+  hashedPassword: String!
+  roles: [RoleEntity!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Query {
   nftsByOwnerAddress(args: GetNftsByOwnerAddressArgs!): GetNftsByOwnerAddressResponse!
   nftsByTokenIds(args: GetNftsByTokenIdsArgs!): GetNftsByTokenIdsResponse!

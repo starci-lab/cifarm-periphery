@@ -1,11 +1,13 @@
 import { Global, Module } from "@nestjs/common"
 import { EnvDebugService } from "./env-debug.service"
+import { GenerateAdminService } from "./generate-admin.service"
 
 @Global()
 @Module({
     imports: [],
     providers: [
-        EnvDebugService
+        EnvDebugService,
+        GenerateAdminService
     ],
 })
-export class InitModule {}
+export class InitializeModule {}

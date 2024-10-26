@@ -3,13 +3,13 @@ import { AuthenticatorControllerService } from "./authenticator"
 import { PackagesControllerService } from "./packages"
 import { TokenControllerService } from "./token"
 import { TypeOrmModule } from "@nestjs/typeorm"
-import { UsersEntity } from "@/database"
+import { UserEntity } from "@/database"
 
 @Global()
 @Module({
     imports: [
         TypeOrmModule.forFeature([
-            UsersEntity
+            UserEntity
         ])
     ],
     providers: [

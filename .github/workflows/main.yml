@@ -46,5 +46,11 @@ jobs:
         POSTGRES_1_USER: ${{secrets.POSTGRES_1_USER}}
         POSTGRES_1_PASS: ${{secrets.POSTGRES_1_PASS}}
 
+        JWT_SECRET: ${{secrets.JWT_SECRET}}
+        JWT_EXPIRES_IN: ${{secrets.JWT_EXPIRES_IN}}
+
+        ADMIN_USERNAME: ${{secrets.ADMIN_USERNAME}}
+        ADMIN_PASSWORD: ${{secrets.ADMIN_PASSWORD}}
+
       run: docker compose -f .docker/production.yaml -p cifarm-api up --build -d 
   

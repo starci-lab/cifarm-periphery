@@ -12,6 +12,9 @@ import {
     AuthorizeTelegramContext,
     AuthorizeTelegramResponse,
     AUTHORIZE_TELEGRAM_RESPONSE_SUCCESS_MESSAGE,
+    SignInRequestBody,
+    SignInResponse,
+    SIGN_IN_RESPONSE_SUCCESS_MESSAGE,
 } from "./dtos"
 import { randomUUID } from "crypto"
 import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager"
@@ -36,10 +39,11 @@ import {
 } from "../../blockchain"
 import { Sha256Service } from "@/services/base"
 import { InjectRepository } from "@nestjs/typeorm"
-import { UsersEntity } from "@/database"
+import { AccountEntity, UserEntity } from "@/database"
 import { Repository } from "typeorm"
 import { encode } from "bs58"
 import { defaultBotType } from "@/guards"
+import { JwtService } from "@nestjs/jwt"
 
 @Injectable()
 export class AuthenticatorControllerService {
@@ -52,12 +56,17 @@ export class AuthenticatorControllerService {
     private readonly sha256Service: Sha256Service,
     private readonly algorandAuthService: AlgorandAuthService,
     private readonly polkadotAuthService: PolkadotAuthService,
-
+    
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache,
 
-    @InjectRepository(UsersEntity)
-    private readonly usersRepository: Repository<UsersEntity>,
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>,
+
+    @InjectRepository(AccountEntity)
+    private readonly accountsRepository: Repository<AccountEntity>,
+    
+    private readonly jwtService: JwtService
     ) {}
 
     public async requestMessage(): Promise<RequestMessageResponse> {
@@ -282,11 +291,10 @@ export class AuthenticatorControllerService {
             },
         })
         if (!user) {
-            const x = await this.usersRepository.save({
+            await this.usersRepository.save({
                 telegramId: telegramData.userId.toString(),
                 username: telegramData.username,
             })
-            console.log(x)
         }
 
         return {
@@ -294,6 +302,26 @@ export class AuthenticatorControllerService {
                 telegramData,
             },
             message: AUTHORIZE_TELEGRAM_RESPONSE_SUCCESS_MESSAGE,
+        }
+    }
+
+    public async signIn({ password, username }: SignInRequestBody): Promise<SignInResponse> {
+        const hashedPassword = this.sha256Service.hash(password)
+        const account = await this.accountsRepository.findOne({
+            where: {
+                username,
+                hashedPassword,
+            },
+        })
+        const jwtToken = this.jwtService.sign(account, {
+            expiresIn: envConfig().secrets.jwt.expiresIn,
+            secret: envConfig().secrets.jwt.secret,
+        })
+        return {
+            data: {
+                jwtToken,
+            },
+            message: SIGN_IN_RESPONSE_SUCCESS_MESSAGE,
         }
     }
 }

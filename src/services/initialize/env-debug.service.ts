@@ -10,6 +10,10 @@ export class EnvDebugService implements OnModuleInit {
         this.logger.debug(`TELEGRAM_CIWALLET_BOT_TOKEN: ${envConfig().secrets.telegram.botTokens.ciwallet}`)
         this.logger.debug(`TELEGRAM_MOCK_AUTHORIZATION: ${envConfig().secrets.telegram.mockAuthorization}`)
         this.logger.debug(`SALT: ${envConfig().secrets.salt}`)
+        this.logger.debug(`JWT_SECRET: ${envConfig().secrets.jwt.secret}`)
+        this.logger.debug(`JWT_EXPIRES_IN: ${envConfig().secrets.jwt.expiresIn}`)
+        this.logger.debug(`ADMIN_USERNAME: ${envConfig().secrets.admin.username}`)
+        this.logger.debug(`ADMIN_PASSWORD: ${envConfig().secrets.admin.password}`)
         // database
     }
 }
