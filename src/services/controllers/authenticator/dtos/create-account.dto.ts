@@ -1,7 +1,7 @@
 import { Role } from "@/database"
 import { HttpResponse } from "@/utils"
 import { ApiProperty } from "@nestjs/swagger"
-import { IsNotEmpty, IsString } from "class-validator"
+import { IsNotEmpty, IsString, IsUUID } from "class-validator"
 
 export class CreateAccountRequestBody {
   @ApiProperty({ example: "starci" })
@@ -13,17 +13,26 @@ export class CreateAccountRequestBody {
 }
 
 export class CreateAccountResponseData {
+  @IsUUID("4")
   @ApiProperty({
-      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWYzZjQ",
+      example: "cf207412-86ea-45b3-87ef-71f6d7764ca4",
   })
-      jwtToken: string
+      id: string
 }
 
 export const CREATE_ACCOUNT_RESPONSE_SUCCESS_MESSAGE =
   "Account created successfully"
-export class CreateAccountResponse implements HttpResponse {
+export class CreateAccountResponse
+implements HttpResponse<CreateAccountResponseData>
+{
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ example: CREATE_ACCOUNT_RESPONSE_SUCCESS_MESSAGE })
       message: string
+  @ApiProperty({
+      example: {
+          id: "cf207412-86ea-45b3-87ef-71f6d7764ca4",
+      },
+  })
+      data?: CreateAccountResponseData
 }

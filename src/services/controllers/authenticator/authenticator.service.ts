@@ -15,6 +15,9 @@ import {
     SignInRequestBody,
     SignInResponse,
     SIGN_IN_RESPONSE_SUCCESS_MESSAGE,
+    CreateAccountRequestBody,
+    CREATE_ACCOUNT_RESPONSE_SUCCESS_MESSAGE,
+    CreateAccountResponse,
 } from "./dtos"
 import { randomUUID } from "crypto"
 import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager"
@@ -40,7 +43,7 @@ import {
 } from "../../blockchain"
 import { Sha256Service } from "@/services/base"
 import { InjectRepository } from "@nestjs/typeorm"
-import { AccountEntity, UserEntity } from "@/database"
+import { AccountEntity, Role, UserEntity } from "@/database"
 import { Repository } from "typeorm"
 import { encode } from "bs58"
 import { defaultBotType } from "@/guards"
@@ -57,7 +60,7 @@ export class AuthenticatorControllerService {
     private readonly sha256Service: Sha256Service,
     private readonly algorandAuthService: AlgorandAuthService,
     private readonly polkadotAuthService: PolkadotAuthService,
-    
+
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache,
 
@@ -66,8 +69,8 @@ export class AuthenticatorControllerService {
 
     @InjectRepository(AccountEntity)
     private readonly accountsRepository: Repository<AccountEntity>,
-    
-    private readonly jwtService: JwtService
+
+    private readonly jwtService: JwtService,
     ) {}
 
     public async requestMessage(): Promise<RequestMessageResponse> {
@@ -306,18 +309,28 @@ export class AuthenticatorControllerService {
         }
     }
 
-    public async signIn({ password, username }: SignInRequestBody): Promise<SignInResponse> {
+    public async signIn({
+        password,
+        username,
+    }: SignInRequestBody): Promise<SignInResponse> {
         const hashedPassword = this.sha256Service.hash(password)
         const account = await this.accountsRepository.findOne({
             where: {
                 username,
                 hashedPassword,
             },
+            relations: {
+                roles: true,
+            },
         })
+        const accountWithRoles: AccountWithRoles = {
+            ...account.toPlain<Omit<AccountEntity, "roles">>(),
+            roles: account.roles.map((role) => role.role),
+        }
         if (!account) {
             throw new AccountNotFoundException()
         }
-        const jwtToken = this.jwtService.sign(account.toDto(AccountEntity).toPlain(), {
+        const jwtToken = this.jwtService.sign(accountWithRoles, {
             expiresIn: envConfig().secrets.jwt.expiresIn,
             secret: envConfig().secrets.jwt.secret,
         })
@@ -328,4 +341,29 @@ export class AuthenticatorControllerService {
             message: SIGN_IN_RESPONSE_SUCCESS_MESSAGE,
         }
     }
+
+    public async createAccount({
+        password,
+        roles,
+        username,
+    }: CreateAccountRequestBody) : Promise<CreateAccountResponse> {
+        const hashedPassword = this.sha256Service.hash(password)
+        const { id } = await this.accountsRepository.save({
+            username,
+            hashedPassword,
+            roles: roles.map((role) => ({
+                role,
+            })),
+        })
+        return {
+            data: {
+                id,
+            },
+            message: CREATE_ACCOUNT_RESPONSE_SUCCESS_MESSAGE,
+        }
+    }
 }
+
+export type AccountWithRoles = Omit<AccountEntity, "roles"> & {
+  roles: Array<Role>;
+};

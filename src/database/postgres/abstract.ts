@@ -26,7 +26,7 @@ export abstract class AbstractEntity {
         return plainToInstance(dtoClass, this)
     }
 
-    toPlain(): object {
-        return instanceToPlain (this)
+    toPlain<Plain>(): Plain {
+        return instanceToPlain(this) as Plain
     }
 }
