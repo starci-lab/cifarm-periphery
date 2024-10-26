@@ -92,7 +92,7 @@ export class AuthenticatorController {
   @HttpCode(HttpStatus.CREATED)
   @ApiResponse({ type: CreateAccountResponse })
   @Post("account")
-  public async create(@Body() body: CreateAccountRequestBody) {
+  public async createAccount(@Body() body: CreateAccountRequestBody) {
       return await this.authenticatorService.createAccount(body)
   }
 
@@ -102,7 +102,7 @@ export class AuthenticatorController {
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ type: UpdateAccountResponse })
   @Put("account")
-  public async update(@Body() body: UpdateAccountRequestBody) {
+  public async updateAccount(@Body() body: UpdateAccountRequestBody) {
       return await this.authenticatorService.updateAccount(body)
   }
 
@@ -112,7 +112,7 @@ export class AuthenticatorController {
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ type: DeleteAccountRequestBody })
   @Delete("account")
-  public async delete(@Body() body: DeleteAccountRequestBody) {
+  public async deleteAccount(@Body() body: DeleteAccountRequestBody) {
       return await this.authenticatorService.deleteAccount(body)
   }
 }

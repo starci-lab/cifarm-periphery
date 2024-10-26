@@ -5,6 +5,7 @@ import { TokenControllerService } from "./token"
 import { TypeOrmModule } from "@nestjs/typeorm"
 import { AccountEntity, RoleEntity, UserEntity } from "@/database"
 import { JwtStrategy } from "@/strategies"
+import { GameControllerService } from "./game"
 
 @Global()
 @Module({
@@ -19,12 +20,14 @@ import { JwtStrategy } from "@/strategies"
         AuthenticatorControllerService,
         PackagesControllerService,
         TokenControllerService,
+        GameControllerService,
         JwtStrategy
     ],
     exports: [
         AuthenticatorControllerService,
         PackagesControllerService,
-        TokenControllerService
+        TokenControllerService,
+        GameControllerService
     ],
 })
 export class ControllersModule {}

@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common"
 import { AuthenticatorController } from "./authenticator.controller"
 import { PackagesController } from "./packages.controller"
 import { TokenController } from "./token.controller"
+import { GameControllerService } from "@/services"
 
 @Module({
     imports: [
@@ -9,7 +10,8 @@ import { TokenController } from "./token.controller"
     controllers: [
         AuthenticatorController,
         PackagesController,
-        TokenController
+        TokenController,
+        GameControllerService
     ],
 })
 export class ControllersModule {}
