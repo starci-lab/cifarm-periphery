@@ -5,3 +5,12 @@ export class AccountNotFoundException extends HttpException {
         super("Account not found", HttpStatus.NOT_FOUND)
     }
 }
+
+export class NotHavePermissionException extends HttpException {
+    constructor(userRoles: Array<string>, requiredRoles: Array<string>) {
+        super(
+            `You do not have permission. User roles: ${userRoles.join(", ")}, required roles: ${requiredRoles.join(", ")}`,
+            HttpStatus.FORBIDDEN,
+        )
+    }
+}

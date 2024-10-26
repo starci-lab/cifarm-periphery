@@ -43,7 +43,7 @@ import {
 } from "../../blockchain"
 import { Sha256Service } from "@/services/base"
 import { InjectRepository } from "@nestjs/typeorm"
-import { AccountEntity, Role, UserEntity } from "@/database"
+import { Account, AccountEntity, UserEntity } from "@/database"
 import { Repository } from "typeorm"
 import { encode } from "bs58"
 import { defaultBotType } from "@/guards"
@@ -323,14 +323,14 @@ export class AuthenticatorControllerService {
                 roles: true,
             },
         })
-        const accountWithRoles: AccountWithRoles = {
+        const flatAccount: Account = {
             ...account.toPlain<Omit<AccountEntity, "roles">>(),
             roles: account.roles.map((role) => role.role),
         }
         if (!account) {
             throw new AccountNotFoundException()
         }
-        const jwtToken = this.jwtService.sign(accountWithRoles, {
+        const jwtToken = this.jwtService.sign(flatAccount, {
             expiresIn: envConfig().secrets.jwt.expiresIn,
             secret: envConfig().secrets.jwt.secret,
         })
@@ -363,7 +363,3 @@ export class AuthenticatorControllerService {
         }
     }
 }
-
-export type AccountWithRoles = Omit<AccountEntity, "roles"> & {
-  roles: Array<Role>;
-};

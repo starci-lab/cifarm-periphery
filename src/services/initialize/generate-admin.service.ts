@@ -1,8 +1,8 @@
 import { envConfig } from "@/config"
-import { AccountEntity } from "@/database"
+import { AccountEntity, Role } from "@/database"
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
-import { Repository } from "typeorm"
+import { DeepPartial, Repository } from "typeorm"
 import { Sha256Service } from "../base"
 
 @Injectable()
@@ -16,13 +16,32 @@ export class GenerateAdminService implements OnModuleInit {
     ) {}
 
     async onModuleInit() {
-        const account: Partial<AccountEntity> = {
+        const found = await this.accountsRepository.findOne({
+            where: {
+                username: envConfig().secrets.admin.username,
+            }
+        })
+
+        const account: DeepPartial<AccountEntity> = {
             username: envConfig().secrets.admin.username,
             hashedPassword: this.sha256Service.hash(
                 envConfig().secrets.admin.password,
             ),
+            roles: [
+                {
+                    role: Role.Admin,
+                }
+            ]
         }
-        await this.accountsRepository.upsert(account, ["username"])
-        this.logger.debug(`Admin account: ${account.id}`)
+
+        if (!found) {
+            //create
+            await this.accountsRepository.save(account)
+            this.logger.debug(`Admin account created: ${account.id}`)
+        } else {
+            //update
+            await this.accountsRepository.update(found.id, account)
+            this.logger.debug(`Admin account updated: ${account.id}`)
+        }
     }
 }

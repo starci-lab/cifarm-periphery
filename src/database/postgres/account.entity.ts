@@ -1,10 +1,6 @@
 import { Field, ObjectType } from "@nestjs/graphql"
-import {
-    Column,
-    Entity,
-    OneToMany,
-} from "typeorm"
-import { RoleEntity } from "./role.entity"
+import { Column, Entity, OneToMany } from "typeorm"
+import { Role, RoleEntity } from "./role.entity"
 import { AbstractEntity } from "./abstract"
 import { Exclude } from "class-transformer"
 
@@ -21,6 +17,12 @@ export class AccountEntity extends AbstractEntity {
       hashedPassword: string
 
   @Field(() => [RoleEntity], { nullable: true })
-  @OneToMany(() => RoleEntity, (role) => role.account)
+  @OneToMany(() => RoleEntity, (role) => role.account, {
+      cascade: true,
+  })
       roles: Array<RoleEntity>
 }
+
+export type Account = Omit<AccountEntity, "roles"> & {
+  roles: Array<Role>;
+};

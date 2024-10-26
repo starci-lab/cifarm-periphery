@@ -1,5 +1,12 @@
+import { Role } from "@/database"
 import { TelegramData } from "@/decorators"
-import { RestJwtAuthGuard, TelegramAuthorizationGuard, TelegramData as TelegramDataType } from "@/guards"
+import { Roles } from "@/decorators"
+import {
+    RestJwtAuthGuard,
+    TelegramAuthorizationGuard,
+    TelegramData as TelegramDataType,
+} from "@/guards"
+import { RolesGuard } from "@/guards/roles.guard"
 import {
     AuthenticatorControllerService,
     AuthorizeTelegramResponse,
@@ -9,8 +16,6 @@ import {
     GetFakeSignatureResponse,
     SignInRequestBody,
     SignInResponse,
-} from "@/services"
-import {
     RequestMessageResponse,
     VerifyMessageRequestBody,
     VerifyMessageResponse,
@@ -24,7 +29,7 @@ import {
     Post,
     UseGuards,
 } from "@nestjs/common"
-import { ApiResponse, ApiTags } from "@nestjs/swagger"
+import { ApiBearerAuth, ApiResponse, ApiTags } from "@nestjs/swagger"
 
 @ApiTags("Authenticator")
 @Controller("api/v1/authenticator")
@@ -33,7 +38,7 @@ export class AuthenticatorController {
     constructor(
     private readonly authenticatorService: AuthenticatorControllerService,
     ) {}
-  
+
   //@UseGuards(DebugGuard)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ type: VerifyMessageResponse, status: 200 })
@@ -61,7 +66,9 @@ export class AuthenticatorController {
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ type: AuthorizeTelegramResponse, status: 200 })
   @Post("authorize-telegram")
-  public async authorizeTelegram(@TelegramData() telegramData: TelegramDataType) {
+  public async authorizeTelegram(
+    @TelegramData() telegramData: TelegramDataType,
+  ) {
       return await this.authenticatorService.authorizeTelegram({
           telegramData,
       })
@@ -74,7 +81,9 @@ export class AuthenticatorController {
       return await this.authenticatorService.signIn(body)
   }
 
-  @UseGuards(RestJwtAuthGuard)
+  @Roles([Role.Admin])
+  @ApiBearerAuth()
+  @UseGuards(RestJwtAuthGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ type: CreateAccountResponse, status: 200 })
   @Post("account")
