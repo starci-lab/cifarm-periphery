@@ -1,14 +1,12 @@
 import { ObjectType, Field, ID } from "@nestjs/graphql"
 import {
     Entity,
-    PrimaryGeneratedColumn,
     Column,
-    CreateDateColumn,
-    UpdateDateColumn,
     JoinColumn,
     ManyToOne,
 } from "typeorm"
 import { AccountEntity } from "./account.entity"
+import { AbstractEntity } from "./abstract"
 
 export enum Role {
   //admin is the highest role
@@ -29,22 +27,10 @@ export enum Role {
 
 @ObjectType()
 @Entity("roles")
-export class RoleEntity {
-  @Field(() => ID)
-  @PrimaryGeneratedColumn("uuid")
-      id: string
-
+export class RoleEntity extends AbstractEntity {
   @Field(() => String)
   @Column({ name: "username", type: "enum", enum: Role })
       role: Role
-
-  @CreateDateColumn({ name: "created_at" })
-  @Field(() => Date)
-      createdAt: Date
-
-  @UpdateDateColumn({ name: "updated_at" })
-  @Field(() => Date)
-      updatedAt: Date
 
   @Field(() => ID)
   @Column({ type: "uuid", name: "account_id" })

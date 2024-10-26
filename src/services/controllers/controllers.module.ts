@@ -3,19 +3,23 @@ import { AuthenticatorControllerService } from "./authenticator"
 import { PackagesControllerService } from "./packages"
 import { TokenControllerService } from "./token"
 import { TypeOrmModule } from "@nestjs/typeorm"
-import { UserEntity } from "@/database"
+import { AccountEntity, RoleEntity, UserEntity } from "@/database"
+import { JwtStrategy } from "@/strategies"
 
 @Global()
 @Module({
     imports: [
         TypeOrmModule.forFeature([
-            UserEntity
+            UserEntity,
+            AccountEntity,
+            RoleEntity
         ])
     ],
     providers: [
         AuthenticatorControllerService,
         PackagesControllerService,
-        TokenControllerService
+        TokenControllerService,
+        JwtStrategy
     ],
     exports: [
         AuthenticatorControllerService,

@@ -19,6 +19,7 @@ import {
 import { randomUUID } from "crypto"
 import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager"
 import {
+    AccountNotFoundException,
     CacheNotFound,
     ChainKeyNotFoundException,
     InvalidSignatureException,
@@ -313,7 +314,10 @@ export class AuthenticatorControllerService {
                 hashedPassword,
             },
         })
-        const jwtToken = this.jwtService.sign(account, {
+        if (!account) {
+            throw new AccountNotFoundException()
+        }
+        const jwtToken = this.jwtService.sign(account.toDto(AccountEntity).toPlain(), {
             expiresIn: envConfig().secrets.jwt.expiresIn,
             secret: envConfig().secrets.jwt.secret,
         })

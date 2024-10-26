@@ -1,5 +1,5 @@
 import { TelegramData } from "@/decorators"
-import { RestJwtAuthGuard, TelegramAuthorizationGuard, TelegramData as TelegramDataType } from "@/guards"
+import { TelegramAuthorizationGuard, TelegramData as TelegramDataType } from "@/guards"
 import {
     AuthenticatorControllerService,
     AuthorizeTelegramResponse,
@@ -65,7 +65,6 @@ export class AuthenticatorController {
       })
   }
 
-  @UseGuards(RestJwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ type: SignInResponse, status: 200 })
   @Post("sign-in")
