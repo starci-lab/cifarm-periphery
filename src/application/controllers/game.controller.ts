@@ -1,4 +1,4 @@
-import { GameVersion, Role } from "@/database"
+import { GameVersionEntity, Role } from "@/database"
 import { Roles } from "@/decorators"
 import {
     RestJwtAuthGuard,
@@ -28,7 +28,7 @@ export class GameController {
     constructor(private readonly gameService: GameControllerService) {}
 
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ type: GameVersion })
+  @ApiResponse({ type: GameVersionEntity })
   @Get("version")
     public async delete() {
         return await this.gameService.getActiveGameVersion()

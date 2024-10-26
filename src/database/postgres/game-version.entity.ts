@@ -4,7 +4,7 @@ import { AbstractEntity } from "./abstract"
 
 @ObjectType()
 @Entity("game-version")
-export class GameVersion extends AbstractEntity {
+export class GameVersionEntity extends AbstractEntity {
   @Field(() => String)
   @Column({ name: "version", type: "varchar", length: 200, unique: true })
       version: string

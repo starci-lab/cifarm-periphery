@@ -1,4 +1,4 @@
-import { GameVersion } from "@/database"
+import { GameVersionEntity } from "@/database"
 import { Injectable, Logger } from "@nestjs/common"
 import { DataSource } from "typeorm"
 import {
@@ -13,8 +13,8 @@ export class GameControllerService {
 
     constructor(private readonly dataSource: DataSource) {}
 
-    public async getActiveGameVersion(): Promise<GameVersion> {
-        return await this.dataSource.manager.findOne(GameVersion, {
+    public async getActiveGameVersion(): Promise<GameVersionEntity> {
+        return await this.dataSource.manager.findOne(GameVersionEntity, {
             where: {
                 isActive: true,
             },
@@ -26,7 +26,7 @@ export class GameControllerService {
         name,
         version,
     }: CreateGameVersionRequestBody): Promise<CreateGameVersionResponse> {
-        const { id } = await this.dataSource.manager.save(GameVersion, {
+        const { id } = await this.dataSource.manager.save(GameVersionEntity, {
             name,
             version,
             description,
