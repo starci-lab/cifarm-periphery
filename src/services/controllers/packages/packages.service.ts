@@ -34,7 +34,7 @@ export class PackagesControllerService {
         const partAtOne = parts.at(1)
         const end = partAtOne ? Number.parseInt(partAtOne, 10) : totalBytes - 1
         const chunksize = end - start + 1
-        console.log(end)
+
         response.setHeader("Content-Range", `bytes ${start}-${end}/${totalBytes}`)
         response.setHeader("Accept-Ranges", "bytes")
 
