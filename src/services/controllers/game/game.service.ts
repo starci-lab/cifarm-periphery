@@ -1,11 +1,12 @@
-import { GameVersionEntity } from "@/database"
-import { Injectable, Logger } from "@nestjs/common"
+import { GameVersionEntity, PostgresErrorCode } from "@/database"
+import { Injectable, InternalServerErrorException, Logger } from "@nestjs/common"
 import { DataSource } from "typeorm"
 import {
     CreateGameVersionRequestBody,
     CreateGameVersionResponse,
     CREATE_GAME_VERSION_SUCCESS_MESSAGE
 } from "./dtos"
+import { VersionAlreadyExistsException } from "@/exceptions"
 
 @Injectable()
 export class GameControllerService {
@@ -27,19 +28,34 @@ export class GameControllerService {
         version,
     }: CreateGameVersionRequestBody): Promise<CreateGameVersionResponse> {
         //update all game version to inactive
-        await this.dataSource.manager.update(GameVersionEntity, {}, {
-            isActive: false,
-        })
-        const { id } = await this.dataSource.manager.save(GameVersionEntity, {
-            name,
-            version,
-            description,
-        })
-        return {
-            message: CREATE_GAME_VERSION_SUCCESS_MESSAGE,
-            data: {
-                id,
-            },
+        const queryRunner = this.dataSource.createQueryRunner()
+        await queryRunner.connect()
+        await queryRunner.startTransaction()
+        try {
+            await queryRunner.manager.update(GameVersionEntity, {}, {
+                isActive: false,
+            })
+            const { id } = await queryRunner.manager.save(GameVersionEntity, {
+                name,
+                version,
+                description,
+            })
+            await queryRunner.commitTransaction()
+            return {
+                message: CREATE_GAME_VERSION_SUCCESS_MESSAGE,
+                data: {
+                    id,
+                },
+            }
+        } catch (ex) {
+            await queryRunner.rollbackTransaction()
+            const code = ex.code as string
+            switch (code) {
+            case PostgresErrorCode.Duplicated:
+                throw new VersionAlreadyExistsException(version)
+            default:
+                throw new InternalServerErrorException(ex)
+            }
         }
     }
 }

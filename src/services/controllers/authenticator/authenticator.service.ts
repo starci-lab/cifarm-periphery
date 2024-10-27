@@ -37,6 +37,7 @@ import {
     CacheNotFound,
     ChainKeyNotFoundException,
     InvalidSignatureException,
+    UsernameAlreadyExistsException,
 } from "@/exceptions"
 import {
     Network,
@@ -53,7 +54,7 @@ import {
     PolkadotAuthService,
 } from "../../blockchain"
 import { Sha256Service } from "@/services/base"
-import { Account, AccountEntity, RoleEntity, UserEntity } from "@/database"
+import { Account, AccountEntity, PostgresErrorCode, RoleEntity, UserEntity } from "@/database"
 import { DataSource, In } from "typeorm"
 import { encode } from "bs58"
 import { defaultBotType } from "@/guards"
@@ -353,20 +354,31 @@ export class AuthenticatorControllerService {
         roles,
         username,
     }: CreateAccountRequestBody): Promise<CreateAccountResponse> {
-        const hashedPassword = this.sha256Service.hash(password)
-        const { id } = await this.dataSource.manager.save(AccountEntity, {
-            username,
-            hashedPassword,
-            roles: roles.map((role) => ({
-                role,
-            })),
-        })
-        return {
-            data: {
-                id,
-            },
-            message: CREATE_ACCOUNT_RESPONSE_SUCCESS_MESSAGE,
-        }
+        try {
+            const hashedPassword = this.sha256Service.hash(password)
+            const { id } = await this.dataSource.manager.save(AccountEntity, {
+                username,
+                hashedPassword,
+                roles: roles.map((role) => ({
+                    role,
+                })),
+            })
+            return {
+                data: {
+                    id,
+                },
+                message: CREATE_ACCOUNT_RESPONSE_SUCCESS_MESSAGE,
+            }
+        } catch (ex) {
+            this.logger.error(ex)
+            const code = ex.code as string
+            switch (code) {
+            case PostgresErrorCode.Duplicated:
+                throw new UsernameAlreadyExistsException(username)
+            default:
+                throw new InternalServerErrorException(ex)
+            }
+        }  
     }
 
     public async updateAccount({
@@ -414,6 +426,7 @@ export class AuthenticatorControllerService {
                 username,
                 hashedPassword,
             })
+            await queryRunner.commitTransaction()
             return {
                 message: UPDATE_ACCOUNT_RESPONSE_SUCCESS_MESSAGE,
             }

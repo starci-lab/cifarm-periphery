@@ -14,3 +14,9 @@ export class NotHavePermissionException extends HttpException {
         )
     }
 }
+
+export class UsernameAlreadyExistsException extends HttpException {
+    constructor(username: string) {
+        super(`Username already exists: ${username}`, HttpStatus.CONFLICT)
+    }
+}

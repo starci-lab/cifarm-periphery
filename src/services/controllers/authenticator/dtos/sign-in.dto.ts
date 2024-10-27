@@ -14,8 +14,7 @@ export class SignInResponseData {
         jwtToken: string
 }  
 
-export const SIGN_IN_RESPONSE_SUCCESS_MESSAGE =
-  "Message verification failed"
+export const SIGN_IN_RESPONSE_SUCCESS_MESSAGE = "Successfully signed in"
 
 export const SIGN_IN_RESPONSE_DATA = "Successfully signed in"
 export class SignInResponse
