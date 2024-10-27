@@ -1,5 +1,6 @@
 import { PackagesControllerService } from "@/services"
-import { Controller, Get, Logger, StreamableFile } from "@nestjs/common"
+import { Response } from "express"
+import { Controller, Get, Logger, Res, StreamableFile, Headers } from "@nestjs/common"
 import { ApiTags } from "@nestjs/swagger"
 
 @ApiTags("Packages")
@@ -7,24 +8,36 @@ import { ApiTags } from "@nestjs/swagger"
 export class PackagesController {
     private readonly logger = new Logger(PackagesController.name)
     constructor(private readonly packagesService: PackagesControllerService) {}
-
+    
   @Get("loader")
-    public streamLoader(): StreamableFile {
-        return this.packagesService.streamLoader()
+    public streamLoader(
+        @Res({ passthrough: true }) response: Response,
+        @Headers("range") range: string,
+    ): StreamableFile {
+        return this.packagesService.streamLoader({ range, response })
     }
 
   @Get("data")
-  public streamData(): StreamableFile {
-      return this.packagesService.streamData()
+  public streamData(
+    @Res({ passthrough: true }) response: Response,
+    @Headers("range") range: string,
+  ): StreamableFile {
+      return this.packagesService.streamData({ range, response })
   }
 
   @Get("framework")
-  public streamFramework(): StreamableFile {
-      return this.packagesService.streamFramework()
+  public streamFramework(
+    @Res({ passthrough: true }) response: Response,
+    @Headers("range") range: string,
+  ): StreamableFile {
+      return this.packagesService.streamFramework({ range, response })
   }
 
   @Get("wasm")
-  public streamWasm(): StreamableFile {
-      return this.packagesService.streamWasm()
+  public streamWasm(
+    @Res({ passthrough: true }) response: Response,
+    @Headers("range") range: string,
+  ): StreamableFile {
+      return this.packagesService.streamWasm({ range, response })
   }
 }

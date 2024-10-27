@@ -3,7 +3,7 @@ import { Column, Entity } from "typeorm"
 import { AbstractEntity } from "./abstract"
 
 @ObjectType()
-@Entity("game-version")
+@Entity("game-versions")
 export class GameVersionEntity extends AbstractEntity {
   @Field(() => String)
   @Column({ name: "version", type: "varchar", length: 200, unique: true })
