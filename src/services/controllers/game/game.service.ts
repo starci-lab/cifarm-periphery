@@ -1,5 +1,5 @@
 import { GameVersionEntity } from "@/database"
-import { Injectable, InternalServerErrorException, Logger } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import { DataSource } from "typeorm"
 import {
     CreateGameVersionRequestBody,
@@ -58,7 +58,7 @@ export class GameControllerService {
             }
         } catch (ex) {
             await queryRunner.rollbackTransaction()
-            throw new InternalServerErrorException(ex)
+            throw ex
         }
     }
 }

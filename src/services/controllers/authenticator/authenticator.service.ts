@@ -380,7 +380,7 @@ export class AuthenticatorControllerService {
             }
         } catch (ex) {
             this.logger.error(ex)
-            throw new InternalServerErrorException(ex)
+            throw ex
         }  
     }
 
