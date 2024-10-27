@@ -54,7 +54,7 @@ import {
     PolkadotAuthService,
 } from "../../blockchain"
 import { Sha256Service } from "@/services/base"
-import { Account, AccountEntity, PostgresErrorCode, RoleEntity, UserEntity } from "@/database"
+import { Account, AccountEntity, RoleEntity, UserEntity } from "@/database"
 import { DataSource, In } from "typeorm"
 import { encode } from "bs58"
 import { defaultBotType } from "@/guards"
@@ -356,6 +356,15 @@ export class AuthenticatorControllerService {
     }: CreateAccountRequestBody): Promise<CreateAccountResponse> {
         try {
             const hashedPassword = this.sha256Service.hash(password)
+            //found username
+            const foundAccount = await this.dataSource.manager.findOne(AccountEntity, {
+                where: {
+                    username,
+                },
+            })
+            if (foundAccount) {
+                throw new UsernameAlreadyExistsException(username)
+            }
             const { id } = await this.dataSource.manager.save(AccountEntity, {
                 username,
                 hashedPassword,
@@ -371,13 +380,7 @@ export class AuthenticatorControllerService {
             }
         } catch (ex) {
             this.logger.error(ex)
-            const code = ex.code as string
-            switch (code) {
-            case PostgresErrorCode.Duplicated:
-                throw new UsernameAlreadyExistsException(username)
-            default:
-                throw new InternalServerErrorException(ex)
-            }
+            throw new InternalServerErrorException(ex)
         }  
     }
 

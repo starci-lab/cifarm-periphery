@@ -1,4 +1,4 @@
-import { GameVersionEntity, PostgresErrorCode } from "@/database"
+import { GameVersionEntity } from "@/database"
 import { Injectable, InternalServerErrorException, Logger } from "@nestjs/common"
 import { DataSource } from "typeorm"
 import {
@@ -35,6 +35,15 @@ export class GameControllerService {
             await queryRunner.manager.update(GameVersionEntity, {}, {
                 isActive: false,
             })
+            //find if version already exists
+            const existingVersion = await queryRunner.manager.findOne(GameVersionEntity, {
+                where: {
+                    version,
+                },
+            })
+            if (existingVersion) {
+                throw new VersionAlreadyExistsException(version)
+            }
             const { id } = await queryRunner.manager.save(GameVersionEntity, {
                 name,
                 version,
@@ -49,13 +58,7 @@ export class GameControllerService {
             }
         } catch (ex) {
             await queryRunner.rollbackTransaction()
-            const code = ex.code as string
-            switch (code) {
-            case PostgresErrorCode.Duplicated:
-                throw new VersionAlreadyExistsException(version)
-            default:
-                throw new InternalServerErrorException(ex)
-            }
+            throw new InternalServerErrorException(ex)
         }
     }
 }
