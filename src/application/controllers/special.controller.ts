@@ -13,6 +13,9 @@ import {
 } from "@nestjs/common"
 import { ApiResponse, ApiTags } from "@nestjs/swagger"
 
+//this is a shared service, so that ciwallet can call,... 
+//all game periphery all have to be in the same service
+
 @ApiTags("Special")
 @Controller("api/v1/special")
 export class SpecialController {
