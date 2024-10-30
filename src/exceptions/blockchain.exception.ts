@@ -29,3 +29,9 @@ export class TransactionExecutionException extends HttpException {
         super(`Transaction execution failed: ${message}`, HttpStatus.BAD_REQUEST)
     }
 }
+
+export class NearUsernameExistsException extends HttpException {
+    constructor(username: string) {
+        super(`Near username already exists: ${username}`, HttpStatus.BAD_REQUEST)
+    }
+}

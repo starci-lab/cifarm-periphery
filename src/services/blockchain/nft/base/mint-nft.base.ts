@@ -52,7 +52,9 @@ export const _mintNearNft = async ({
     description,
 }: MintNftParams): Promise<MintNftResult> => {
     //near configuration
-    const { privateKey, accountId } = envConfig().secrets.chainCredentials.near.nftMinter
+    const { privateKey, accountIds } = envConfig().secrets.chainCredentials.near.nftMinter
+    const accountId = accountIds[network]
+
     const keyPair = nearKeyPair(privateKey)
     const storageKey = nearKeyStore({ accountId, network, keyPair })
     const client = await nearClient(network, storageKey)

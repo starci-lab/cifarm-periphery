@@ -1,3 +1,5 @@
+import { Network } from "./blockchain.config"
+
 export enum NodeEnv {
     Production = "production",
     Development = "development",
@@ -74,27 +76,52 @@ export const envConfig = () => ({
             near: {
                 tokenMinter: {
                     privateKey: process.env.NEAR_TOKEN_MINTER_PRIVATE_KEY,
-                    accountId: process.env.NEAR_TOKEN_MINTER_ACCOUNT_ID
+                    accountIds: {
+                        [Network.Testnet]: process.env.NEAR_TESTNET_TOKEN_MINTER_ACCOUNT_ID,
+                        [Network.Mainnet]: process.env.NEAR_MAINNET_TOKEN_MINTER_ACCOUNT_ID
+                    }
                 },
                 tokenBurner: {
                     privateKey: process.env.NEAR_TOKEN_BURNER_PRIVATE_KEY,
-                    accountId: process.env.NEAR_TOKEN_BURNER_ACCOUNT_ID
+                    accountIds: {
+                        [Network.Testnet]: process.env.NEAR_TESTNET_TOKEN_BURNER_ACCOUNT_ID,
+                        [Network.Mainnet]: process.env.NEAR_MAINNET_TOKEN_BURNER_ACCOUNT_ID
+                    }
                 },
                 nftMinter: {
                     privateKey: process.env.NEAR_NFT_MINTER_PRIVATE_KEY,
-                    accountId: process.env.NEAR_NFT_MINTER_ACCOUNT_ID
+                    accountIds: {
+                        [Network.Testnet]: process.env.NEAR_TESTNET_NFT_MINTER_ACCOUNT_ID,
+                        [Network.Mainnet]: process.env.NEAR_MAINNET_NFT_MINTER_ACCOUNT_ID
+                    }
                 },
                 nftBurner: {
                     privateKey: process.env.NEAR_NFT_BURNER_PRIVATE_KEY,
-                    accountId: process.env.NEAR_NFT_BURNER_ACCOUNT_ID
+                    accountIds: {
+                        [Network.Testnet]: process.env.NEAR_TESTNET_NFT_BURNER_ACCOUNT_ID,
+                        [Network.Mainnet]: process.env.NEAR_MAINNET_NFT_BURNER_ACCOUNT_ID
+                    }
                 },
                 nftUpdater: {
                     privateKey: process.env.NEAR_NFT_UPDATER_PRIVATE_KEY,
-                    accountId: process.env.NEAR_NFT_UPDATER_ACCOUNT_ID
+                    accountIds: {
+                        [Network.Testnet]: process.env.NEAR_TESTNET_NFT_UPDATER_ACCOUNT_ID,
+                        [Network.Mainnet]: process.env.NEAR_MAINNET_NFT_UPDATER_ACCOUNT_ID
+                    }
                 },
                 admin: {
                     privateKey: process.env.NEAR_ADMIN_PRIVATE_KEY,
-                    accountId: process.env.NEAR_ADMIN_ACCOUNT_ID
+                    accountIds: {
+                        [Network.Testnet]: process.env.NEAR_TESTNET_ADMIN_ACCOUNT_ID,
+                        [Network.Mainnet]: process.env.NEAR_MAINNET_ADMIN_ACCOUNT_ID
+                    }
+                },
+                deposit: {
+                    privateKey: process.env.NEAR_DEPOSIT_PRIVATE_KEY,
+                    accountIds: {
+                        [Network.Testnet]: process.env.NEAR_TESTNET_DEPOSIT_ACCOUNT_ID,
+                        [Network.Mainnet]: process.env.NEAR_MAINNET_DEPOSIT_ACCOUNT_ID
+                    }
                 }
             }   
         },

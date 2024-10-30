@@ -6,14 +6,27 @@
 
 # Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
 
-ARG NODE_VERSION=21.6.2
+# ARG NODE_VERSION=21.6.2
 
 ################################################################################
-# Use node image for base image for all stages.
-FROM node:${NODE_VERSION}-alpine as base
+# Use linuxbrew image for base image for all stages.
+FROM homebrew/brew as base
 
 # Set working directory for all build stages.
 WORKDIR /usr/src/app
+
+#Install packages
+RUN brew install node
+RUN brew install rust
+RUN brew install rustup
+RUN brew install libusb
+
+#install libudev-dev
+RUN sudo apt-get update
+RUN sudo apt-get -y install libudev-dev
+
+# Install near-cli
+RUN cargo install near-cli-rs
 
 ################################################################################
 # Create a stage for installing production dependecies.
