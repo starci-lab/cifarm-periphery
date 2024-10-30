@@ -32,12 +32,7 @@ export class VerifyMessageResponseData {
   @IsBoolean()
   @ApiProperty({ example: true })
       result: boolean
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ example: "0x6fc0C3f7B9Ec501A547185074F7299d34cd73209" })
-      address: string
-
+      
   @IsString()
   @IsNotEmpty()
   @ApiProperty({

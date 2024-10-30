@@ -109,7 +109,6 @@ export class AuthenticatorControllerService {
         console.log(message, signature, publicKey)
         //await this.cacheManager.del(message)
         let result = false
-        let address = publicKey
 
         chainKey = chainKey ?? defaultChainKey
         network = network ?? Network.Testnet
@@ -137,7 +136,6 @@ export class AuthenticatorControllerService {
                 signature,
                 publicKey,
             })
-            address = this.aptosAuthService.toAddress(publicKey)
             break
         }
         case Platform.Algorand: {
@@ -154,7 +152,6 @@ export class AuthenticatorControllerService {
                 signature,
                 publicKey,
             })
-            address = this.polkadotAuthService.toAddress(publicKey)
             break
         }
         case Platform.Near: {
@@ -163,8 +160,6 @@ export class AuthenticatorControllerService {
                 signature,
                 publicKey,
             })
-            //near address is different from public key, depends on the registered account
-            address = ""
             break
         }
         default:
@@ -175,7 +170,7 @@ export class AuthenticatorControllerService {
         if (!result) throw new InvalidSignatureException(signature)
 
         const authenticationId = this.sha256Service.hash(
-            address,
+            publicKey,
             chainKey,
             network,
         )
@@ -183,7 +178,7 @@ export class AuthenticatorControllerService {
             message: result
                 ? VERIFY_MESSAGE_RESPONSE_SUCCESS_MESSAGE
                 : VERIFY_MESSAGE_RESPONSE_FAILED_MESSAGE,
-            data: { result, address, authenticationId },
+            data: { result, authenticationId },
         }
     }
 
