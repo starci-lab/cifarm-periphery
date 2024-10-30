@@ -36,13 +36,17 @@ export class NearAccountsService implements OnModuleInit {
         return await client.account(accountId)
     }
     async onModuleInit() {
-        const [testnetAccount, mainnetAccount] = await Promise.all([
-            this.createClient(Network.Testnet),
-            this.createClient(Network.Mainnet),
-        ])
-        this.accounts = {
-            [Network.Testnet]: testnetAccount,
-            [Network.Mainnet]: mainnetAccount,
+        try {
+            const [testnetAccount, mainnetAccount] = await Promise.all([
+                this.createClient(Network.Testnet),
+                this.createClient(Network.Mainnet),
+            ])
+            this.accounts = {
+                [Network.Testnet]: testnetAccount,
+                [Network.Mainnet]: mainnetAccount,
+            }
+        } catch (ex) {
+            this.logger.error(ex)
         }
     }
 

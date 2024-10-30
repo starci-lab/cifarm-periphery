@@ -52,5 +52,9 @@ jobs:
         ADMIN_USERNAME: ${{secrets.ADMIN_USERNAME}}
         ADMIN_PASSWORD: ${{secrets.ADMIN_PASSWORD}}
 
+        NEAR_DEPOSIT_PRIVATE_KEY: ${{secrets.NEAR_DEPOSIT_PRIVATE_KEY}}
+        NEAR_TESTNET_DEPOSIT_ACCOUNT_ID: ${{secrets.NEAR_TESTNET_DEPOSIT_ACCOUNT_ID}}
+        NEAR_MAINNET_DEPOSIT_ACCOUNT_ID: ${{secrets.NEAR_MAINNET_DEPOSIT_ACCOUNT_ID}}
+
       run: docker compose -f .docker/production.yaml -p cifarm-api up --build -d 
   
