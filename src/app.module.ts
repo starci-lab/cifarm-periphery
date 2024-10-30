@@ -12,7 +12,7 @@ import { MongooseModule } from "@nestjs/mongoose"
 import { CacheModule } from "@nestjs/cache-manager"
 import * as redisStore from "cache-manager-redis-store"
 import { TypeOrmModule } from "@nestjs/typeorm"
-
+ 
 @Module({
     imports: [
         ConfigModule.forRoot({
