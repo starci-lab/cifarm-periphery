@@ -51,7 +51,7 @@ export const envConfig = () => ({
     },
     redis: {
         host: process.env.REDIS_HOST,
-        port: Number(process.env.REDIS_PORT ?? 6379),
+        port: Number(process.env.REDIS_PORT ?? 6379)
     },
     secrets: {
         salt: process.env.SALT, 
@@ -69,6 +69,39 @@ export const envConfig = () => ({
         admin: {
             username: process.env.ADMIN_USERNAME,
             password: process.env.ADMIN_PASSWORD
-        }
+        },
+        chainCredentials: {
+            near: {
+                tokenMinter: {
+                    privateKey: process.env.NEAR_TOKEN_MINTER_PRIVATE_KEY,
+                    accountId: process.env.NEAR_TOKEN_MINTER_ACCOUNT_ID
+                },
+                tokenBurner: {
+                    privateKey: process.env.NEAR_TOKEN_BURNER_PRIVATE_KEY,
+                    accountId: process.env.NEAR_TOKEN_BURNER_ACCOUNT_ID
+                },
+                nftMinter: {
+                    privateKey: process.env.NEAR_NFT_MINTER_PRIVATE_KEY,
+                    accountId: process.env.NEAR_NFT_MINTER_ACCOUNT_ID
+                },
+                nftBurner: {
+                    privateKey: process.env.NEAR_NFT_BURNER_PRIVATE_KEY,
+                    accountId: process.env.NEAR_NFT_BURNER_ACCOUNT_ID
+                },
+                nftUpdater: {
+                    privateKey: process.env.NEAR_NFT_UPDATER_PRIVATE_KEY,
+                    accountId: process.env.NEAR_NFT_UPDATER_ACCOUNT_ID
+                },
+                admin: {
+                    privateKey: process.env.NEAR_ADMIN_PRIVATE_KEY,
+                    accountId: process.env.NEAR_ADMIN_ACCOUNT_ID
+                }
+            }   
+        },
     }
 }) 
+
+export interface NearPair {
+    privateKey: string;
+    accountId: string;
+}

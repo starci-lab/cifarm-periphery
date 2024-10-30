@@ -2,14 +2,15 @@ import { Injectable, Logger } from "@nestjs/common"
 import {
     GetNftsByOwnerAddressParams,
     _getNftsByOwnerAddress,
-} from "./get-nfts-by-owner-address.nft"
+} from "./get-nfts-by-owner-address.base"
 import { Network } from "@/config"
 import {
     GetNftsByTokenIdsParams,
     _getNftsByTokenIds,
-} from "./get-nfts-by-token-ids.nft"
-import { GetNftByTokenIdParams, _getNftByTokenId } from "./get-nfts-by-token-id.nft"
+} from "./get-nfts-by-token-ids.base"
+import { GetNftByTokenIdParams, _getNftByTokenId } from "./get-nfts-by-token-id.base"
 import { IpfsService } from "../common"
+import { _mintNft, MintNftParams } from "./mint-nft.base"
 
 export interface BlockchainNftBaseServiceConstructorParams {
   nftCollectionId: string;
@@ -39,6 +40,12 @@ export class BlockchainNftBaseService {
 
     public getNftByTokenId(params: GetNftByTokenIdParams) {
         return _getNftByTokenId(params, {
+            ipfsService: this.ipfsService,
+        })
+    }
+
+    public mintNft(params: MintNftParams) {
+        return _mintNft(params, {
             ipfsService: this.ipfsService,
         })
     }

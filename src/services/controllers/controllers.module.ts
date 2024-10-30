@@ -6,6 +6,7 @@ import { TypeOrmModule } from "@nestjs/typeorm"
 import { AccountEntity, GameVersionEntity, RoleEntity, UserEntity } from "@/database"
 import { JwtStrategy } from "@/strategies"
 import { GameControllerService } from "./game"
+import { NftControllerService } from "./nft"
 
 @Global()
 @Module({
@@ -22,13 +23,15 @@ import { GameControllerService } from "./game"
         PackagesControllerService,
         TokenControllerService,
         GameControllerService,
+        NftControllerService,
         JwtStrategy
     ],
     exports: [
         AuthenticatorControllerService,
         PackagesControllerService,
         TokenControllerService,
-        GameControllerService
+        GameControllerService,
+        NftControllerService,
     ],
 })
 export class ControllersModule {}

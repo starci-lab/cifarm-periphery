@@ -7,6 +7,8 @@ export enum Network {
 
 export interface NftCollectionInfo {
     collectionId: string
+    defaultTitlePrefix: string
+    defaultImageUrl: string
 }
 
 export enum NftCollectionKey {
@@ -15,7 +17,8 @@ export enum NftCollectionKey {
     //bò
     Cow = "cow",
 }
-export interface ChainIfo {
+export interface ChainInfo {
+    decimals: number
     nftCollections: Record<string, Record<Network, NftCollectionInfo>>
 }
 
@@ -27,75 +30,121 @@ export enum SupportedChainKey {
     Bsc = "bsc",
     Algorand = "algorand",
     Polkadot = "polkadot",
+    Near = "near",
   }
 
-export type BlockchainConfig = Record<string, ChainIfo>
+const DEFAULT_FERTILE_TILE_NFT_IMAGE_URL = "https://violet-lazy-yak-333.mypinata.cloud/ipfs/Qmd1x1KvmS4geRkHtXjXwNdUuBWN3unugXMbjBb5wpdqdp"
+const DEFAULT_FERTILE_TILE_NFT_TITLE_PREFIX = "Fertile Tile #"
+
+export type BlockchainConfig = Record<string, ChainInfo>
 export const blockchainConfig = (): BlockchainConfig => ({
     [SupportedChainKey.Avalanche]: {
+        decimals: 18,
         nftCollections: {
             [NftCollectionKey.FertileTile]: {
                 [Network.Mainnet]: {
-                    collectionId: ""
+                    collectionId: "",
+                    defaultImageUrl: DEFAULT_FERTILE_TILE_NFT_IMAGE_URL,
+                    defaultTitlePrefix: DEFAULT_FERTILE_TILE_NFT_TITLE_PREFIX
                 },
                 [Network.Testnet]: {
-                    collectionId: "0x2a86d07b6f49e8794051580e107d96f6feed0d27b52359e8d8c62af32c07cc34"
+                    collectionId: "0x2a86d07b6f49e8794051580e107d96f6feed0d27b52359e8d8c62af32c07cc34",
+                    defaultImageUrl: DEFAULT_FERTILE_TILE_NFT_IMAGE_URL,
+                    defaultTitlePrefix: DEFAULT_FERTILE_TILE_NFT_TITLE_PREFIX
                 }
             },
         },
     },
     [SupportedChainKey.Solana]: {
+        decimals: 9,
         nftCollections: {
             [NftCollectionKey.FertileTile]: {
                 [Network.Mainnet]: {
-                    collectionId: ""
+                    collectionId: "",
+                    defaultImageUrl: DEFAULT_FERTILE_TILE_NFT_IMAGE_URL,
+                    defaultTitlePrefix: DEFAULT_FERTILE_TILE_NFT_TITLE_PREFIX
                 },
                 [Network.Testnet]: {
-                    collectionId: "E31eadBc4uLfcHRSCLVVDPVngPavmZDVjzdGdjyCkbWZ"
+                    collectionId: "E31eadBc4uLfcHRSCLVVDPVngPavmZDVjzdGdjyCkbWZ",
+                    defaultImageUrl: DEFAULT_FERTILE_TILE_NFT_IMAGE_URL,
+                    defaultTitlePrefix: DEFAULT_FERTILE_TILE_NFT_TITLE_PREFIX
                 }
             },
         },
     },
     [SupportedChainKey.Aptos]: {
+        decimals: 18,
         nftCollections: {
             [NftCollectionKey.FertileTile]: {
                 [Network.Mainnet]: {
-                    collectionId: ""
+                    collectionId: "",
+                    defaultImageUrl: DEFAULT_FERTILE_TILE_NFT_IMAGE_URL,
+                    defaultTitlePrefix: DEFAULT_FERTILE_TILE_NFT_TITLE_PREFIX
                 },
                 [Network.Testnet]: {
-                    collectionId: "0x2a86d07b6f49e8794051580e107d96f6feed0d27b52359e8d8c62af32c07cc34"
+                    collectionId: "0x2a86d07b6f49e8794051580e107d96f6feed0d27b52359e8d8c62af32c07cc34",
+                    defaultImageUrl: DEFAULT_FERTILE_TILE_NFT_IMAGE_URL,
+                    defaultTitlePrefix: DEFAULT_FERTILE_TILE_NFT_TITLE_PREFIX
                 }
             },
         },
     },
     [SupportedChainKey.Algorand]: {
+        decimals: 6,
         nftCollections: {
             [NftCollectionKey.FertileTile]: {
                 [Network.Mainnet]: {
-                    collectionId: ""
+                    collectionId: "",
+                    defaultImageUrl: DEFAULT_FERTILE_TILE_NFT_IMAGE_URL,
+                    defaultTitlePrefix: DEFAULT_FERTILE_TILE_NFT_TITLE_PREFIX
                 },
                 [Network.Testnet]: {
-                    collectionId: "premiumTile1"
+                    collectionId: "premiumTile1",
+                    defaultImageUrl: DEFAULT_FERTILE_TILE_NFT_IMAGE_URL,
+                    defaultTitlePrefix: DEFAULT_FERTILE_TILE_NFT_TITLE_PREFIX
                 }
             },
         },
     },
     [SupportedChainKey.Polkadot]: {
+        decimals: 10,
         nftCollections: {
             [NftCollectionKey.FertileTile]: {
                 [Network.Mainnet]: {
-                    collectionId: ""
+                    collectionId: "",
+                    defaultImageUrl: DEFAULT_FERTILE_TILE_NFT_IMAGE_URL,
+                    defaultTitlePrefix: DEFAULT_FERTILE_TILE_NFT_TITLE_PREFIX
                 },
                 [Network.Testnet]: {
-                    collectionId: "4191"
+                    collectionId: "4191",
+                    defaultImageUrl: DEFAULT_FERTILE_TILE_NFT_IMAGE_URL,
+                    defaultTitlePrefix: DEFAULT_FERTILE_TILE_NFT_TITLE_PREFIX
                 }
             },
         },
+    },
+    [SupportedChainKey.Near]: {
+        decimals: 24,
+        nftCollections: {
+            [NftCollectionKey.FertileTile]: {
+                [Network.Mainnet]: {
+                    collectionId: "",
+                    defaultImageUrl: DEFAULT_FERTILE_TILE_NFT_IMAGE_URL,
+                    defaultTitlePrefix: DEFAULT_FERTILE_TILE_NFT_TITLE_PREFIX
+                },
+                [Network.Testnet]: {
+                    collectionId: "starci123.testnet",
+                    defaultImageUrl: DEFAULT_FERTILE_TILE_NFT_IMAGE_URL,
+                    defaultTitlePrefix: DEFAULT_FERTILE_TILE_NFT_TITLE_PREFIX
+                }
+            },
+        }
     }
 })
 
-export const defaultChainKey = Object.keys(blockchainConfig())[0]
+export const defaultChainKey = Object.keys(blockchainConfig())[0] as SupportedChainKey
 export const defaultNftCollectionKey = Object.keys(blockchainConfig()[defaultChainKey].nftCollections)[0]
-
+export const defaultNetwork = Network.Testnet
 
 export enum Platform {
   Evm = "evm",
@@ -103,6 +152,7 @@ export enum Platform {
   Aptos = "aptos",
   Algorand = "algorand",
   Polkadot = "polkadot",
+  Near = "near",
 }
 
 export const chainKeyToPlatform = (chainKey: string): Platform => {
@@ -117,6 +167,8 @@ export const chainKeyToPlatform = (chainKey: string): Platform => {
         return Platform.Algorand
     case SupportedChainKey.Polkadot:
         return Platform.Polkadot
+    case SupportedChainKey.Near:
+        return Platform.Near
     default:
         throw new ChainKeyNotFoundException(chainKey)
     }

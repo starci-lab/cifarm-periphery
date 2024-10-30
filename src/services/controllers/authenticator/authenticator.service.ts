@@ -44,6 +44,7 @@ import {
     Platform,
     chainKeyToPlatform,
     defaultChainKey,
+    defaultNetwork,
     envConfig,
 } from "@/config"
 import {
@@ -179,7 +180,7 @@ export class AuthenticatorControllerService {
         chainKey,
         network,
     }: GetFakeSignatureRequestBody): Promise<GetFakeSignatureResponse> {
-        network = network || Network.Testnet
+        network = network || defaultNetwork
         const {
             data: { message },
         } = await this.requestMessage()

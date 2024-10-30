@@ -9,9 +9,8 @@ import {
     NftDataResponse,
 } from "./dtos"
 import {
-    Network,
-    blockchainConfig,
     defaultChainKey,
+    defaultNetwork,
     defaultNftCollectionKey,
 } from "@/config"
 import { AccountAddressNotFoundException } from "@/exceptions"
@@ -35,16 +34,13 @@ export class NftResolverService {
 
         chainKey = chainKey || defaultChainKey
         nftCollectionKey = nftCollectionKey || defaultNftCollectionKey
-        network = network || Network.Testnet
-
-        const nftCollectionId =
-      blockchainConfig()[chainKey].nftCollections[nftCollectionKey][network].collectionId
+        network = network  || defaultNetwork
 
         return await this.blockchainNftBaseService.getNftsByOwnerAddress({
             accountAddress,
             network,
             chainKey,
-            nftCollectionId,
+            nftCollectionKey,
             skip,
             take,
         })
@@ -58,16 +54,13 @@ export class NftResolverService {
 
         chainKey = chainKey || defaultChainKey
         nftCollectionKey = nftCollectionKey || defaultNftCollectionKey
-        network = network || Network.Testnet
+        network = network  || defaultNetwork
         
-        const nftCollectionId =
-      blockchainConfig()[chainKey].nftCollections[nftCollectionKey][network].collectionId
-
         return await this.blockchainNftBaseService.getNftsByTokenIds({
             tokenIds,
             network,
             chainKey,
-            nftCollectionId,
+            nftCollectionKey,
         })
     }
 
@@ -77,16 +70,14 @@ export class NftResolverService {
 
         chainKey = chainKey || defaultChainKey
         nftCollectionKey = nftCollectionKey || defaultNftCollectionKey
-        network = network || Network.Testnet
+        network = network || defaultNetwork
 
-        const nftCollectionId =
-        blockchainConfig()[chainKey].nftCollections[nftCollectionKey][network].collectionId
         try {
             return await this.blockchainNftBaseService.getNftByTokenId({
                 tokenId,
                 network,
                 chainKey,
-                nftCollectionId,
+                nftCollectionKey,
             })
         } catch (ex) {
             this.logger.error(ex)

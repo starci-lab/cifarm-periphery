@@ -3,11 +3,12 @@ import {
     algorandAlgodClient,
     aptosClient,
     evmHttpRpcUrl,
+    nearClient,
     polkadotUniqueNetworkIndexerClient,
     solanaHttpRpcUrl,
 } from "../../rpcs"
 import { erc721Abi } from "../../abis"
-import { Network, Platform, chainKeyToPlatform } from "@/config"
+import { Network, Platform, blockchainConfig, chainKeyToPlatform } from "@/config"
 import { PlatformNotFoundException } from "@/exceptions"
 import { MulticallProvider } from "@ethers-ext/provider-multicall"
 import { AlgorandMetadata, NftData } from "../common"
@@ -19,7 +20,7 @@ import { IpfsService } from "../common"
 
 export interface GetNftsByOwnerAddressParams {
   accountAddress: string;
-  nftCollectionId: string;
+  nftCollectionKey: string;
   chainKey: string;
   network: Network;
   skip: number;
@@ -38,7 +39,7 @@ export interface GetNftsByOwnerAddressResult {
 
 export const _getEvmNftsByOwnerAddress = async (
     {
-        nftCollectionId,
+        nftCollectionKey,
         chainKey,
         network,
         accountAddress,
@@ -47,6 +48,10 @@ export const _getEvmNftsByOwnerAddress = async (
     }: GetNftsByOwnerAddressParams,
     { ipfsService }: GetNftsByOwnerAddressServices,
 ): Promise<GetNftsByOwnerAddressResult> => {
+    const nftCollectionId =
+        blockchainConfig()[chainKey].nftCollections[nftCollectionKey][network]
+            .collectionId
+            
     const rpc = evmHttpRpcUrl(chainKey, network)
     const provider = new JsonRpcProvider(rpc)
     const contract = new Contract(nftCollectionId, erc721Abi, provider)
@@ -108,7 +113,7 @@ export const _getEvmNftsByOwnerAddress = async (
 
 export const _getSolanaNftsByOwnerAddress = async (
     {
-        nftCollectionId,
+        nftCollectionKey,
         chainKey,
         network,
         accountAddress,
@@ -117,6 +122,10 @@ export const _getSolanaNftsByOwnerAddress = async (
     }: GetNftsByOwnerAddressParams,
     { ipfsService }: GetNftsByOwnerAddressServices,
 ): Promise<GetNftsByOwnerAddressResult> => {
+    const nftCollectionId =
+        blockchainConfig()[chainKey].nftCollections[nftCollectionKey][network]
+            .collectionId
+
     const rpc = solanaHttpRpcUrl(chainKey, network)
     const umi = createUmi(rpc)
 
@@ -159,7 +168,7 @@ export const _getSolanaNftsByOwnerAddress = async (
 
 export const _getAptosNftsByOwnerAddress = async (
     {
-        nftCollectionId,
+        nftCollectionKey,
         network,
         accountAddress,
         skip,
@@ -167,6 +176,10 @@ export const _getAptosNftsByOwnerAddress = async (
     }: GetNftsByOwnerAddressParams,
     { ipfsService }: GetNftsByOwnerAddressServices,
 ): Promise<GetNftsByOwnerAddressResult> => {
+    const nftCollectionId =
+        blockchainConfig()[nftCollectionKey].nftCollections[nftCollectionKey][network]
+            .collectionId
+
     const client = aptosClient(network)
 
     let nfts = await client.getAccountOwnedTokensFromCollectionAddress({
@@ -204,7 +217,7 @@ export const _getAptosNftsByOwnerAddress = async (
 
 export const _getAlgorandNftsByOwnerAddress = async (
     {
-        nftCollectionId,
+        nftCollectionKey,
         network,
         accountAddress,
         skip,
@@ -212,6 +225,10 @@ export const _getAlgorandNftsByOwnerAddress = async (
     }: GetNftsByOwnerAddressParams,
     { ipfsService }: GetNftsByOwnerAddressServices,
 ): Promise<GetNftsByOwnerAddressResult> => {
+    const nftCollectionId =
+        blockchainConfig().algorand.nftCollections[nftCollectionKey][network]
+            .collectionId
+
     const client = algorandAlgodClient(network)
 
     const accountInfo = await client.accountInformation(accountAddress).do()
@@ -249,12 +266,17 @@ export const _getAlgorandNftsByOwnerAddress = async (
 }
 
 export const _getPolkadotUniqueNetworkNftsByOwnerAddress = async ({
-    nftCollectionId,
+    nftCollectionKey,
     network,
     accountAddress,
     skip,
     take,
 }: GetNftsByOwnerAddressParams): Promise<GetNftsByOwnerAddressResult> => {
+    const nftCollectionId =
+        blockchainConfig().polkadotUniqueNetwork.nftCollections[nftCollectionKey][
+            network
+        ].collectionId
+
     const indexerClient = polkadotUniqueNetworkIndexerClient(network)
 
     const searchNfts = await indexerClient.nfts({
@@ -290,6 +312,60 @@ export const _getPolkadotUniqueNetworkNftsByOwnerAddress = async ({
     }
 }
 
+export const _getNearNftsByOwnerAddress = async (
+    {
+        nftCollectionKey,
+        network,
+        accountAddress,
+        skip,
+        take,
+    }: GetNftsByOwnerAddressParams,
+    { ipfsService }: GetNftsByOwnerAddressServices,
+): Promise<GetNftsByOwnerAddressResult> => {
+    const nftCollectionId =
+        blockchainConfig().near.nftCollections[nftCollectionKey][network]
+            .collectionId
+            
+    const client = await nearClient(network)
+
+    const account = await client.account(accountAddress)
+    console.log(account)
+    const response = await account.viewFunction({
+        contractId: nftCollectionId,
+        methodName: "nft_tokens_for_owner",
+        args: { account_id: accountAddress },
+    })
+    console.log(response)
+
+    // nfts = nfts.slice(skip ? skip : undefined, take ? take : undefined)
+
+    // const promises: Array<Promise<void>> = []
+    // const records: Array<NftData> = []
+
+    // for (const nft of nfts) {
+    //     const promise = async () => {
+    //         const digitalAsset = await client.getDigitalAssetData({
+    //             digitalAssetAddress: nft.token_data_id,
+    //         })
+    //         const metadata = await ipfsService.getRawContent(digitalAsset.token_uri)
+    //         records.push({
+    //             ownerAddress: accountAddress,
+    //             tokenId: nft.token_data_id,
+    //             metadata: {
+    //                 image: metadata.image,
+    //                 properties: metadata.properties,
+    //             },
+    //         })
+    //     }
+    //     promises.push(promise())
+    // }
+    // await Promise.all(promises)
+    return {
+        records:  [],
+        count: 0,
+    }
+}
+
 export const _getNftsByOwnerAddress = (
     params: GetNftsByOwnerAddressParams,
     services: GetNftsByOwnerAddressServices,
@@ -310,6 +386,9 @@ export const _getNftsByOwnerAddress = (
     }
     case Platform.Polkadot: {
         return _getPolkadotUniqueNetworkNftsByOwnerAddress(params)
+    }
+    case Platform.Near: {
+        return _getNearNftsByOwnerAddress(params, services)
     }
     default:
         throw new PlatformNotFoundException(platform)

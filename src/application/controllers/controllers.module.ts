@@ -3,6 +3,7 @@ import { AuthenticatorController } from "./authenticator.controller"
 import { PackagesController } from "./packages.controller"
 import { TokenController } from "./token.controller"
 import { GameController } from "./game.controller"
+import { NftController } from "./nft.controller"
 
 @Module({
     imports: [
@@ -11,7 +12,8 @@ import { GameController } from "./game.controller"
         AuthenticatorController,
         PackagesController,
         TokenController,
-        GameController
+        GameController,
+        NftController
     ],
 })
 export class ControllersModule {}

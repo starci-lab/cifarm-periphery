@@ -11,7 +11,12 @@ import { fetchDigitalAsset } from "@metaplex-foundation/mpl-token-metadata"
 import { publicKey } from "@metaplex-foundation/umi"
 import { Connection, PublicKey, ParsedAccountData } from "@solana/web3.js"
 import { erc721Abi } from "../../abis"
-import { Network, Platform, chainKeyToPlatform } from "@/config"
+import {
+    Network,
+    Platform,
+    blockchainConfig,
+    chainKeyToPlatform,
+} from "@/config"
 import { PlatformNotFoundException } from "@/exceptions"
 import { MulticallProvider } from "@ethers-ext/provider-multicall"
 import { NftData } from "../common"
@@ -21,7 +26,7 @@ import { IpfsService } from "../common"
 
 export interface GetNftByTokenIdParams {
   tokenId: string;
-  nftCollectionId: string;
+  nftCollectionKey: string;
   chainKey: string;
   network: Network;
 }
@@ -32,9 +37,13 @@ export interface GetNftByTokenIdServices {
 }
 
 export const _getEvmNftByTokenId = async (
-    { nftCollectionId, chainKey, network, tokenId }: GetNftByTokenIdParams,
+    { nftCollectionKey, chainKey, network, tokenId }: GetNftByTokenIdParams,
     { ipfsService }: GetNftByTokenIdServices,
 ): Promise<NftData> => {
+    const nftCollectionId =
+    blockchainConfig()[chainKey].nftCollections[nftCollectionKey][network]
+        .collectionId
+
     const rpc = evmHttpRpcUrl(chainKey, network)
     const provider = new JsonRpcProvider(rpc)
     const multicaller = new MulticallProvider(provider)
@@ -86,11 +95,10 @@ export const _getSolanaNftByTokenId = async (
     }
 }
 
-export const _getAptosNftByTokenId = async ({
-    network,
-    tokenId,
-}: GetNftByTokenIdParams,
-{ ipfsService }: GetNftByTokenIdServices): Promise<NftData> => {
+export const _getAptosNftByTokenId = async (
+    { network, tokenId }: GetNftByTokenIdParams,
+    { ipfsService }: GetNftByTokenIdServices,
+): Promise<NftData> => {
     const client = aptosClient(network)
 
     const [digitalAsset, ownership] = await Promise.all([
@@ -108,7 +116,7 @@ export const _getAptosNftByTokenId = async ({
         tokenId,
         metadata: {
             image: metadata.image,
-            properties: metadata.properties
+            properties: metadata.properties,
         },
     }
 }
@@ -142,9 +150,16 @@ export const _getAlgorandNftByTokenId = async (
     }
 }
 
-export const _getPolkadotUniqueNetworkNftByTokenId = async (
-    { network, tokenId, nftCollectionId }: GetNftByTokenIdParams
-): Promise<NftData> => {
+export const _getPolkadotUniqueNetworkNftByTokenId = async ({
+    network,
+    tokenId,
+    nftCollectionKey,
+}: GetNftByTokenIdParams): Promise<NftData> => {
+    const nftCollectionId =
+    blockchainConfig().polkadotUniqueNetwork.nftCollections[nftCollectionKey][
+        network
+    ].collectionId
+
     const sdkClient = polkadotUniqueNetworkSdkClient(network)
     try {
         const nft = await sdkClient.token.get({

@@ -4,4 +4,3 @@ export interface SignedMessage {
     signature: string;
     chainKey?: string;
   }
-  
