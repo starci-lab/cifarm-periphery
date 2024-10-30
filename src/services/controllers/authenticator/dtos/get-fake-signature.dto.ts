@@ -43,6 +43,8 @@ export class GetFakeSignatureResponseData {
 
   @ApiProperty({ example: BotType.Ciwallet })
       botType: BotType
+  @ApiProperty({ example: "0xc0ffee" })
+      accountAddress: string
 }
 
 export const GET_FAKE_SIGNATURE_RESPONSE_SUCCESS_MESSAGE =

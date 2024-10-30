@@ -210,6 +210,7 @@ export class AuthenticatorControllerService {
                     network,
                     telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
                     botType: defaultBotType,
+                    accountAddress: address,
                 },
             }
         }
@@ -230,6 +231,7 @@ export class AuthenticatorControllerService {
                     network,
                     telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
                     botType: defaultBotType,
+                    accountAddress: publicKey.toBase58(),
                 },
             }
         }
@@ -250,6 +252,7 @@ export class AuthenticatorControllerService {
                     network,
                     telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
                     botType: defaultBotType,
+                    accountAddress: this.aptosAuthService.toAddress(publicKey.toString()),
                 },
             }
         }
@@ -270,6 +273,7 @@ export class AuthenticatorControllerService {
                     network,
                     telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
                     botType: defaultBotType,
+                    accountAddress: addr.toString(),
                 },
             }
         }
@@ -293,6 +297,7 @@ export class AuthenticatorControllerService {
                     network,
                     telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
                     botType: defaultBotType,
+                    accountAddress: publicKey.toString(),
                 },
             }
         }
@@ -313,6 +318,7 @@ export class AuthenticatorControllerService {
                     network,
                     telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
                     botType: defaultBotType,
+                    accountAddress: `example.${envConfig().secrets.chainCredentials.near.deposit.accountIds[network]}`,
                 },
             }
         }
