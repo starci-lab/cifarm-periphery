@@ -11,6 +11,7 @@ export class GetFakeSignatureRequestBody {
   @IsOptional()
   @ApiProperty({ example: 0 })
       accountNumber?: number
+
   @IsOptional()
   @ApiProperty({ example: Network.Testnet })
       network?: Network

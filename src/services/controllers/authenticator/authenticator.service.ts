@@ -53,6 +53,7 @@ import {
     SolanaAuthService,
     AlgorandAuthService,
     PolkadotAuthService,
+    NearAuthService,
 } from "../../blockchain"
 import { Sha256Service } from "@/services/base"
 import { Account, AccountEntity, RoleEntity, UserEntity } from "@/database"
@@ -72,6 +73,7 @@ export class AuthenticatorControllerService {
     private readonly sha256Service: Sha256Service,
     private readonly algorandAuthService: AlgorandAuthService,
     private readonly polkadotAuthService: PolkadotAuthService,
+    private readonly nearAuthService: NearAuthService,
 
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache,
@@ -153,6 +155,16 @@ export class AuthenticatorControllerService {
                 publicKey,
             })
             address = this.polkadotAuthService.toAddress(publicKey)
+            break
+        }
+        case Platform.Near: {
+            result = this.nearAuthService.verifyMessage({
+                message,
+                signature,
+                publicKey,
+            })
+            //near address is different from public key, depends on the registered account
+            address = ""
             break
         }
         default:
@@ -276,6 +288,26 @@ export class AuthenticatorControllerService {
                 publicKey.toString(),
             )
 
+            return {
+                message: GET_FAKE_SIGNATURE_RESPONSE_SUCCESS_MESSAGE,
+                data: {
+                    message,
+                    publicKey: publicKey.toString(),
+                    signature,
+                    chainKey,
+                    network,
+                    telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
+                    botType: defaultBotType,
+                },
+            }
+        }
+        case Platform.Near: {
+            const { publicKey, secretKey } =
+          this.nearAuthService.getFakeKeyPair(accountNumber)
+            const signature = this.nearAuthService.signMessage(
+                message,
+                secretKey.toString(),
+            )
             return {
                 message: GET_FAKE_SIGNATURE_RESPONSE_SUCCESS_MESSAGE,
                 data: {

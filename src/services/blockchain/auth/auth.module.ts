@@ -4,6 +4,7 @@ import { AptosAuthService } from "./aptos-auth.service"
 import { EvmAuthService } from "./evm-auth.service"
 import { PolkadotAuthService } from "./polkadot-auth.service"
 import { SolanaAuthService } from "./solana-auth.service"
+import { NearAuthService } from "./near-auth.service"
 
 @Global()
 @Module({
@@ -14,6 +15,7 @@ import { SolanaAuthService } from "./solana-auth.service"
         SolanaAuthService,
         AlgorandAuthService,
         PolkadotAuthService,
+        NearAuthService
     ],
     exports: [
         EvmAuthService,
@@ -21,6 +23,7 @@ import { SolanaAuthService } from "./solana-auth.service"
         SolanaAuthService,
         AlgorandAuthService,
         PolkadotAuthService,
+        NearAuthService
     ],
 })
 export class AuthModule {}
