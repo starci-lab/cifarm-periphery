@@ -4,6 +4,7 @@ import {
     algorandIndexerClient,
     aptosClient,
     evmHttpRpcUrl,
+    nearClient,
     polkadotUniqueNetworkSdkClient,
     solanaHttpRpcUrl,
 } from "../../rpcs"
@@ -19,7 +20,7 @@ import {
 } from "@/config"
 import { PlatformNotFoundException } from "@/exceptions"
 import { MulticallProvider } from "@ethers-ext/provider-multicall"
-import { NftData } from "../common"
+import { NearNft, NftData } from "../common"
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults"
 import { Atomic } from "@/utils"
 import { IpfsService } from "../common"
@@ -184,6 +185,34 @@ export const _getPolkadotUniqueNetworkNftByTokenId = async ({
     }
 }
 
+export const _getNearNftByTokenId = async ({
+    network,
+    tokenId,
+    nftCollectionKey,
+}: GetNftByTokenIdParams): Promise<NftData> => {
+    const nftCollectionId =
+    blockchainConfig().near.nftCollections[nftCollectionKey][network]
+        .collectionId
+
+    const client = await nearClient(network)
+    const account = await client.account("")
+
+    const nft: NearNft = await account.viewFunction({
+        contractId: nftCollectionId,
+        methodName: "nft_token",
+        args: { token_id: tokenId },
+    })
+
+    return {
+        tokenId,
+        ownerAddress: nft.owner_id,
+        metadata: {
+            image: nft.metadata.media,
+            properties: nft.metadata.extra || "",
+        },
+    }
+}
+
 export const _getNftByTokenId = (
     params: GetNftByTokenIdParams,
     services: GetNftByTokenIdServices,
@@ -204,6 +233,9 @@ export const _getNftByTokenId = (
     }
     case Platform.Polkadot: {
         return _getPolkadotUniqueNetworkNftByTokenId(params)
+    }
+    case Platform.Near: {
+        return _getNearNftByTokenId(params)
     }
     default:
         throw new PlatformNotFoundException(platform)

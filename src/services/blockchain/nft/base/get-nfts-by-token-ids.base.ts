@@ -4,6 +4,7 @@ import {
     algorandIndexerClient,
     aptosClient,
     evmHttpRpcUrl,
+    nearClient,
     polkadotUniqueNetworkIndexerClient,
     solanaHttpRpcUrl,
 } from "../../rpcs"
@@ -16,7 +17,7 @@ import {
 } from "@/config"
 import { PlatformNotFoundException } from "@/exceptions"
 import { MulticallProvider } from "@ethers-ext/provider-multicall"
-import { NftData } from "../common"
+import { NearNft, NftData } from "../common"
 import { Connection, PublicKey, ParsedAccountData } from "@solana/web3.js"
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults"
 import { fetchDigitalAsset } from "@metaplex-foundation/mpl-token-metadata"
@@ -241,6 +242,46 @@ export const _getPolkadotUniqueNetworkNftsByTokenIds = async ({
     }
 }
 
+export const _getNearNftsByTokenIds = async ({
+    network,
+    tokenIds,
+    nftCollectionKey,
+}: GetNftsByTokenIdsParams): Promise<GetNftsByTokenIdsResult> => {
+    const nftCollectionId =
+    blockchainConfig().near.nftCollections[nftCollectionKey][network]
+        .collectionId
+
+    const client = await nearClient(network)
+    const account = await client.account("")
+
+    const records: Array<NftData> = []
+    const promises: Array<Promise<void>> = []
+    for (const tokenId of tokenIds) {
+        promises.push(
+            (async () => {
+                const nft: NearNft = await account.viewFunction({
+                    contractId: nftCollectionId,
+                    methodName: "nft_token",
+                    args: { token_id: tokenId },
+                })
+                records.push({
+                    tokenId,
+                    ownerAddress: nft.owner_id,
+                    metadata: {
+                        image: nft.metadata.media,
+                        properties: nft.metadata.extra || "",
+                    },
+                })
+            })(),
+        )
+    }
+    await Promise.all(promises)
+
+    return {
+        records,
+    }
+}
+
 export const _getNftsByTokenIds = (
     params: GetNftsByTokenIdsParams,
     services: GetNftsByTokenIdsServices,
@@ -261,6 +302,9 @@ export const _getNftsByTokenIds = (
     }
     case Platform.Polkadot: {
         return _getPolkadotUniqueNetworkNftsByTokenIds(params)
+    }
+    case Platform.Near: {
+        return _getNearNftsByTokenIds(params)
     }
     default:
         throw new PlatformNotFoundException(platform)
