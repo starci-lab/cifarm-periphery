@@ -3,6 +3,7 @@ import { Sha256Service } from "./sha256.service"
 import { RabbitMQService } from "./rabbitmq.service"
 import { KafkaService } from "./kafka.service"
 import { JwtService } from "@nestjs/jwt"
+import { JwtStrategy } from "@/strategies"
 
 @Global()
 @Module({
@@ -11,13 +12,15 @@ import { JwtService } from "@nestjs/jwt"
         Sha256Service,
         RabbitMQService,
         KafkaService,
-        JwtService
+        JwtService,
+        JwtStrategy
     ],
     exports: [
         Sha256Service,
         RabbitMQService,
         KafkaService,
-        JwtService
+        JwtService,
+        JwtStrategy
     ]
 })
 export class BaseModule {}

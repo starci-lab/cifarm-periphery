@@ -1,10 +1,10 @@
 import { Global, Module } from "@nestjs/common"
-import { NearDepositService } from "./near-deposit.service"
+import { NearAccountsService } from "./near-accounts"
 
 @Global()
 @Module({
     imports: [],
-    providers: [NearDepositService],
-    exports: [NearDepositService],
+    providers: [NearAccountsService],
+    exports: [NearAccountsService],
 })
 export class SpecialModule {}

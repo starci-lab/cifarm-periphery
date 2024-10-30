@@ -10,12 +10,12 @@ import { nearClient, nearKeyPair, nearKeyStore } from "../rpcs"
 import { computeRaw } from "@/utils"
 import { NearUsernameExistsException } from "@/exceptions"
 
-export type NearDepositAccounts = Record<Network, Account>;
+export type NearAccounts = Record<Network, Account>;
 //special service for near deposit, to create a new account
 @Injectable()
-export class NearDepositService implements OnModuleInit {
-    private readonly logger = new Logger(NearDepositService.name)
-    private accounts: NearDepositAccounts
+export class NearAccountsService implements OnModuleInit {
+    private readonly logger = new Logger(NearAccountsService.name)
+    private accounts: NearAccounts
     //we'll take the deposit account
     constructor() {}
 

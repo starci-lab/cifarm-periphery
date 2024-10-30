@@ -4,9 +4,9 @@ import { PackagesControllerService } from "./packages"
 import { TokenControllerService } from "./token"
 import { TypeOrmModule } from "@nestjs/typeorm"
 import { AccountEntity, GameVersionEntity, RoleEntity, UserEntity } from "@/database"
-import { JwtStrategy } from "@/strategies"
 import { GameControllerService } from "./game"
 import { NftControllerService } from "./nft"
+import { SpecialControllerService } from "./special"
 
 @Global()
 @Module({
@@ -24,7 +24,7 @@ import { NftControllerService } from "./nft"
         TokenControllerService,
         GameControllerService,
         NftControllerService,
-        JwtStrategy
+        SpecialControllerService,
     ],
     exports: [
         AuthenticatorControllerService,
@@ -32,6 +32,7 @@ import { NftControllerService } from "./nft"
         TokenControllerService,
         GameControllerService,
         NftControllerService,
+        SpecialControllerService,
     ],
 })
 export class ControllersModule {}

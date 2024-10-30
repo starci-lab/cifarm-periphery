@@ -1,2 +1,2 @@
-export * from "./near-deposit.service"
+export * from "./near-accounts"
 export * from "./special.module"
