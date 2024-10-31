@@ -58,6 +58,7 @@ ENV NODE_ENV production
 
 # Copy package.json so that package manager commands can be used.
 COPY package.json .
+COPY chain-credentials.json .
 
 ADD https://github.com/starci-lab/cifarm-build.git ./cifarm-build
 
