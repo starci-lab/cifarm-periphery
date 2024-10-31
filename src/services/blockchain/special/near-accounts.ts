@@ -21,7 +21,7 @@ export class NearAccountsService implements OnModuleInit {
     constructor() {}
 
     private async createClient(network: Network): Promise<Account> {
-        const { privateKey, accountId } = envConfig().chainCredentials[SupportedChainKey.Near].nftMinter[network]
+        const { privateKey, accountId } = envConfig().chainCredentials[SupportedChainKey.Near].creator[network]
 
         const keyPair = nearKeyPair(privateKey)
         const keyStore = nearKeyStore({
