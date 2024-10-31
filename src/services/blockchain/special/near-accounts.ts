@@ -1,5 +1,4 @@
 import {
-    blockchainConfig,
     envConfig,
     Network,
     SupportedChainKey,
@@ -7,7 +6,6 @@ import {
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common"
 import { Account } from "near-api-js"
 import { nearClient, nearKeyPair, nearKeyStore } from "../rpcs"
-import { computeRaw } from "@/utils"
 import { NearUsernameExistsException } from "@/exceptions"
 
 export type NearAccounts = Record<Network, Account>;
@@ -22,7 +20,6 @@ export class NearAccountsService implements OnModuleInit {
 
     private async createClient(network: Network): Promise<Account> {
         const { privateKey, accountId } = envConfig().chainCredentials[SupportedChainKey.Near].creator[network]
-
         const keyPair = nearKeyPair(privateKey)
         const keyStore = nearKeyStore({
             network,
@@ -58,13 +55,12 @@ export class NearAccountsService implements OnModuleInit {
     }: NearDepositCreateAccountParams): Promise<NearDepositCreateAccountResult> {
         try {
             const account = this.accounts[network]
-            const decimals = blockchainConfig()[SupportedChainKey.Near].decimals
             const {
                 transaction_outcome: { id },
             } = await account.createAccount(
                 `${username}.${account.accountId}`,
                 publicKey,
-                computeRaw(0.1, decimals),
+                BigInt(0),
             )
             return {
                 transactionHash: id,

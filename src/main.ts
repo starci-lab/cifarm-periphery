@@ -27,7 +27,7 @@ const generateSchema = async () => {
         ),
         printSchema(schema),
     )
-}
+} 
 
 const bootstrap = async () => {
     const app = await NestFactory.create(AppModule)

@@ -12,7 +12,7 @@ export const getEnvValue = <ValueType = string>(values: {
         return development
     }
 }
-
+ 
 export const waitFor = (observeVariable: boolean, delay: number = 100): Promise<void> => {
     return new Promise((resolve) => {
         const interval = setInterval(() => {
