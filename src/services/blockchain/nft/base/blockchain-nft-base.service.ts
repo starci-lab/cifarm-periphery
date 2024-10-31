@@ -11,7 +11,6 @@ import {
 import { GetNftByTokenIdParams, _getNftByTokenId } from "./get-nfts-by-token-id.base"
 import { IpfsService } from "../common"
 import { _mintNft, MintNftParams } from "./mint-nft.base"
-import { ChainCredentialsService } from "../../../initialize"
 
 export interface BlockchainNftBaseServiceConstructorParams {
   nftCollectionId: string;
@@ -25,7 +24,6 @@ export class BlockchainNftBaseService {
 
     constructor(
         private readonly ipfsService: IpfsService,
-        private readonly chainCredentialsService: ChainCredentialsService,
     ) {
     }
 
@@ -49,8 +47,6 @@ export class BlockchainNftBaseService {
     }
 
     public mintNft(params: MintNftParams) {
-        return _mintNft(params, {
-            chainCredentialsService: this.chainCredentialsService,
-        })
+        return _mintNft(params)
     }
 }

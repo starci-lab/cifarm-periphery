@@ -1,6 +1,7 @@
 import {
     blockchainConfig,
     chainKeyToPlatform,
+    envConfig,
     Network,
     Platform,
     SupportedChainKey,
@@ -8,7 +9,6 @@ import {
 import { nearClient, nearKeyPair, nearKeyStore } from "../../rpcs"
 import { computeRaw, TransactionResult } from "@/utils"
 import { NearNftMetadata } from "../common"
-import { ChainCredentialsService } from "../../../initialize"
 
 export interface MintNftParams {
   //specify other or not, since some blockchains may not require it
@@ -31,10 +31,6 @@ export interface MintNftParams {
 }
 
 //services from dependency injection
-export interface MintNftServices {
-    chainCredentialsService?: ChainCredentialsService;
-  }
-  
 
 export interface MintNftResult extends TransactionResult {
   //tokenId
@@ -51,9 +47,9 @@ export const _mintNearNft = async ({
     chainKey,
     title,
     description,
-}: MintNftParams, { chainCredentialsService }: MintNftServices): Promise<MintNftResult> => {
+}: MintNftParams): Promise<MintNftResult> => {
     //near configuration
-    const { privateKey, accountId } = chainCredentialsService.config.near.nftMinter[network]
+    const { privateKey, accountId } = envConfig().chainCredentials[SupportedChainKey.Near].nftMinter[network]
 
     const keyPair = nearKeyPair(privateKey)
     const storageKey = nearKeyStore({ accountId, network, keyPair })
@@ -98,7 +94,6 @@ export const _mintNearNft = async ({
 
 export const _mintNft = async (
     params: MintNftParams,
-    services: MintNftServices,
 ) => {
     const platform = chainKeyToPlatform(params.chainKey)
     switch (platform) {
@@ -118,7 +113,7 @@ export const _mintNft = async (
         throw new Error(`Unsupported platform ${platform}`)
     }
     case Platform.Near: {
-        return _mintNearNft(params, services)
+        return _mintNearNft(params)
     }
     default:
         throw new Error(`Unsupported platform ${platform}`)

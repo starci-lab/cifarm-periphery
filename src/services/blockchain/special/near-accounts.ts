@@ -1,5 +1,6 @@
 import {
     blockchainConfig,
+    envConfig,
     Network,
     SupportedChainKey,
 } from "@/config"
@@ -8,7 +9,6 @@ import { Account } from "near-api-js"
 import { nearClient, nearKeyPair, nearKeyStore } from "../rpcs"
 import { computeRaw } from "@/utils"
 import { NearUsernameExistsException } from "@/exceptions"
-import { ChainCredentialsService } from "../../initialize"
 
 export type NearAccounts = Record<Network, Account>;
 //special service for near deposit, to create a new account
@@ -18,13 +18,10 @@ export class NearAccountsService implements OnModuleInit {
     private accounts: NearAccounts
 
     //we'll take the deposit account
-    constructor(
-        private readonly chainCredentialsService: ChainCredentialsService,
-    ) {}
+    constructor() {}
 
     private async createClient(network: Network): Promise<Account> {
-        const { accountId, privateKey } =
-      this.chainCredentialsService.config.near.creator[network]
+        const { privateKey, accountId } = envConfig().chainCredentials[SupportedChainKey.Near].nftMinter[network]
 
         const keyPair = nearKeyPair(privateKey)
         const keyStore = nearKeyStore({

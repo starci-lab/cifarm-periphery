@@ -13,14 +13,14 @@ import { JwtStrategy } from "@/strategies"
         RabbitMQService,
         KafkaService,
         JwtService,
-        JwtStrategy
+        JwtStrategy,
     ],
     exports: [
         Sha256Service,
         RabbitMQService,
         KafkaService,
         JwtService,
-        JwtStrategy
+        JwtStrategy,
     ]
 })
 export class BaseModule {}
