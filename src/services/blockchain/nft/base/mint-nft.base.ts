@@ -1,14 +1,14 @@
 import {
     blockchainConfig,
     chainKeyToPlatform,
-    envConfig,
     Network,
     Platform,
     SupportedChainKey,
 } from "@/config"
 import { nearClient, nearKeyPair, nearKeyStore } from "../../rpcs"
 import { computeRaw, TransactionResult } from "@/utils"
-import { IpfsService, NearNftMetadata } from "../common"
+import { NearNftMetadata } from "../common"
+import { ChainCredentialsService } from "../../../initialize"
 
 export interface MintNftParams {
   //specify other or not, since some blockchains may not require it
@@ -30,14 +30,15 @@ export interface MintNftParams {
   description?: string;
 }
 
+//services from dependency injection
+export interface MintNftServices {
+    chainCredentialsService?: ChainCredentialsService;
+  }
+  
+
 export interface MintNftResult extends TransactionResult {
   //tokenId
   tokenId: string;
-}
-
-//services from dependency injection
-export interface MintNftServices {
-  ipfsService: IpfsService;
 }
 
 export const _mintNearNft = async ({
@@ -50,10 +51,9 @@ export const _mintNearNft = async ({
     chainKey,
     title,
     description,
-}: MintNftParams): Promise<MintNftResult> => {
+}: MintNftParams, { chainCredentialsService }: MintNftServices): Promise<MintNftResult> => {
     //near configuration
-    const { privateKey, accountIds } = envConfig().secrets.chainCredentials.near.nftMinter
-    const accountId = accountIds[network]
+    const { privateKey, accountId } = chainCredentialsService.config.near.nftMinter[network]
 
     const keyPair = nearKeyPair(privateKey)
     const storageKey = nearKeyStore({ accountId, network, keyPair })
@@ -98,7 +98,6 @@ export const _mintNearNft = async ({
 
 export const _mintNft = async (
     params: MintNftParams,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     services: MintNftServices,
 ) => {
     const platform = chainKeyToPlatform(params.chainKey)
@@ -119,7 +118,7 @@ export const _mintNft = async (
         throw new Error(`Unsupported platform ${platform}`)
     }
     case Platform.Near: {
-        return _mintNearNft(params)
+        return _mintNearNft(params, services)
     }
     default:
         throw new Error(`Unsupported platform ${platform}`)

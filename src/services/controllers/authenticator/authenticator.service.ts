@@ -61,6 +61,7 @@ import { DataSource, In } from "typeorm"
 import { encode } from "bs58"
 import { defaultBotType } from "@/guards"
 import { JwtService } from "@nestjs/jwt"
+import { ChainCredentialsService } from "../../initialize"
 
 @Injectable()
 export class AuthenticatorControllerService {
@@ -74,6 +75,7 @@ export class AuthenticatorControllerService {
     private readonly algorandAuthService: AlgorandAuthService,
     private readonly polkadotAuthService: PolkadotAuthService,
     private readonly nearAuthService: NearAuthService,
+    private readonly chainCredentialsService: ChainCredentialsService,
 
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache,
@@ -318,7 +320,7 @@ export class AuthenticatorControllerService {
                     network,
                     telegramInitDataRaw: envConfig().secrets.telegram.mockAuthorization,
                     botType: defaultBotType,
-                    accountAddress: `example.${envConfig().secrets.chainCredentials.near.deposit.accountIds[network]}`,
+                    accountAddress: `example.${this.chainCredentialsService.config.near.creator[network].accountId}`,
                 },
             }
         }

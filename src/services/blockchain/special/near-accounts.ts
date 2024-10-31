@@ -1,6 +1,5 @@
 import {
     blockchainConfig,
-    envConfig,
     Network,
     SupportedChainKey,
 } from "@/config"
@@ -9,6 +8,7 @@ import { Account } from "near-api-js"
 import { nearClient, nearKeyPair, nearKeyStore } from "../rpcs"
 import { computeRaw } from "@/utils"
 import { NearUsernameExistsException } from "@/exceptions"
+import { ChainCredentialsService } from "../../initialize"
 
 export type NearAccounts = Record<Network, Account>;
 //special service for near deposit, to create a new account
@@ -16,13 +16,15 @@ export type NearAccounts = Record<Network, Account>;
 export class NearAccountsService implements OnModuleInit {
     private readonly logger = new Logger(NearAccountsService.name)
     private accounts: NearAccounts
+
     //we'll take the deposit account
-    constructor() {}
+    constructor(
+        private readonly chainCredentialsService: ChainCredentialsService,
+    ) {}
 
     private async createClient(network: Network): Promise<Account> {
-        const { accountIds, privateKey } =
-      envConfig().secrets.chainCredentials.near.deposit
-        const accountId = accountIds[network]
+        const { accountId, privateKey } =
+      this.chainCredentialsService.config.near.creator[network]
 
         const keyPair = nearKeyPair(privateKey)
         const keyStore = nearKeyStore({
@@ -35,7 +37,9 @@ export class NearAccountsService implements OnModuleInit {
         this.logger.debug(`Connected to ${network} near deposit account: ${accountId}`)
         return await client.account(accountId)
     }
+
     async onModuleInit() {
+        //delay until chain credentials loaded
         try {
             const [testnetAccount, mainnetAccount] = await Promise.all([
                 this.createClient(Network.Testnet),

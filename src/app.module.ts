@@ -10,6 +10,7 @@ import { ApplicationModule } from "./application"
 import { ScheduleModule } from "@nestjs/schedule"
 import { MongooseModule } from "@nestjs/mongoose"
 import { CacheModule } from "@nestjs/cache-manager"
+import { EventEmitterModule } from "@nestjs/event-emitter"
 import * as redisStore from "cache-manager-redis-store"
 import { TypeOrmModule } from "@nestjs/typeorm"
  
@@ -33,7 +34,9 @@ import { TypeOrmModule } from "@nestjs/typeorm"
             host: envConfig().redis.host,
             port: envConfig().redis.port,
         }),
- 
+
+        EventEmitterModule.forRoot(),
+        
         TypeOrmModule.forRoot({
             type: "postgres",
             host: envConfig().database.postgres.postgres1.host,

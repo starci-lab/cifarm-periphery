@@ -3,6 +3,7 @@ import { EnvDebugService } from "./env-debug.service"
 import { GenerateAdminService } from "./generate-admin.service"
 import { TypeOrmModule } from "@nestjs/typeorm"
 import { AccountEntity, RoleEntity } from "@/database"
+import { ChainCredentialsService } from "./chain-credentials.service"
 
 @Global()
 @Module({
@@ -14,7 +15,13 @@ import { AccountEntity, RoleEntity } from "@/database"
     ],
     providers: [
         EnvDebugService,
-        GenerateAdminService
+        GenerateAdminService,
+        ChainCredentialsService
     ],
+    exports: [
+        EnvDebugService,
+        GenerateAdminService,
+        ChainCredentialsService
+    ]
 })
 export class InitializeModule {}

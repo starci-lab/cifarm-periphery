@@ -1,3 +1,15 @@
+type RoleEntity {
+  role: String!
+  accountId: ID!
+  account: AccountEntity!
+}
+
+type AccountEntity {
+  username: String!
+  hashedPassword: String!
+  roles: [RoleEntity!]
+}
+
 type NftMetadataResponse {
   image: String!
   properties: String!
@@ -16,18 +28,6 @@ type GetNftsByOwnerAddressResponse {
 
 type GetNftsByTokenIdsResponse {
   records: [NftDataResponse!]!
-}
-
-type RoleEntity {
-  role: String!
-  accountId: ID!
-  account: AccountEntity!
-}
-
-type AccountEntity {
-  username: String!
-  hashedPassword: String!
-  roles: [RoleEntity!]
 }
 
 type Query {
