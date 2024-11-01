@@ -1,12 +1,6 @@
 
 # syntax=docker/dockerfile:1
 
-# Comments are provided throughout this file to help you get started.
-# If you need more help, visit the Dockerfile reference guide at
-# https://docs.docker.com/go/dockerfile-reference/
-
-# Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
-
 ARG NODE_VERSION=21.6.2
 
 ################################################################################
@@ -33,12 +27,11 @@ RUN npm ci --omit=dev --cache /root/.npm
 # Create a stage for building the application.
 FROM deps as build
 
-# # Download additional development dependencies before building, as some projects require
-# # "devDependencies" to be installed to build. If you don't need this, remove this step.
-# RUN --mount=type=bind,source=package.json,target=package.json \
-#     --mount=type=bind,source=package-lock.json,target=package-lock.json \
-#     --mount=type=cache,target=/root/.npm \
-#     npm ci
+# Download additional development dependencies before building, as some projects require
+# "devDependencies" to be installed to build. If you don't need this, remove this step.
+COPY package.json package.json
+COPY package-lock.json package-lock.json
+RUN npm ci --cache /root/.npm
 
 # Copy the rest of the source files into the image.
 COPY . .
