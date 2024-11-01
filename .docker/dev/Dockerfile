@@ -66,8 +66,8 @@ ADD https://github.com/starci-lab/cifarm-build.git ./cifarm-build
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./dist
 
-# Expose the port that the application listens on.
-EXPOSE 3065
+# # Expose the port that the application listens on.
+# EXPOSE 3065
 
-# Run the application.
-CMD node dist/main
+# # Run the application.
+# CMD node dist/main
