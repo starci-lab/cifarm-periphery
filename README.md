@@ -1,75 +1,50 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# CiFarm Periphery Server
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+The **CiFarm Periphery Server** is a NestJS application designed to connect the CiFarm ecosystem to blockchain networks. This server enables functionalities such as reading information from the blockchain and performing actions like minting and burning tokens. It acts as an intermediary, controlled by the CiFarm server, to facilitate secure interactions with blockchain technology.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Table of Contents
 
-## Description
+1. [Introduction](#introduction)
+2. [Features](#features)
+3. [Architecture](#architecture)
+4. [Installation](#installation)
+5. [Configuration](#configuration)
+6. [Usage](#usage)
+7. [API Endpoints](#api-endpoints)
+8. [Contributing](#contributing)
+9. [License](#license)
+10. [Acknowledgments](#acknowledgments)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Introduction
+
+The CiFarm Periphery Server plays a crucial role in the CiFarm ecosystem by enabling communication with blockchain networks. It provides basic blockchain authentication through signing and verifying messages, ensuring secure operations when interacting with smart contracts and executing various blockchain functionalities.
+
+## Features
+
+- **Blockchain Connectivity**: Connects to various blockchain networks to read information and execute actions.
+- **Minting and Burning**: Facilitates the minting and burning of tokens as required by the CiFarm application.
+- **Basic Authentication**: Provides functionality for signing and verifying messages for secure blockchain interactions.
+- **Controlled by CiFarm Server**: Acts as a controlled service to manage blockchain-related operations seamlessly.
+
+## Architecture
+
+The server is built using **NestJS**, a progressive Node.js framework. The architecture includes:
+
+- **NestJS Framework**: Provides a modular and scalable structure for building server applications.
+- **Blockchain Interfaces**: Connects with different blockchain networks through appropriate libraries and APIs.
+- **Authentication Module**: Handles message signing and verification for secure transactions.
 
 ## Installation
 
-```bash
-$ npm install
-```
+To set up the CiFarm Periphery Server, follow these steps:
 
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
-
-Thientm 7
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/yourusername/cifarm-periphery-server.git
+   cd cifarm-periphery-server
+2. **Install Dependencies: Install the required Node.js packages:**
+   ```bash
+   npm install
+3. Set Up Environment Variables: Create a .env file based on the provided .env.example file. Configure your environment variables within this file, including connection details for your blockchain network.
+4. **Run the server```
+   npm run start
