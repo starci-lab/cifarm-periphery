@@ -46,5 +46,6 @@ To set up the CiFarm Periphery Server, follow these steps:
    ```bash
    npm install
 3. Set Up Environment Variables: Create a .env file based on the provided .env.example file. Configure your environment variables within this file, including connection details for your blockchain network.
-4. **Run the server```
+4. **Run the server***
+   ```bash
    npm run start
