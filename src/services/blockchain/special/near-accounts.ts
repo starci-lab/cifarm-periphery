@@ -51,14 +51,14 @@ export class NearAccountsService implements OnModuleInit {
     public async createAccount({
         network,
         publicKey,
-        username,
-    }: NearDepositCreateAccountParams): Promise<NearDepositCreateAccountResult> {
+        subdomain,
+    }: CreateAccountParams): Promise<CreateAccountResult> {
         try {
             const account = this.accounts[network]
             const {
                 transaction_outcome: { id },
             } = await account.createAccount(
-                `${username}.${account.accountId}`,
+                `${subdomain}.${account.accountId}`,
                 publicKey,
                 BigInt(0),
             )
@@ -70,21 +70,21 @@ export class NearAccountsService implements OnModuleInit {
             //maybe error from username exists
             console.log(ex)
             //test for username exists
-            throw new NearUsernameExistsException(username)
+            throw new NearUsernameExistsException(subdomain)
         }
         
     }
 }
 
-export interface NearDepositCreateAccountParams {
+export interface CreateAccountParams {
   network: Network;
   //account id
   publicKey: string;
   //username
-  username: string;
+  subdomain: string;
 }
 
-export interface NearDepositCreateAccountResult {
+export interface CreateAccountResult {
   //transaction hash
   transactionHash: string;
 }

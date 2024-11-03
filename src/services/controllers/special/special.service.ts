@@ -16,13 +16,13 @@ export class SpecialControllerService {
 
     async createNearAcount({
         network,
-        username,
+        subdomain,
         publicKey,
     }: CreateNearAccountRequestBody): Promise<CreateNearAccountResponse> {
         network = network || defaultNetwork
         
         const { transactionHash } = await this.nearAccountsService.createAccount({
-            username,
+            subdomain,
             publicKey,
             network,
         })

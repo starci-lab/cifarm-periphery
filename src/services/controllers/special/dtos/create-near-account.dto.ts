@@ -8,7 +8,7 @@ export class CreateNearAccountRequestBody {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ example: "tucuong183" })
-      username: string
+      subdomain: string
 
     @IsString()
     @IsNotEmpty()
